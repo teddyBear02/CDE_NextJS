@@ -1,0 +1,29 @@
+.toolbar-section{
+    display: flex;
+    align-items: center;
+    background-color: #f3f3f7;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    position: relative;
+    position: -webkit-sticky!important;
+    position: sticky!important;
+    top: 0;
+    z-index: 4;
+    .filtersContianer{
+        align-items: center;
+        display: flex;
+        flex-flow: row nowrap;
+    }
+    .filter{
+        padding: 0.75rem;
+        margin-right: 1rem;
+        transition: ease-in-out 0.225s;
+        &:hover{
+            background-color: #e2e2e7;
+            cursor: pointer;
+            transition: ease-in-out 0.225s;
+        }
+    }
+}

@@ -1,0 +1,137 @@
+$background_page: url("../../../assets/1dc2d4ac-image-1024x691.jpeg");
+body {
+  background-color: #f3f3f7;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul {
+  margin: 0;
+}
+
+li {
+  list-style: none;
+}
+// Background chung của Login và Register
+.bgImg {
+  background: linear-gradient(
+      to left,
+      rgba($color: #000, $alpha: 0.6),
+      rgba($color: #fff, $alpha: 0.6)
+    ),
+    $background_page no-repeat;
+  background-size: cover;
+  height: 100vh;
+}
+
+//.................................................//
+
+// Component SubNav.tsx (Begin)
+#subNav {
+  background-color: #f3f3f7 !important;
+}
+
+.disable {
+  display: none !important;
+}
+
+// Component SubNav.tsx (End)
+
+//.................................................//
+
+// Page Register.tsx(Begin)
+
+#wrapValid {
+  h2 {
+    margin-bottom: 12px;
+  }
+  &::before,
+  &::after {
+    display: table;
+    content: "";
+    clear: both;
+  }
+  position: absolute;
+  width: 28%;
+  background-color: #fff;
+  border-radius: 5px;
+  transform: translate(50%, 50%);
+  bottom: 50%;
+  right: 50%;
+  padding: 32px;
+
+  #icon {
+    i {
+      margin: 0 6px;
+      font-size: 24px;
+      &:hover {
+        opacity: 0.7;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+// Page Register.tsx(End)
+
+//...............................................//
+
+// Component ListItem.tsx (Begin)
+
+.listW100 {
+  width: 100%;
+  text-decoration: none;
+}
+.hoverList {
+  transition: ease-in 0.2s;
+  &:hover {
+    transition: ease-in 0.2s;
+  }
+}
+
+// Component ListItem.tsx (End)
+
+//...............................................//
+
+// Component None.tsx (Begin)
+#descrip {
+  padding: 0 0.75rem;
+}
+// Component None.tsx (End)
+
+//...............................................//
+
+// Component Nav.tsx (Begin)
+
+#userIcon {
+  padding: 0 8px;
+  border-radius: 50%;
+  transition: ease-in 0.2s;
+
+  &:hover {
+    background-color: #b1b1b1;
+    color: #fff !important;
+    transition: ease-in 0.2s;
+  }
+}
+
+#myNav {
+  .navbar-brand {
+    transition: ease-in 0.215s;
+    padding-left: 1.125rem;
+    padding-right: 1.125rem;
+    &:hover {
+      transition: ease-in 0.215s;
+      background: #c1c1c1;
+      color: rgb(23, 117, 194);
+    }
+  }
+}
+
+// Component Nav.tsx (End)
+
+//...............................................//

@@ -1,0 +1,78 @@
+#flow-y{
+    overflow-y:auto;
+}
+
+#bg-w{
+    margin-left: 4px;
+    input{
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 0.065rem solid #d0d0d7;
+    }
+    label{
+        float: left;
+        
+    }
+}
+
+#basicIf,#contactInfo,#bg-w{
+    background-color: white;
+    padding: 2.5rem;
+    box-shadow: 0 0 0.25rem  rgba($color: #aeaeb6, $alpha: 1);
+    h4{
+        text-align:  left;
+    }
+
+    .half{
+        display: inline-block;
+        padding: 0;  
+    }
+
+    
+
+    #left50,.half{
+        width: 50%;
+        input{
+            width: 90%;
+            padding: 0.5rem 0.75rem;
+            border: 0.065rem solid #d0d0d7;
+        }
+
+        label{
+            float: left;
+            padding-left: 5%;
+        }
+        .e-mail{
+            text-align: left;
+            padding-left: 5%;
+            color: #aaa;
+        }
+    }
+}
+
+
+#basicIf{
+   
+    label{
+        text-align: left;
+    }
+
+    .infor{
+        padding: 0;
+    }
+
+    #changePass{
+        p{
+            padding-left: 2%;
+            text-align: left;
+            span{
+                transition: ease-in 0.25s;
+                &:hover{
+                    background-color: #ccc;
+                    cursor: pointer;
+                    transition: ease-in 0.25s;
+                }
+            }
+        }
+    }
+}

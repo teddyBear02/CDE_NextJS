@@ -1,0 +1,136 @@
+.panelWrapper{
+    background-color: #fff;
+    border-top: 1px solid #d0d0d7;
+    display: flex;
+    flex-flow: row nowrap;
+    height: 100%;
+    position: relative;
+    h6{
+        text-align: left;
+    }
+}
+
+.px-2{
+    padding: 0 1rem !important;
+}
+
+
+.panelLeft{
+    display: flex;
+    flex-flow: row nowrap;
+}
+.listPanel{
+    border-right: 1px solid #d0d0d7;
+    flex: 1 1 auto;
+    flex-flow: column nowrap;
+}
+
+
+.listHeader,.listPanel{
+    display: flex;
+    max-width: 14.5rem;
+    min-width: 14.5rem;
+}
+
+.listHeader{
+    align-items: center;
+    border-bottom: 1px solid #d0d0d7;
+    flex-flow: row nowrap;
+    height: 4rem;
+    justify-content: space-between;
+    padding: 1rem;
+    h3{
+        font-size: 1.125rem;
+    }
+    button{
+        border: none;
+        background-color: #d0d0d7;
+        padding: 0.5rem;
+        min-height: 2rem;
+        font-size: small;
+        transition: ease-in-out 0.25s;
+        border-radius: 2px;
+        &:hover{
+            background-color: #bbb;
+            transition: ease-in-out 0.25s;
+        }
+    }
+}
+
+.listWrapper{
+    .sub-section{
+        padding: 1rem 0;
+        .value{
+            font-size: .875rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .list{
+            font-size: .875rem;
+            min-height: 2.5rem;
+            padding: 0.5rem 1rem;
+        }
+        p{
+            margin: 0;
+            text-align: left;
+        }
+    }
+}
+
+.label-group{
+    justify-content: center;
+    min-height: 3rem;
+    display: flex;
+    flex-flow: column nowrap;    
+    position: relative;
+
+    label{
+        align-items: flex-end;
+        color: #6a6976;
+        display: flex;
+        flex-flow: row nowrap;
+        font-size: .75rem;
+        font-weight: 400;
+        margin-bottom: 0;
+    }
+    .value{
+        p{
+            margin: 0;
+            text-align: left;
+            font-size: 16px;
+        }
+    }
+}
+
+.panelRight{
+    width: calc(100% - 14.5rem);
+    .tableSection{
+        height: 100%;
+    }
+
+    .tablePanel{
+        display: flex;
+        flex: 1 1 auto;
+        flex-flow: column nowrap;
+        height: calc(100% - 4rem);
+        position: relative;
+    }
+    .tableHeader{
+        align-items: center;
+        border-bottom: 1px solid #d0d0d7;
+        display: flex;
+        flex: 0 1 auto;
+        flex-flow: row nowrap;
+        height: 4rem;
+        justify-content: space-between;
+        padding: 1rem;
+    }
+
+    .tableWrapper{
+        display: flex;
+    flex-flow: row nowrap;
+    overflow: hidden;
+    }
+}
+
