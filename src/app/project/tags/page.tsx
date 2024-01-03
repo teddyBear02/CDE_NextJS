@@ -6,7 +6,7 @@ import {
   TagsDeleteAll,
   TagsEdit,
 } from "@/app/components";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import tagSevice from "@/service/tagsService";
 
 interface Tag {
@@ -19,8 +19,6 @@ export default function Tags() {
 
   let token = localStorage.getItem("userData"); // Lấy Token Login từ Local Storage
 
-  let id = 1;
-
   const [showModalEdit, setShowModalEdit] = useState(false);
 
   const [showModalDelete, setshowModalDelete] = useState(false);
@@ -30,8 +28,6 @@ export default function Tags() {
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
   const [currTag, setCurrTag] = useState(""); // Default value tag
-
-  const inpRef = useRef();
 
   const toggleModal = (e: React.MouseEvent<HTMLElement>) => {
     setShowModalEdit(!showModalEdit);
@@ -58,7 +54,8 @@ export default function Tags() {
   async function getAllTag() {
     try {
       const tagsData = await tagSevice.getTags(token, projectId);
-      setTags(tagsData);
+      setTags(() => [...tagsData]);
+      console.log(tagsData);
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
     }
@@ -71,7 +68,6 @@ export default function Tags() {
   //......................... xử lý post 1 tag mới................................//
 
   const [inforTag, setinforTag] = useState({
-    id: "",
     TagName: "",
     ProjectID: projectId,
   });
@@ -83,7 +79,7 @@ export default function Tags() {
 
   async function handleAdd() {
     try {
-      const tagsData = await tagSevice.handleAdd(token, projectId);
+      const tagsData = await tagSevice.handleAdd(inforTag, token);
       setTags((prev: any) => [...prev, tagsData]);
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
@@ -107,19 +103,25 @@ export default function Tags() {
 
   async function handleEditTags() {
     try {
-      const tagsData = await tagSevice.handleEditTags(token, projectId, id);
+      const tagsData = await tagSevice.handleEditTags(
+        selectedTag,
+        token,
+        selectedItemId,
+        projectId
+      );
+
       let newTagName = {
-        id: tagsData.metadata.id,
-        TagName: tagsData.metadata.TagName,
+        id: tagsData.id,
+        TagName: tagsData.TagName,
       };
       const indexToRemove = tags.findIndex(
         (item: any) => item.id === parseInt(selectedItemId)
       );
 
-      if (indexToRemove !== -1) {
-        tags.splice(indexToRemove, 1, newTagName);
-        setShowModalEdit(!showModalEdit);
-      }
+      tags.splice(indexToRemove, 1, newTagName);
+      setShowModalEdit(!showModalEdit);
+
+      console.log(tagsData);
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
     }
@@ -229,21 +231,18 @@ export default function Tags() {
     getInfor();
   }, []);
 
-  const propsAdmin = {
-    titleNav: "Thẻ",
-    titleBtn: "Extension",
-    event: { toggleModalDeleteAll },
-  };
-
-  const propsUser = {
-    titleNav: "Thẻ",
-    disable: true,
-  };
-
   return (
     <>
       <div className="container showFolder">
-        {role ? <SubNav params={propsAdmin} /> : <SubNav params={propsUser} />}
+        {role ? (
+          <SubNav
+            titleNav="Thẻ"
+            btnTitle="Extension"
+            event={toggleModalDeleteAll}
+          />
+        ) : (
+          <SubNav titleNav="Thẻ" disable={!role} />
+        )}
 
         {showDeleteAll && <TagsDeleteAll deleteAll={handleDeleteAllTags} />}
 

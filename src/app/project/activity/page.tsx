@@ -1,12 +1,6 @@
 import { SubNav, None } from "@/app/components";
 
 export default function Activity() {
-  const propsSubNav = {
-    titleNav: "Hoạt động",
-    disabel: false,
-    btnTitle: "Tạo mới",
-  };
-
   const propsNone = {
     title: "Hiện không có hoạt động nào",
     subTitle: "Hãy thay đổi trong dự án",
@@ -15,7 +9,7 @@ export default function Activity() {
     <>
       <>
         <div className="container showFolder">
-          <SubNav params={propsSubNav} />
+          <SubNav titleNav="Hoạt động" btnTitle="Tạo mới" />
           <div className="toolbar-section">
             <div className="filtersWrapper">
               <div className="filtersContianer">

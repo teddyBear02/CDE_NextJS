@@ -10,7 +10,7 @@ export default function ProjectLayout({
       <NavBar />
       <div id="wrapperProject">
         <SideBar />
-        <div className="container showFolder">{children}</div>
+        {children}
       </div>
     </>
   );

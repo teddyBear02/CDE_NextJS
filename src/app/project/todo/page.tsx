@@ -1,14 +1,9 @@
 import { SubNav } from "@/app/components";
 export default function Todo() {
-  const propsSubNav = {
-    titleNav: "Việc cần làm",
-    disabel: false,
-    btnTitle: "Tạo mới",
-  };
   return (
     <>
       <div className="container showFolder">
-        <SubNav params={propsSubNav} />
+        <SubNav titleNav="Việc cần làm" btnTitle="Tạo mới" />
         <div className="toolbar-section">
           <div className="filtersWrapper">
             <div className="filtersContianer">

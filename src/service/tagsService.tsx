@@ -55,23 +55,25 @@ const tagSevice = {
 
   //................................. UPDATE tag..................................//
 
-  async handleEditTags(data: any, token: any, id: any) {
+  async handleEditTags(data: any, token: any, id: any, idProject: any) {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/tag/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data), // Chuyển đổi dữ liệu thành chuỗi JSON
-      });
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/tag/${id}/${idProject}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Không thành công");
       }
-      // Xử lý dữ liệu phản hồi (nếu cần)
       const responseData = await response.json();
-      return responseData;
+      return responseData.metadata;
     } catch (error) {
       console.error("Lỗi khi thực hiện yêu cầu PUT:", error);
     }
@@ -81,7 +83,7 @@ const tagSevice = {
 
   //.................................. DELETE tag.................................//
 
-  async handleDeleteTags(data: any, token: any, id: any) {
+  async handleDeleteTag(data: any, token: any, id: any) {
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/tag/${id}`, {
         method: "DELETE",

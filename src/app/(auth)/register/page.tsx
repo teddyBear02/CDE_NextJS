@@ -1,8 +1,9 @@
 "use client";
 import resgisterService from "@/service/resgisterService";
-
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 export default function Register() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,7 +19,12 @@ export default function Register() {
   async function resgister() {
     try {
       const data = await resgisterService.handleRegister(formData);
-      console.log(data);
+      if (data) {
+        router.back();
+        alert("Đăng kí thành công !!!");
+      } else {
+        alert("Đăng kí không thành công");
+      }
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
     }

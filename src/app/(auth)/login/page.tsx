@@ -1,7 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import loginService from "@/service/loginService";
+import { useRouter } from "next/navigation";
+
 export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
@@ -13,9 +15,16 @@ export default function Login() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const router = useRouter();
+
   async function login() {
     try {
       const userData = await loginService.login(formData);
+      if (userData) {
+        router.push("/home");
+      } else {
+        alert("Thông tin chưa chính xác !!!");
+      }
       console.log(userData);
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
