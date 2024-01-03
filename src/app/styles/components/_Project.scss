@@ -34,10 +34,12 @@ a {
       width: 100%;
       li {
         transition: ease-in-out 0.2s;
-        color: #fff;
+        color: #fff !important;
         line-height: 3rem;
         width: 100%;
-        padding-left: 3.25rem;
+        a {
+          padding-left: 3.25rem;
+        }
         &:hover {
           background-color: #07599b;
           cursor: pointer;
@@ -47,9 +49,14 @@ a {
       }
     }
   }
+  .anchor {
+    color: #fff !important;
+    text-decoration: none;
+    display: block;
+    padding-left: 1rem;
+  }
 
   .nav-item {
-    padding-left: 1rem;
     line-height: 3.5rem;
     transition: ease-in-out 0.2s;
     color: #fff;
@@ -63,6 +70,10 @@ a {
       font-size: 20px;
       padding: 0 0.5rem;
     }
+  }
+
+  .pl-1 {
+    padding-left: 1rem;
   }
 }
 

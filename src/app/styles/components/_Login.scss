@@ -6,10 +6,18 @@
   background-color: #fff;
   border-radius: 4px;
   width: 450px;
-
   padding: 2% 2% 4% 2%;
   #btn-log {
     margin-top: 24px;
+    button {
+      padding: 0;
+    }
+    a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+      padding: 0.5rem 0.7rem;
+    }
   }
   .form-floating {
     margin: 24px 0;

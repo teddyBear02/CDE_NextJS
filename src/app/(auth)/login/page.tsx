@@ -1,6 +1,27 @@
+"use client";
 import Link from "next/link";
-
+import { useState } from "react";
+import loginService from "@/service/loginService";
 export default function Login() {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  async function login() {
+    try {
+      const userData = await loginService.login(formData);
+      console.log(userData);
+    } catch (error) {
+      console.error("Đã xảy ra lỗi:", error);
+    }
+  }
+
   return (
     <>
       <div className="bgImg">
@@ -13,6 +34,7 @@ export default function Login() {
               id="floatingInput"
               placeholder="name@example.com"
               name="email"
+              onChange={handleInputChange}
             />
             <label form="floatingInput">Tên đăng nhập</label>
           </div>
@@ -23,6 +45,7 @@ export default function Login() {
               id="floatingPassword"
               placeholder="Password"
               name="password"
+              onChange={handleInputChange}
             />
             <label form="floatingPassword">Mật khẩu</label>
           </div>
@@ -40,11 +63,9 @@ export default function Login() {
             </p>
           </div>
           <div className="d-grid gap-2 col-6 mx-auto" id="btn-log">
-            <Link href={"/home"}>
-              <button type="button" className={`btn btn-primary`}>
-                Đăng nhập
-              </button>
-            </Link>
+            <button type="button" className="btn btn-primary" onClick={login}>
+              Đăng nhập
+            </button>
           </div>
         </div>
       </div>

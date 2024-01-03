@@ -1,4 +1,29 @@
+"use client";
+import resgisterService from "@/service/resgisterService";
+
+import { useState } from "react";
 export default function Register() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    NumberPhone: "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  async function resgister() {
+    try {
+      const data = await resgisterService.handleRegister(formData);
+      console.log(data);
+    } catch (error) {
+      console.error("Đã xảy ra lỗi:", error);
+    }
+  }
+
   return (
     <>
       <div className="bgImg">
@@ -10,10 +35,10 @@ export default function Register() {
                 type="text"
                 className="form-control"
                 id="floatingInput"
-                placeholder="Nguyễn Văn A"
+                placeholder=""
                 name="name"
-                // value={formData.name}
-                // onChange={handleInputChange}
+                value={formData.name}
+                onChange={handleInputChange}
               />
               <label htmlFor="floatingInput">Tên người dùng</label>
             </div>
@@ -24,9 +49,9 @@ export default function Register() {
                 className="form-control"
                 id="floatingPassword"
                 placeholder="Email"
-                // value={formData.email}
+                value={formData.email}
                 name="email"
-                // onChange={handleInputChange}
+                onChange={handleInputChange}
               />
               <label htmlFor="floatingPassword">Nhập email của bạn</label>
             </div>
@@ -38,8 +63,8 @@ export default function Register() {
                 id="floatingPassword"
                 placeholder="Password"
                 name="password"
-                // value={formData.password}
-                // onChange={handleInputChange}
+                value={formData.password}
+                onChange={handleInputChange}
               />
               <label htmlFor="floatingPassword">Nhập mật khẩu</label>
             </div>
@@ -54,14 +79,19 @@ export default function Register() {
                 maxLength={12}
                 placeholder="Số điện thoại"
                 name="NumberPhone"
-                // value={formData.NumberPhone}
-                // onChange={handleInputChange}
+                value={formData.NumberPhone}
+                onChange={handleInputChange}
               />
               <label htmlFor="floatingPassword">Nhập số điện thoại</label>
             </div>
 
             <div id="btnValid" className="mb-4">
-              <button></button>
+              <button
+                className="btn btn-primary p-4 pt-2 pb-2"
+                onClick={resgister}
+              >
+                Đăng kí
+              </button>
             </div>
 
             <div id="otherValid">
