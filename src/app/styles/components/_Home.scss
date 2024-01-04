@@ -1,181 +1,122 @@
-.main{
-    height: 100%;
-    position: relative;
+.main {
+  height: 100%;
+  position: relative;
 }
 
-#myNav{
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index:1;
-    line-height: 40px;
-    box-shadow: 3px 0px 4px 1px rgba($color: #000000, $alpha: 0.4);
-    #userIcon{
-        font-size: 24px;
-        &:hover{
-            color: #858585 ;
-            cursor: pointer;
-        }
-    }
-
-    #dropdown-info{
-        background-color: #fff;
-        border-radius: 0.125rem;
-        box-shadow: 0 0 0.375rem #aeaeb6;
-        font-weight: 400;
-        padding: 1rem 0;
-        width: 232px;
-        position: absolute;
-        z-index: 12;
-        top:55px;
-        right: 25px;
-        .userInfo{
-            align-items: center;
-            display: flex;
-            flex-flow: column nowrap!important;
-            height: auto!important;
-            max-width: 232px;
-            padding: 0.5rem 1rem;
-            width: 232px;
-            .thumbnailSection{
-                align-items: center;
-                display: flex;
-                flex-flow: column nowrap;
-                .avatar{
-                    
-                    font-size: 28px;
-                    background-color: #bfbfbf;
-                    padding: 0 0.4rem;
-                    border-radius: 50%;
-                }
-                .textEllipsis{
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-                .small{
-                    font-size: .75rem!important
-                }
-
-                .text-center{
-                    text-align: center;
-                }
-            }
-
-            .thumbnailDetails{
-                width: 100%;
-            }
-        }
-        .listDown{
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            li{
-                text-align: center;
-                transition: ease-in 0.15s;
-                &:hover{
-                    transition: ease-in 0.15s;
-                    background-color: #e5e5e5;
-                    cursor: pointer;
-                }
-            }
-        }  
-    }
- }
-
- 
-
-
-.toRender{
-    padding-top: 56px;
-    margin-top: 24px;
+.toRender {
+  padding-top: 56px;
+  margin-top: 24px;
 }
 
-.hoverList{
-    &:hover{
-        cursor: pointer;
-    }
+.hoverList {
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 // Modal Create Project
-.modalNew{
-    z-index: 3;
-    width: 100%;
-    height: 100%;
+.modalNew {
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  background-color: rgba($color: #000000, $alpha: 0.5);
+  &::after,
+  &::before {
+    clear: both;
+    display: table;
+    content: "";
+  }
+  #boxModal {
+    border-radius: 4px;
+    background-color: #fff;
+    padding: 24px 36px;
+    width: 450px;
+    height: 520px;
+    transform: translate(50%, 12%);
+    right: 50%;
     position: absolute;
-    top: 0;
-    background-color: rgba($color: #000000, $alpha: 0.5);
-    &::after,&::before{
-        clear: both;
-        display: table;
-        content: "";
-    }
-    #boxModal{
-        border-radius: 4px;
-        background-color: #fff;
-        padding: 24px 36px;
-        width: 450px;
-        height: 520px;
-        transform: translate(50%, 12%);
-        right: 50%;
-        position: absolute;
-        animation: upToDown 0.45s;
-        #titleModal{
-            h2{
-                position: relative;
-                margin: 12px 0;
-                i{
-                    position: absolute;
-                    right: 0;
-                    bottom: 0;
-                    font-size: 21px;
-                    padding: 6px 8px;
-                    border-radius: 50%;
-                    transition: ease-in 0.225s;  
+    animation: upToDown 0.45s;
+    #titleModal {
+      h2 {
+        position: relative;
+        margin: 12px 0;
+        i {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          font-size: 21px;
+          padding: 6px 8px;
+          border-radius: 50%;
+          transition: ease-in 0.225s;
 
-                    &:hover{
-                        background-color: #d7d7d7;
-                        cursor: pointer;
-                        transition: ease-in 0.225s;  
-                    }
-                }
-            }
+          &:hover {
+            background-color: #d7d7d7;
+            cursor: pointer;
+            transition: ease-in 0.225s;
+          }
         }
-        #detail{
-            border-bottom: 1px solid #ccc;
-            height: 65%;
-            input{
-                padding: 8px ;
-                margin: 8px 0;
-                width: 100%;
-            }
-        }
-        
-        #modalBtn{
-            position: relative;
-            margin-top: 20px;
-            .btns{
-                position: absolute;
-                border: none;
-                border-radius: 4px;
-            }
-            #created{
-                right: 0;
-            }
-            #cancel{
-                right: 25%;
-            }
-        }
+      }
     }
+    #detail {
+      border-bottom: 1px solid #ccc;
+      height: 65%;
+      input {
+        padding: 8px;
+        margin: 8px 0;
+        width: 100%;
+      }
+    }
+
+    #modalBtn {
+      position: relative;
+      margin-top: 20px;
+      .btns {
+        position: absolute;
+        border: none;
+        border-radius: 4px;
+      }
+      #created {
+        right: 0;
+      }
+      #cancel {
+        right: 25%;
+      }
+    }
+  }
+}
+
+.height-3rem {
+  height: 3rem;
+}
+
+table {
+  thead {
+    vertical-align: middle !important;
+    background-color: #f9f9fb !important;
+  }
+
+  tbody {
+    vertical-align: middle !important;
+  }
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(6, 24px);
+  height: 3.5rem;
+  align-items: center;
+  background-color: #f9f9fb;
 }
 
 // Keyframe for Modal Create Project
-@keyframes upToDown{
-    from{
-        transform: translate(50%,-5%);
-    }
+@keyframes upToDown {
+  from {
+    transform: translate(50%, -5%);
+  }
 
-    to{
-        transform: translateY(50%,12%);
-    }
+  to {
+    transform: translateY(50%, 12%);
+  }
 }

@@ -1,7 +1,9 @@
+import { env } from "@/config/varenv";
+
 const loginService = {
   async login(data: any) {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login", {
+      const response = await fetch(`${env.BASE_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -12,7 +14,8 @@ const loginService = {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("userData", data.metadata.token);
-        return data;
+        console.log(data.metadata);
+        return data.metadata;
       } else {
         const errorData = await response.json();
         console.error("Login failed:", errorData);

@@ -54,8 +54,10 @@ export default function Tags() {
   async function getAllTag() {
     try {
       const tagsData = await tagSevice.getTags(token, projectId);
-      setTags(() => [...tagsData]);
-      console.log(tagsData);
+      if (tagsData) {
+        setTags(() => [...tagsData]);
+        console.log(tagsData);
+      }
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
     }

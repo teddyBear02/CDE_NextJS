@@ -33,6 +33,7 @@ li {
 // Component SubNav.tsx (Begin)
 #subNav {
   background-color: #f3f3f7 !important;
+  margin-bottom: 1.75rem;
 }
 
 .disable {
@@ -120,6 +121,13 @@ li {
 }
 
 #myNav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  line-height: 40px;
+  box-shadow: 3px 0px 4px 1px rgba($color: #000000, $alpha: 0.4);
+
   .navbar-brand {
     transition: ease-in 0.215s;
     padding-left: 1.125rem;
@@ -128,6 +136,77 @@ li {
       transition: ease-in 0.215s;
       background: #c1c1c1;
       color: rgb(23, 117, 194);
+    }
+  }
+
+  #userIcon {
+    font-size: 24px;
+    &:hover {
+      color: #858585;
+      cursor: pointer;
+    }
+  }
+
+  #dropdown-info {
+    background-color: #fff;
+    border-radius: 0.125rem;
+    box-shadow: 0 0 0.375rem #aeaeb6;
+    font-weight: 400;
+    padding: 1rem 0;
+    width: 232px;
+    position: absolute;
+    z-index: 12;
+    top: 55px;
+    right: 25px;
+    .userInfo {
+      align-items: center;
+      display: flex;
+      flex-flow: column nowrap !important;
+      height: auto !important;
+      max-width: 232px;
+      padding: 0.5rem 1rem;
+      width: 232px;
+      .thumbnailSection {
+        align-items: center;
+        display: flex;
+        flex-flow: column nowrap;
+        .avatar {
+          font-size: 28px;
+          background-color: #bfbfbf;
+          padding: 0 0.4rem;
+          border-radius: 50%;
+        }
+        .textEllipsis {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .small {
+          font-size: 0.75rem !important;
+        }
+
+        .text-center {
+          text-align: center;
+        }
+      }
+
+      .thumbnailDetails {
+        width: 100%;
+      }
+    }
+    .listDown {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      li {
+        text-align: center;
+        transition: ease-in 0.15s;
+        &:hover {
+          transition: ease-in 0.15s;
+          background-color: #e5e5e5;
+          cursor: pointer;
+        }
+      }
     }
   }
 }

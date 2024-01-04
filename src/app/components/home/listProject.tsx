@@ -7,8 +7,17 @@ interface Props {
 let ListItem = ({ project, eventClick, tag }: Props) => {
   return (
     <>
-      <table className="table table-hover">
-        <thead>
+      {/* <div className="grid-container">
+        <div className="col-3 col-sm-1 col-md-1 col-lg-1">h1</div>
+        <div className="">2</div>
+        <div className="">3</div>
+        <div className="">4</div>
+        <div className="">5</div>
+        <div className="">6</div>
+      </div> */}
+
+      <table className="table table-hove">
+        <thead className="height-3rem">
           <tr>
             <th scope="col"></th>
             <th scope="col">Name</th>
@@ -18,10 +27,10 @@ let ListItem = ({ project, eventClick, tag }: Props) => {
             <th scope="col">{tag}</th>
           </tr>
         </thead>
-        <tbody className="table-group-divider">
+        <tbody className="table-group-divider ">
           {project.map((project: any, index: any) => (
             <tr
-              className="hoverList"
+              className="hoverList height-3rem"
               key={index}
               onClick={eventClick}
               id={project.id}

@@ -10,7 +10,7 @@ interface Project {
   FinishDate: Date;
 }
 export default function Home() {
-  const token = localStorage.getItem("userData");
+  let token = localStorage.getItem("userData");
 
   const [showModal, setShowModal] = useState(false);
 
@@ -33,10 +33,12 @@ export default function Home() {
     title: "Hiện tại chưa có dự án nào",
     subTitle: "Ấn nút tạo mới để tạo dự án",
   };
+
   //..................GET Project....................//
   async function getProject() {
-    const data = await projectService.getProject(token);
-    setProjects(() => [...data]);
+    const data: any = await projectService.getProject(token);
+    // setProjects(() => [...data]);
+    console.log(data);
   }
 
   useEffect(() => {

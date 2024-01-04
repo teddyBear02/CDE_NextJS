@@ -1,18 +1,17 @@
+import { env } from "@/config/varenv";
+
 const tagSevice = {
   //............................... GET tag......................................//
 
   async getTags(token: any, id: any) {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/tag/showAll/${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${env.BASE_URL}/tag/showAll/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -30,7 +29,7 @@ const tagSevice = {
 
   async handleAdd(data: any, token: any) {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/tag", {
+      const response = await fetch(`${env.BASE_URL}/api/tag`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +57,7 @@ const tagSevice = {
   async handleEditTags(data: any, token: any, id: any, idProject: any) {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/tag/${id}/${idProject}`,
+        `${env.BASE_URL}/api/tag/${id}/${idProject}`,
         {
           method: "PUT",
           headers: {
@@ -85,7 +84,7 @@ const tagSevice = {
 
   async handleDeleteTag(data: any, token: any, id: any) {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/tag/${id}`, {
+      const response = await fetch(`${env.BASE_URL}/api/tag/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

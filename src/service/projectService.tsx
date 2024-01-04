@@ -1,8 +1,10 @@
+import { env } from "@/config/varenv";
+
 const projectService = {
   //....................GET project......................//
   async getProject(token: any) {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/project", {
+      const response = await fetch(`${env.BASE_URL}/api/project`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -18,14 +20,14 @@ const projectService = {
         console.error("Add new tag failed:", errorData);
       }
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.error("Không lấy được dữ liệu:", error);
     }
   },
 
   //...................POST project......................//
   async handleCreateProject(data: any, token: any) {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/project", {
+      const response = await fetch(`${env.BASE_URL}/api/project`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,7 +45,7 @@ const projectService = {
         console.error("Add new tag failed:", errorData);
       }
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.error("Không tạo mới được dữ liệu:", error);
     }
   },
 };
