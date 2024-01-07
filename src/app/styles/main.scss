@@ -1,17 +1,22 @@
 @import "./components/Var";
 
+//................Common...................//
 @import "./components/Login";
 
 @import "./components/Home";
 
 @import "./components/Profile";
 
-@import "./components/Project";
+//...............Project...................//
 
-@import "./components/TodoComponent";
+@import "./components/project/Project";
 
-@import "./components/TeamComponent";
+@import "./components/project/TodoComponent";
 
-@import "./components/tags";
+@import "./components/project/TeamComponent";
 
-@import "./components/ProjectDetail";
+@import "./components/project/tags";
+
+@import "./components/project/ProjectDetail";
+
+@import "./components/project/NoneFolder";

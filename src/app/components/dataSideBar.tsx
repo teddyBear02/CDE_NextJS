@@ -2,7 +2,7 @@ let nav = [
   {
     icon: "bi bi-folder-fill",
     title: "Dữ liệu",
-    link: `/project`,
+    link: `/project/data`,
   },
 
   {

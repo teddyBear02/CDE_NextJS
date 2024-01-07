@@ -247,77 +247,78 @@ export default function Tags() {
         )}
 
         {showDeleteAll && <TagsDeleteAll deleteAll={handleDeleteAllTags} />}
-
-        <div className="tagManager">
-          <h4 id="header">Quản lý thẻ</h4>
-          <div className="row">
-            <div className="col-md-12 col-lg-4 mb-2" id="leftTags">
-              <p>
-                Xác định thẻ để cho các thành viên trong dự án có thể sử dụng
-              </p>
-              <div id="">
-                <h5>Thêm thẻ tùy chỉnh</h5>
-                <hr />
-                <div id="rowTags">
-                  <div className="col-80 inpTags">
-                    <input
-                      type="text"
-                      name="TagName"
-                      placeholder="Tên thẻ"
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="col-20">
-                    <button className="btnTags" onClick={handleAdd}>
-                      Thêm
-                    </button>
+        <div className="container">
+          <div className="tagManager">
+            <h4 id="header">Quản lý thẻ</h4>
+            <div className="row">
+              <div className="col-md-12 col-lg-4 mb-2" id="leftTags">
+                <p>
+                  Xác định thẻ để cho các thành viên trong dự án có thể sử dụng
+                </p>
+                <div id="">
+                  <h5>Thêm thẻ tùy chỉnh</h5>
+                  <hr />
+                  <div id="rowTags">
+                    <div className="col-80 inpTags">
+                      <input
+                        type="text"
+                        name="TagName"
+                        placeholder="Tên thẻ"
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="col-20">
+                      <button className="btnTags" onClick={handleAdd}>
+                        Thêm
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className=" col-8" id="rightTags">
-              <div className="row" id="headerTags">
-                <div className="col nameHeader">Tags</div>
-                <div className="col-xl-2 actionHeader">Actions</div>
-              </div>
+              <div className=" col-8" id="rightTags">
+                <div className="row" id="headerTags">
+                  <div className="col nameHeader">Tags</div>
+                  <div className="col-xl-2 actionHeader">Actions</div>
+                </div>
 
-              <div>
-                {tags.length === 0 ? (
-                  <NoTags />
-                ) : role ? (
-                  <ul className="listTags">
-                    {tags.map((item: any) => (
-                      <li className="row" key={item.id} id={`${item.id}`}>
-                        <div className="nameTag col">{item.TagName}</div>
-                        <div className="col-xl-2 actionTags">
-                          <button onClick={toggleModal}>
-                            <i className="bi bi-pencil-fill"></i>
-                          </button>
-                          <button onClick={toggleModalDelete}>
-                            <i className="bi bi-x-lg"></i>
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <ul className="listTags">
-                    {tags.map((item: any) => (
-                      <li className="row" key={item.id} id={`${item.id}`}>
-                        <div className="nameTag col">{item.TagName}</div>
-                        <div className="col-xl-2 actionTags">
-                          <button className="disableEdit" disabled>
-                            <i className="bi bi-pencil-fill"></i>
-                          </button>
-                          <button className="disableEdit" disabled>
-                            <i className="bi bi-x-lg"></i>
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <div>
+                  {tags.length === 0 ? (
+                    <NoTags />
+                  ) : role ? (
+                    <ul className="listTags">
+                      {tags.map((item: any) => (
+                        <li className="row" key={item.id} id={`${item.id}`}>
+                          <div className="nameTag col">{item.TagName}</div>
+                          <div className="col-xl-2 actionTags">
+                            <button onClick={toggleModal}>
+                              <i className="bi bi-pencil-fill"></i>
+                            </button>
+                            <button onClick={toggleModalDelete}>
+                              <i className="bi bi-x-lg"></i>
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <ul className="listTags">
+                      {tags.map((item: any) => (
+                        <li className="row" key={item.id} id={`${item.id}`}>
+                          <div className="nameTag col">{item.TagName}</div>
+                          <div className="col-xl-2 actionTags">
+                            <button className="disableEdit" disabled>
+                              <i className="bi bi-pencil-fill"></i>
+                            </button>
+                            <button className="disableEdit" disabled>
+                              <i className="bi bi-x-lg"></i>
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
           </div>

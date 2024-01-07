@@ -1,21 +1,33 @@
+"use client";
+import { useRouter } from "next/navigation";
+// import projectService from "@/service/projectService";
+// import { useEffect } from "react";
 interface Props {
-  project: any;
-  eventClick?: any;
+  projects: any;
   tag?: any;
 }
 
-let ListItem = ({ project, eventClick, tag }: Props) => {
+let ListItem = ({ projects, tag }: Props) => {
+  const router = useRouter();
+
+  const token = localStorage.getItem("Token");
+  // const getProject = async () => {
+  //   const data: any = await projectService.getProject(token);
+  //   console.log(data);
+  // };
+
+  // useEffect(() => {
+  //   getProject();
+  // }, []);
+
+  const toProject = (e: React.MouseEvent<HTMLElement>) => {
+    let projectId = e.currentTarget.id;
+    localStorage.setItem("projectId", projectId);
+    router.push(`/project/:${projectId}`);
+  };
+
   return (
     <>
-      {/* <div className="grid-container">
-        <div className="col-3 col-sm-1 col-md-1 col-lg-1">h1</div>
-        <div className="">2</div>
-        <div className="">3</div>
-        <div className="">4</div>
-        <div className="">5</div>
-        <div className="">6</div>
-      </div> */}
-
       <table className="table table-hove">
         <thead className="height-3rem">
           <tr>
@@ -28,11 +40,11 @@ let ListItem = ({ project, eventClick, tag }: Props) => {
           </tr>
         </thead>
         <tbody className="table-group-divider ">
-          {project.map((project: any, index: any) => (
+          {projects.map((project: any, index: any) => (
             <tr
               className="hoverList height-3rem"
               key={index}
-              onClick={eventClick}
+              onClick={toProject}
               id={project.id}
             >
               <th scope="row">{project.id}</th>

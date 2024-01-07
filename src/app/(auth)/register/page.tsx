@@ -1,5 +1,6 @@
 "use client";
 import resgisterService from "@/service/resgisterService";
+import googleRegister from "@/service/ggResgister";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 export default function Register() {
@@ -28,6 +29,11 @@ export default function Register() {
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
     }
+  }
+
+  async function googleRegis() {
+    const data = await googleRegister();
+    console.log(data);
   }
 
   return (
@@ -103,7 +109,7 @@ export default function Register() {
             <div id="otherValid">
               <p>Bạn có thể đăng kí qua:</p>
               <div id="icon">
-                <i className="bi bi-google"></i>
+                <i className="bi bi-google" onClick={googleRegis}></i>
                 <i className="bi bi-facebook"></i>
                 <i className="bi bi-github"></i>
               </div>

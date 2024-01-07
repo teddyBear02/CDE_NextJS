@@ -12,12 +12,22 @@ const projectService = {
         },
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        return data.metadata;
+      const contentType = response.headers.get("Content-Type");
+
+      if (contentType && contentType.includes("application/json")) {
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          return data.metadata;
+        } else {
+          const errorData = await response.json();
+          console.error("Thêm thẻ mới thất bại:", errorData);
+        }
       } else {
-        const errorData = await response.json();
-        console.error("Add new tag failed:", errorData);
+        console.error(
+          "Loại phản hồi không mong đợi. Mong đợi JSON, nhưng nhận được:",
+          contentType
+        );
       }
     } catch (error) {
       console.error("Không lấy được dữ liệu:", error);
