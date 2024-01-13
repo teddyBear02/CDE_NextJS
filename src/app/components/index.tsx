@@ -15,6 +15,7 @@ export { default as TodoComponent } from "./project/todo/todoComponent";
 export { default as TodoList } from "./project/todo/todoList";
 export { default as NoneTodo } from "./project/todo/noneTodo";
 export { default as ProjectDetail } from "./project/project_detail/projectDetail";
+export { default as Privacy } from "./project/privacy/privacy";
 
 //...................Home Components....................//
 export { default as ModalCreate } from "./home/modalCreate";

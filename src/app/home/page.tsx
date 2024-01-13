@@ -17,8 +17,8 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = req.cookies.get("token");
-
+      // const token = req.cookies.get("token");
+      let token = "";
       try {
         const responseData = await projectService.getProject(token);
         setData(responseData);

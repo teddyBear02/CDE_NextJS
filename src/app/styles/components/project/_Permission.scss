@@ -1,0 +1,38 @@
+.boxPermission {
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 0 0.25rem rgba($color: #000000, $alpha: 0.35);
+  text-align: left;
+  padding: 2.5rem;
+  p {
+    margin: 0;
+  }
+}
+
+.group-items {
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+  margin-right: 1rem;
+  margin-bottom: 12px;
+}
+
+.radio {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto !important;
+  height: 2.5rem;
+  justify-content: center;
+  position: relative;
+  width: 2.5rem;
+}
+
+.custom-input {
+  height: 1.25rem;
+  width: 1.5rem;
+}
+
+.headerPermisson {
+  margin-bottom: 1rem;
+  font-size: 20px;
+  font-weight: 600;
+}
