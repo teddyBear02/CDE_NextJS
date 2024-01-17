@@ -2,25 +2,24 @@
 import Link from "next/link";
 import { login } from "@/service/loginService";
 import { useRouter } from "next/navigation";
-
+import { useMutation } from "react-query";
 let Login = () => {
   const router = useRouter();
+
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      localStorage.setItem("Token", data?.metadata?.token);
+      console.log(data);
+      router.push("/home");
+    },
+  });
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-
     try {
-      const response = await login(formData);
-      if (response !== undefined) {
-        router.push("/home");
-        localStorage.setItem("Token", response.metadata.token);
-        document.cookie = `token=${response.metadata.token}`;
-        console.log(response);
-      } else {
-        console.log("Bạn đã nhập sai hoặc để trống thông tin");
-        console.log("response: ", response);
-      }
+      mutation.mutate(formData);
     } catch (error) {
       console.error("Error during login:", error);
     }

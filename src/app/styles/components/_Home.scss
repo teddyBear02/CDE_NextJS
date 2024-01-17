@@ -91,17 +91,6 @@
   height: 3rem;
 }
 
-table {
-  thead {
-    vertical-align: middle !important;
-    background-color: #f9f9fb !important;
-  }
-
-  tbody {
-    vertical-align: middle !important;
-  }
-}
-
 .grid-container {
   display: grid;
   grid-template-columns: repeat(6, 24px);

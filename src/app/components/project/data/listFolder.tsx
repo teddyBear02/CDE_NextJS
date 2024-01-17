@@ -30,17 +30,17 @@ export default function ListFolder({
           </tr>
         </thead>
         <tbody className="table-group-divider">
-          {/* {data.map((data: any) => (
+          {data.map((data: any) => (
             <tr className="hoverList" key={data.id} id={data.id}>
               <th scope="row"></th>
-              <td>{data.name}</td>
-              <td>{data.userModified}</td>
-              <td>{data.modifiedTime}</td>
+              <td>{data.folderName}</td>
+              <td>{data.modifiled}</td>
+              <td>{data.dateModified}</td>
               <td>{data.size}</td>
               <td>{data.tag}</td>
               <td></td>
             </tr>
-          ))} */}
+          ))}
         </tbody>
       </table>
     </>
