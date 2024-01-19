@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { NavBar, SubNav, None, ModalCreate, ListProject } from "../components";
 import projectService from "@/service/projectService";
-// import projectService from "@/service/projectService";
 
 const Home = () => {
   const paramNone = {
@@ -12,14 +11,17 @@ const Home = () => {
 
   const [data, setData] = useState();
 
+  let token: any;
   //..................GET Project....................//
-  // const data: any = await projectService.getProject(token);
-  // console.log("Data: ", data);
+
+  useEffect(() => {
+    if (typeof window.localStorage !== "undefined") {
+      token = localStorage.getItem("Token");
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      // const token = req.cookies.get("token");
-      let token = "";
       try {
         const responseData = await projectService.getProject(token);
         setData(responseData);
@@ -27,9 +29,10 @@ const Home = () => {
         console.error("Không lấy được dữ liệu:", error);
       }
     };
-
     fetchData();
-  }, []); // Empty dependency array ensures that this effect runs only once
+  }, []);
+
+  console.log(token);
 
   //.................................................//
 

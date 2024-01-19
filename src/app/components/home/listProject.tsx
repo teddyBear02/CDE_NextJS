@@ -10,20 +10,10 @@ interface Props {
 let ListItem = ({ projects, tag }: Props) => {
   const router = useRouter();
 
-  const token = localStorage.getItem("Token");
-  // const getProject = async () => {
-  //   const data: any = await projectService.getProject(token);
-  //   console.log(data);
-  // };
-
-  // useEffect(() => {
-  //   getProject();
-  // }, []);
-
   const toProject = (e: React.MouseEvent<HTMLElement>) => {
     let projectId = e.currentTarget.id;
     localStorage.setItem("projectId", projectId);
-    router.push(`/project/:${projectId}`);
+    router.push(`/project/${projectId}`);
   };
 
   return (

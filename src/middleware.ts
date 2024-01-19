@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 
-const isLoggin : boolean = true // Get Session function => Checking 
+const isLoggin : boolean = false // Get Session function => Checking 
 
 export default function MiddleWare(res:NextRequest){
     if(isLoggin){
@@ -12,5 +12,5 @@ export default function MiddleWare(res:NextRequest){
 } 
 
 export const config = {
-    matcher: ["/project/:path", "/login"],
+    matcher: ["/project/:path"],
 } 

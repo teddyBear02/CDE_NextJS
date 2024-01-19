@@ -17,7 +17,6 @@ const projectService = {
       if (contentType && contentType.includes("application/json")) {
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
           return data.metadata;
         } else {
           const errorData = await response.json();
@@ -52,7 +51,7 @@ const projectService = {
         return data.metadata;
       } else {
         const errorData = await response.json();
-        console.error("Add new tag failed:", errorData);
+        console.error("Add new project failed:", errorData);
       }
     } catch (error) {
       console.error("Không tạo mới được dữ liệu:", error);
