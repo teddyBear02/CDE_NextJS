@@ -1,52 +1,50 @@
-"use client";
-import { useRouter } from "next/navigation";
-// import projectService from "@/service/projectService";
-// import { useEffect } from "react";
+import Link from "next/link";
 interface Props {
   projects: any;
   tag?: any;
 }
 
 let ListItem = ({ projects, tag }: Props) => {
-  const router = useRouter();
-
-  const toProject = (e: React.MouseEvent<HTMLElement>) => {
+  const getProjectId = (e: React.MouseEvent<HTMLElement>) => {
     let projectId = e.currentTarget.id;
     localStorage.setItem("projectId", projectId);
-    router.push(`/project/${projectId}`);
   };
 
   return (
     <>
-      <table className="table table-hove">
-        <thead className="height-3rem">
-          <tr>
-            <th scope="col"></th>
-            <th scope="col">Name</th>
-            <th scope="col">Size</th>
-            <th scope="col">Last visited</th>
-            <th scope="col">Modifile on</th>
-            <th scope="col">{tag}</th>
-          </tr>
-        </thead>
-        <tbody className="table-group-divider ">
-          {projects.map((project: any, index: any) => (
-            <tr
-              className="hoverList height-3rem"
-              key={index}
-              onClick={toProject}
-              id={project.id}
-            >
-              <th scope="row">{project.id}</th>
-              <td>{project.ProjectName}</td>
-              <td>0 Kb</td>
-              <td>mm/dd/yyyy</td>
-              <td>mm/dd/yyyy</td>
-              <td></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="table-list-project">
+        <div className="row sm-height" id="header">
+          <div className="col-3 col-sm-1 col-md-1 col-lg-1 cl-bl"></div>
+          <div className="col col-sm-4 col-md-5 col-lg-3 cl-bl">Tên dự án</div>
+          <div className="col-sm-3 col-md-2 col-lg-2 cl-bl">Kích thước</div>
+          <div className="col-lg-2 cl-bl">Lần cuối vào dự án</div>
+          <div className="col-sm-3 col-md-3 col-lg-3 cl-bl">
+            Thời gian chỉnh sửa
+          </div>
+          <div className="col-2 col-sm-1 col-md-1 col-lg-1  cl-bl"></div>
+        </div>
+        {projects.map((project: any, index: any) => (
+          <Link
+            href={`/project/${project.id}`}
+            key={index}
+            id={project.id}
+            onClick={getProjectId}
+          >
+            <div className="row sm-height hoverList bodyList">
+              <div className="col-3 col-sm-1 col-md-1 col-lg-1 cl-bl">
+                {project.id}
+              </div>
+              <div className="col col-sm-4 col-md-5 col-lg-3 cl-bl">
+                {project.ProjectName}
+              </div>
+              <div className="col-sm-3 col-md-2 col-lg-2 cl-bl">0 Kb</div>
+              <div className="col-lg-2 cl-bl">mm/dd/yyyy</div>
+              <div className="col-sm-3 col-md-3 col-lg-3 cl-bl">mm/dd/yyyy</div>
+              <div className="col-2 col-sm-1 col-md-1 col-lg-1  cl-bl"></div>
+            </div>
+          </Link>
+        ))}
+      </div>
     </>
   );
 };

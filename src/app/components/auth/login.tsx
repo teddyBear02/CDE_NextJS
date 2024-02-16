@@ -9,9 +9,10 @@ let Login = () => {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      localStorage.setItem("Token", data?.metadata?.token);
-      console.log(data);
-      router.push("/home");
+      if (data !== undefined) {
+        localStorage.setItem("Token", data?.metadata?.token);
+        router.push("/home");
+      }
     },
   });
 

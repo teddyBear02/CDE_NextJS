@@ -11,6 +11,19 @@ const Home = () => {
 
   const [data, setData] = useState();
 
+  const [project, setProject] = useState({}); //   Chứa dữ liệu của dự án:
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProject({ ...project, [name]: value });
+  };
+
+  const [showModal, setShowModal] = useState(false);
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
   let token: any;
   //..................GET Project....................//
 
@@ -38,6 +51,15 @@ const Home = () => {
 
   //.................POST Project....................//
 
+  const createProject = async () => {
+    try {
+      const res = await projectService.handleCreateProject(project, token);
+      setData(res);
+    } catch (error) {
+      console.error("Lỗi khi POST dự án !!!");
+    }
+  };
+
   //.................................................//
 
   return (
@@ -45,7 +67,7 @@ const Home = () => {
       <div className="main">
         <NavBar />
         <div className="toRender container">
-          <SubNav titleNav="Dự án" btnTitle="Tạo mới" />
+          <SubNav titleNav="Dự án" btnTitle="Tạo mới" event={toggleModal} />
           {data === undefined ? (
             <None params={paramNone} />
           ) : (
@@ -53,6 +75,14 @@ const Home = () => {
           )}
         </div>
       </div>
+      {showModal && (
+        <ModalCreate
+          showModal={showModal}
+          handleClose={toggleModal}
+          handleInputChange={handleInputChange}
+          handleCreateProject={createProject}
+        />
+      )}
     </>
   );
 };

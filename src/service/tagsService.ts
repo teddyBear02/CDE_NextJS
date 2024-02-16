@@ -5,7 +5,7 @@ const tagSevice = {
 
   async getTags(token: any, id: any) {
     try {
-      const response = await fetch(`${env.BASE_URL}/tag/showAll/${id}`, {
+      const response = await fetch(`${env.BASE_URL}/api/tag/showAll/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -21,7 +21,7 @@ const tagSevice = {
         console.error("Add new tag failed:", errorData);
       }
     } catch (error) {
-      console.error("Error during registration:", error);
+      console.error("Lỗi không Fetch được data:", error);
     }
   },
 
@@ -82,9 +82,9 @@ const tagSevice = {
 
   //.................................. DELETE tag.................................//
 
-  async handleDeleteTag(data: any, token: any, id: any) {
+  async handleDeleteTag(data: any, token: any, id: any, projectId:any) {
     try {
-      const response = await fetch(`${env.BASE_URL}/api/tag/${id}`, {
+      const response = await fetch(`${env.BASE_URL}/api/tag/${id}/${projectId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

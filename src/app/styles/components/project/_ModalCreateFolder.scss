@@ -1,0 +1,25 @@
+#modalCreateFolder {
+  position: absolute;
+  background-color: rgba($color: #000, $alpha: 0.4);
+  z-index: 222;
+  height: 100%;
+  width: 100%;
+}
+
+#boxModal {
+  background-color: #fff;
+  position: absolute;
+  transform: translate(50%, 50%);
+  right: 50%;
+  #header {
+    padding: 2rem 3rem 0 3rem;
+  }
+
+  #content {
+    padding: 0 3rem;
+  }
+
+  #footer {
+    padding: 0 2rem 2rem 3rem;
+  }
+}

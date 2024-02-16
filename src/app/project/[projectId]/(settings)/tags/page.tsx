@@ -15,9 +15,20 @@ interface Tag {
 }
 
 export default function Tags() {
-  let projectId = localStorage.getItem("projectId"); //Lấy ID của dự án từ Local Storage
+  let projectId: any;
 
-  let token = localStorage.getItem("userData"); // Lấy Token Login từ Local Storage
+  let token: any;
+
+  useEffect(() => {
+    if (typeof window.localStorage !== "undefined") {
+      projectId = localStorage.getItem("projectId");
+      token = localStorage.getItem("Token");
+    } else {
+      console.log("Error !!!");
+    }
+  }, []);
+
+  console.log(projectId, token);
 
   const [showModalEdit, setShowModalEdit] = useState(false);
 
@@ -130,8 +141,15 @@ export default function Tags() {
   }
 
   //............................. xử lý DELETE 1 tag..............................//
-
-  const handleDeleteTags = async () => {
+  async function handleDeleteTags() {
+    const handleDeleteTags = await tagSevice.handleDeleteTag(
+      selectedTag,
+      token,
+      selectedItemId,
+      projectId
+    );
+  }
+  const handleDeleteTag = async () => {
     try {
       const response = await fetch(
         `http://127.0.0.1:8000/api/tag/${selectedItemId}/${projectId}`,
@@ -151,7 +169,6 @@ export default function Tags() {
       // Xử lý dữ liệu phản hồi (nếu cần)
       const responseData = await response.json();
       console.log("Dữ liệu phản hồi:", responseData);
-
       const indexToRemove = tags.findIndex(
         (item: any) => item.id === parseInt(selectedItemId)
       );

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 
-const isLoggin : boolean = false // Get Session function => Checking 
+const isLoggin : boolean = true // Get Session function => Checking 
+
+
 
 export default function MiddleWare(res:NextRequest){
     if(isLoggin){

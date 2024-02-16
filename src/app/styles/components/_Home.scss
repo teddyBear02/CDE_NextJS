@@ -8,8 +8,32 @@
   margin-top: 24px;
 }
 
+// List Table Projects
+
+.table-list-project {
+  margin-bottom: 3rem;
+  #header {
+    background-color: #f9f9fb;
+  }
+
+  .bodyList {
+    background-color: #fff;
+  }
+
+  .sm-height {
+    height: 3.5rem;
+    align-items: center;
+    border-bottom: 0.0625rem solid #d0d0d7;
+  }
+
+  a {
+    color: #6a6976;
+  }
+}
+
 .hoverList {
   &:hover {
+    background-color: #c9c9c996;
     cursor: pointer;
   }
 }
@@ -28,6 +52,7 @@
     display: table;
     content: "";
   }
+
   #boxModal {
     border-radius: 4px;
     background-color: #fff;
