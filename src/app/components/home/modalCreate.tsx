@@ -1,14 +1,18 @@
 interface Props {
   showModal: any;
   handleClose: any;
-  handleInputChange: any;
+  handleInputChangeName: any;
+  handleInputChangeStart: any;
+  handleInputChangeEnd: any;
   handleCreateProject: any;
 }
 let ModalCreate = ({
   showModal,
   handleClose,
   handleCreateProject,
-  handleInputChange,
+  handleInputChangeName,
+  handleInputChangeStart,
+  handleInputChangeEnd,
 }: Props) => {
   return (
     <>
@@ -27,15 +31,23 @@ let ModalCreate = ({
             <input
               type="text"
               placeholder="Tên dự án"
-              name="ProjectName"
-              onChange={handleInputChange}
+              name="name"
+              onChange={handleInputChangeName}
             />
 
             <label>Ngày bắt đầu:</label>
-            <input type="date" onChange={handleInputChange} name="StartDate" />
+            <input
+              type="date"
+              onChange={handleInputChangeStart}
+              name="start_date"
+            />
 
             <label>Ngày kết thúc:</label>
-            <input type="date" onChange={handleInputChange} name="FinishDate" />
+            <input
+              type="date"
+              onChange={handleInputChangeEnd}
+              name="finish_date"
+            />
           </form>
           <div id="modalBtn">
             <button

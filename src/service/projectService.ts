@@ -3,7 +3,7 @@ import { env } from "@/config/varenv";
 const projectService = {
   //....................GET project......................//
   async getProject(token: any) {
-    try {
+    
       const response = await fetch(`${env.BASE_URL}/api/project`, {
         method: "GET",
         headers: {
@@ -12,25 +12,14 @@ const projectService = {
         },
       });
 
-      const contentType = response.headers.get("Content-Type");
-
-      if (contentType && contentType.includes("application/json")) {
-        if (response.ok) {
-          const data = await response.json();
-          return data.metadata;
-        } else {
-          const errorData = await response.json();
-          console.error("Thêm thẻ mới thất bại:", errorData);
-        }
+      if (response.ok) {
+        const data = await response.json();
+        return data.metadata;
       } else {
-        console.error(
-          "Loại phản hồi không mong đợi. Mong đợi JSON, nhưng nhận được:",
-          contentType
-        );
+        const errorData = await response.json();
+        console.log(errorData);
+        // console.error("Lấy dữ liệu  thất bại:", errorData);
       }
-    } catch (error) {
-      console.error("Không lấy được dữ liệu:", error);
-    }
   },
 
   //...................POST project......................//

@@ -1,10 +1,13 @@
-let None = () => {
+interface Props {
+  openCreateFolder: any;
+}
+let None = ({ openCreateFolder }: Props) => {
   return (
     <>
       <div className="container showFolder">
         <h3>Drag & drop to this folder or create</h3>
         <div className="row mt-5">
-          <div className="col">
+          <div className="col" onClick={openCreateFolder}>
             <div className="noneFolderHover">
               <i className="bi bi-folder-plus fs-2 "></i>
               <h5>Tạo thư mục mới</h5>

@@ -1,21 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavBar, SubNav, None, ModalCreate, ListProject } from "../components";
-import projectService from "@/service/projectService";
+import { env } from "@/config/varenv";
+import { useQuery, useMutation } from "react-query";
 
 const Home = () => {
+  let token: any = env.TOKEN;
+
   const paramNone = {
     title: "Hiện không có dự án nào",
     subTitle: "Ấn tạo mới để tạo dự án ",
-  };
-
-  const [data, setData] = useState();
-
-  const [project, setProject] = useState({}); //   Chứa dữ liệu của dự án:
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProject({ ...project, [name]: value });
   };
 
   const [showModal, setShowModal] = useState(false);
@@ -24,41 +18,46 @@ const Home = () => {
     setShowModal(!showModal);
   };
 
-  let token: any;
   //..................GET Project....................//
 
-  useEffect(() => {
-    if (typeof window.localStorage !== "undefined") {
-      token = localStorage.getItem("Token");
-    }
-  }, []);
+  const query = useQuery("project", async () => {
+    const response = await fetch(`${env.BASE_URL}/api/project`);
+    return response.json();
+  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const responseData = await projectService.getProject(token);
-        setData(responseData);
-      } catch (error) {
-        console.error("Không lấy được dữ liệu:", error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  console.log(token);
+  const { data, isLoading, error } = query;
 
   //.................................................//
 
   //.................POST Project....................//
 
-  const createProject = async () => {
-    try {
-      const res = await projectService.handleCreateProject(project, token);
-      setData(res);
-    } catch (error) {
-      console.error("Lỗi khi POST dự án !!!");
-    }
+  const [formData, setFormData] = useState({
+    name: "",
+    start_date: "",
+    finish_date: "",
+  });
+
+  const mutateData = async (data: any) => {
+    const response = await fetch(`${env.BASE_URL}/api/project`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    return response.json();
   };
+
+  const mutation = useMutation(mutateData, {
+    onSuccess: (data) => {
+      console.log("Data posted successfully:", data);
+    },
+    onError: (error) => {
+      console.error("Error posting data:", error);
+    },
+  });
 
   //.................................................//
 
@@ -79,8 +78,16 @@ const Home = () => {
         <ModalCreate
           showModal={showModal}
           handleClose={toggleModal}
-          handleInputChange={handleInputChange}
-          handleCreateProject={createProject}
+          handleInputChangeName={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFormData({ ...formData, name: e.target.value })
+          }
+          handleInputChangeStart={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFormData({ ...formData, start_date: e.target.value })
+          }
+          handleInputChangeEnd={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFormData({ ...formData, finish_date: e.target.value })
+          }
+          handleCreateProject={mutation.mutate(formData)}
         />
       )}
     </>

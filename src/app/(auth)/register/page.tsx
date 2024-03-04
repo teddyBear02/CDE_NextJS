@@ -9,7 +9,7 @@ export default function Register() {
     name: "",
     email: "",
     password: "",
-    NumberPhone: "",
+    phone: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,7 +91,7 @@ export default function Register() {
                 maxLength={12}
                 placeholder="Số điện thoại"
                 name="NumberPhone"
-                value={formData.NumberPhone}
+                value={formData.phone}
                 onChange={handleInputChange}
               />
               <label htmlFor="floatingPassword">Nhập số điện thoại</label>

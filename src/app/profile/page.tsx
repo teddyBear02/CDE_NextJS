@@ -1,18 +1,13 @@
 import { NavBar, SubNav } from "../components";
 
 export default function Profile() {
-  const propsSubNav = {
-    titleNav: "Hồ sơ cá nhân",
-    disabel: false,
-    btnTitle: "Lưu",
-  };
   return (
     <>
       <div className="main">
         <NavBar />
         <div className="container-fluid toRender">
           <div className="container-md" id="flow-y">
-            <SubNav params={propsSubNav} />
+            <SubNav titleNav="Hồ sơ cá nhân" btnTitle="Lưu" />
             <div className="container text-center">
               <div className="row">
                 <div className="col">

@@ -5,6 +5,7 @@ interface Props {
   timeCreate: string;
   size: string;
   statusTodo: string;
+  eventClick: any;
 }
 
 export default function ListFolder({
@@ -14,6 +15,7 @@ export default function ListFolder({
   timeCreate,
   statusTodo,
   size,
+  eventClick,
 }: Props) {
   return (
     <>
@@ -30,8 +32,13 @@ export default function ListFolder({
           </tr>
         </thead>
         <tbody className="table-group-divider">
-          {data.map((data: any) => (
-            <tr className="hoverList" key={data.id} id={data.id}>
+          {data.map((data: any, index: any) => (
+            <tr
+              className="hoverList"
+              key={index}
+              id={data.id}
+              onClick={eventClick}
+            >
               <th scope="row"></th>
               <td>{data.folderName}</td>
               <td>{data.modifiled}</td>

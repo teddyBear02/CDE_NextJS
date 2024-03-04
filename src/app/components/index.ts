@@ -18,6 +18,8 @@ export { default as ProjectDetail } from "./project/project_detail/projectDetail
 export { default as Privacy } from "./project/privacy/privacy";
 export { default as ModalNewFolder } from './project/data/modalNew'
 export { default as ModalCreateFolder } from './project/data/modalNewFolder'
+export { default as ModalUpload } from './project/data/modalUploadFol'
+export { default as DetailProject } from './project/data/detailProject' 
 //...................Home Components....................//
 export { default as ModalCreate } from "./home/modalCreate";
 export { default as ListProject } from "./home/listProject";
