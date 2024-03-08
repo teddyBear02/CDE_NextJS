@@ -2,11 +2,11 @@
 import { useState } from "react";
 import { NavBar, SubNav, None, ModalCreate, ListProject } from "../components";
 import { env } from "@/config/varenv";
-import { useQuery, useMutation } from "react-query";
+import { useQuery} from "react-query";
+import projectService from "@/service/projectService";
 
 const Home = () => {
   let token: any = env.TOKEN;
-
   const paramNone = {
     title: "Hiện không có dự án nào",
     subTitle: "Ấn tạo mới để tạo dự án ",
@@ -20,12 +20,17 @@ const Home = () => {
 
   //..................GET Project....................//
 
-  const query = useQuery("project", async () => {
-    const response = await fetch(`${env.BASE_URL}/api/project`);
-    return response.json();
+
+  const { data, isLoading, error } = useQuery("project",() => {
+    fetch(`${env.BASE_URL}/api/project`)
+      .then((res) => res.json())
+      .then((res) => res = data)
+      .catch(()=> console.log("Lỗi"))
   });
 
-  const { data, isLoading, error } = query;
+  if(error){
+    console.log("Error")
+  }
 
   //.................................................//
 
@@ -37,27 +42,10 @@ const Home = () => {
     finish_date: "",
   });
 
-  const mutateData = async (data: any) => {
-    const response = await fetch(`${env.BASE_URL}/api/project`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-
+  const handleSubmit  = async (data: any) => {
+    const response = await projectService.getProject(data)
     return response.json();
   };
-
-  const mutation = useMutation(mutateData, {
-    onSuccess: (data) => {
-      console.log("Data posted successfully:", data);
-    },
-    onError: (error) => {
-      console.error("Error posting data:", error);
-    },
-  });
 
   //.................................................//
 
@@ -87,7 +75,7 @@ const Home = () => {
           handleInputChangeEnd={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFormData({ ...formData, finish_date: e.target.value })
           }
-          handleCreateProject={mutation.mutate(formData)}
+          handleCreateProject={handleSubmit}
         />
       )}
     </>

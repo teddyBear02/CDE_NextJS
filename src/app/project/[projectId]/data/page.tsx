@@ -3,7 +3,7 @@ import {
   SubNav,
   ListFolder,
   NoneFolder,
-  ModalNewFolder,
+  ModalNewFolder, 
   ModalCreateFolder,
   ModalUpload,
   DetailProject,
@@ -63,7 +63,7 @@ let Folder = () => {
               }}
               eventUpLoadFile={() => {
                 setIsUploadFile(!isUploadFile);
-                setNewOpen(false);
+                setNewOpen(false);}}
             />
           ) : null}
         </div>
