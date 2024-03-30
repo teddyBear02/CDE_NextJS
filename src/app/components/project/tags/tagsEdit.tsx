@@ -34,7 +34,7 @@ export default function TagsEdit({
             <div>
               <input
                 type="text"
-                name="TagName"
+                name="name"
                 onChange={handleChangeNewTag}
                 value={value}
               />

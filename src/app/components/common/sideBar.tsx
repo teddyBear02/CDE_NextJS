@@ -57,12 +57,21 @@ export default function SideBar({ projectId }: Props) {
     },
   ];
 
+  let handleClick = (e: React.MouseEvent) => {
+    localStorage.setItem("parent_id", "0");
+  };
+
   return (
     <>
       <div id="leftNav">
         <ul className="nav flex-column">
           {nav.map((data, index) => (
-            <li className="nav-item" id={`${data.id}`} key={index}>
+            <li
+              className="nav-item"
+              id={`${data.id}`}
+              key={index}
+              onClick={handleClick}
+            >
               <Link className="anchor" href={data.link}>
                 <i className={`${data.icon}`}></i>
                 {data.title}

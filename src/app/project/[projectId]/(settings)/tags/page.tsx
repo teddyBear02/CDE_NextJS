@@ -5,30 +5,17 @@ import {
   TagsDelete,
   TagsDeleteAll,
   TagsEdit,
+  ListTag,
 } from "@/app/components";
 import { useState, useEffect } from "react";
-import tagSevice from "@/service/tagsService";
-
-interface Tag {
-  id: number;
-  TagName: string;
-}
+import tagService from "@/service/project/tagsService";
+import CheckRole from "@/service/project/checkRole";
+import { env } from "@/config/varenv";
 
 export default function Tags() {
-  let projectId: any;
+  let project_id: any = localStorage.getItem("project_id");
 
-  let token: any;
-
-  useEffect(() => {
-    if (typeof window.localStorage !== "undefined") {
-      projectId = localStorage.getItem("projectId");
-      token = localStorage.getItem("Token");
-    } else {
-      console.log("Error !!!");
-    }
-  }, []);
-
-  console.log(projectId, token);
+  let token: any = env.TOKEN;
 
   const [showModalEdit, setShowModalEdit] = useState(false);
 
@@ -58,17 +45,14 @@ export default function Tags() {
     setshowDeleteAll(!showDeleteAll);
   };
 
-  const [tags, setTags] = useState<Tag[]>([]); // Lưu thông tin nhiều tag : [{}]
+  const [tags, setTags] = useState<any[]>([]); // Lưu thông tin nhiều tag : [{}]
 
   //.......................... xử lý get all tag .................................//
 
   async function getAllTag() {
     try {
-      const tagsData = await tagSevice.getTags(token, projectId);
-      if (tagsData) {
-        setTags(() => [...tagsData]);
-        console.log(tagsData);
-      }
+      const tagsData = await tagService.getTags(token, project_id);
+      setTags(tagsData);
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
     }
@@ -81,8 +65,8 @@ export default function Tags() {
   //......................... xử lý post 1 tag mới................................//
 
   const [inforTag, setinforTag] = useState({
-    TagName: "",
-    ProjectID: projectId,
+    name: "",
+    project_id: project_id,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +76,7 @@ export default function Tags() {
 
   async function handleAdd() {
     try {
-      const tagsData = await tagSevice.handleAdd(inforTag, token);
+      const tagsData = await tagService.handleAdd(inforTag, token);
       setTags((prev: any) => [...prev, tagsData]);
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
@@ -104,7 +88,7 @@ export default function Tags() {
   //............................. xử lý Update 1 tag..............................//
 
   const [selectedTag, setSelectedTag] = useState({
-    TagName: "",
+    name: "",
   });
 
   const handleEditClick = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,137 +100,73 @@ export default function Tags() {
 
   async function handleEditTags() {
     try {
-      const tagsData = await tagSevice.handleEditTags(
+      const response = await tagService.handleEditTags(
         selectedTag,
         token,
         selectedItemId,
-        projectId
+        project_id
       );
 
       let newTagName = {
-        id: tagsData.id,
-        TagName: tagsData.TagName,
+        id: response.id,
+        name: response.name,
       };
+
       const indexToRemove = tags.findIndex(
         (item: any) => item.id === parseInt(selectedItemId)
       );
 
       tags.splice(indexToRemove, 1, newTagName);
       setShowModalEdit(!showModalEdit);
-
-      console.log(tagsData);
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
     }
   }
 
   //............................. xử lý DELETE 1 tag..............................//
-  async function handleDeleteTags() {
-    const handleDeleteTags = await tagSevice.handleDeleteTag(
+  const handleDeleteTags = async () => {
+    await tagService.handleDeleteTag(
       selectedTag,
       token,
       selectedItemId,
-      projectId
+      project_id
     );
-  }
-  const handleDeleteTag = async () => {
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/tag/${selectedItemId}/${projectId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(selectedTag), // Chuyển đổi dữ liệu thành chuỗi JSON
-        }
-      );
 
-      if (!response.ok) {
-        throw new Error("Không thành công");
-      }
-      // Xử lý dữ liệu phản hồi (nếu cần)
-      const responseData = await response.json();
-      console.log("Dữ liệu phản hồi:", responseData);
-      const indexToRemove = tags.findIndex(
-        (item: any) => item.id === parseInt(selectedItemId)
-      );
+    const indexToRemove = tags.findIndex(
+      (item: any) => item.id === parseInt(selectedItemId)
+    );
 
-      if (indexToRemove !== -1) {
-        tags.splice(indexToRemove, 1);
-        setshowModalDelete(!showModalDelete);
-      }
-    } catch (error) {
-      console.error("Lỗi khi thực hiện yêu cầu DELETE:", error);
+    if (indexToRemove !== -1) {
+      tags.splice(indexToRemove, 1);
+      setshowModalDelete(!showModalDelete);
     }
   };
   //..............................................................................//
 
   //............................ xử lý DELETE all tag.............................//
-  const handleDeleteAllTags = async () => {
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/tag/removeAll/${projectId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
 
-      if (!response.ok) {
-        throw new Error("Không thành công");
-      }
-      // Xử lý dữ liệu phản hồi (nếu cần)
-      const responseData = await response.json();
-      console.log("Dữ liệu phản hồi:", responseData);
-      setTags(tags.slice(tags.length));
-      setshowDeleteAll(!showDeleteAll);
-    } catch (error) {
-      console.error("Lỗi khi thực hiện yêu cầu DELETE:", error);
-    }
+  const handleDeleteAllTags = async () => {
+    await tagService.handleDeleteAllTag(token, project_id);
+    // Xử lý dữ liệu phản hồi (nếu cần)
+    setTags(tags.slice(tags.length));
+    setshowDeleteAll(!showDeleteAll);
   };
 
   //..............................................................................//
 
-  const [role, setRole]: boolean | any = useState();
+  const [role, setRole] = useState<boolean>();
+
+  const getInfor = async () => {
+    const response = await CheckRole(token, project_id);
+
+    if (response.role == 1) {
+      setRole(true);
+    } else {
+      setRole(false);
+    }
+  };
 
   useEffect(() => {
-    const getInfor = async () => {
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:8000/api/checkRole/${projectId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          let dataTag = data.metadata;
-
-          if (dataTag.Role == 1) {
-            setRole(true);
-          } else {
-            setRole(false);
-          }
-        } else {
-          const errorData = await response.json();
-          console.error("Failed:", errorData);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    // Gọi hàm khi component được mount
     getInfor();
   }, []);
 
@@ -279,7 +199,7 @@ export default function Tags() {
                     <div className="col-80 inpTags">
                       <input
                         type="text"
-                        name="TagName"
+                        name="name"
                         placeholder="Tên thẻ"
                         onChange={handleInputChange}
                       />
@@ -300,40 +220,22 @@ export default function Tags() {
                 </div>
 
                 <div>
-                  {tags.length === 0 ? (
+                  {tags.length === 0 || tags === undefined ? (
                     <NoTags />
                   ) : role ? (
-                    <ul className="listTags">
-                      {tags.map((item: any) => (
-                        <li className="row" key={item.id} id={`${item.id}`}>
-                          <div className="nameTag col">{item.TagName}</div>
-                          <div className="col-xl-2 actionTags">
-                            <button onClick={toggleModal}>
-                              <i className="bi bi-pencil-fill"></i>
-                            </button>
-                            <button onClick={toggleModalDelete}>
-                              <i className="bi bi-x-lg"></i>
-                            </button>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
+                    <ListTag
+                      tags={tags}
+                      toggleModal={toggleModal}
+                      toggleModalDelete={toggleModalDelete}
+                    />
                   ) : (
-                    <ul className="listTags">
-                      {tags.map((item: any) => (
-                        <li className="row" key={item.id} id={`${item.id}`}>
-                          <div className="nameTag col">{item.TagName}</div>
-                          <div className="col-xl-2 actionTags">
-                            <button className="disableEdit" disabled>
-                              <i className="bi bi-pencil-fill"></i>
-                            </button>
-                            <button className="disableEdit" disabled>
-                              <i className="bi bi-x-lg"></i>
-                            </button>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
+                    <ListTag
+                      tags={tags}
+                      toggleModal={toggleModal}
+                      disableBtn={true}
+                      classDisable={"disableEdit"}
+                      toggleModalDelete={toggleModalDelete}
+                    />
                   )}
                 </div>
               </div>

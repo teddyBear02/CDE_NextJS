@@ -1,6 +1,6 @@
 "use client";
-import resgisterService from "@/service/resgisterService";
-import googleRegister from "@/service/ggResgister";
+import resgisterService from "@/service/auth/resgisterService";
+import googleRegister from "@/service/auth/ggResgister";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 export default function Register() {

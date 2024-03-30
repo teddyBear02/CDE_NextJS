@@ -6,8 +6,8 @@ interface Props {
 
 let ListItem = ({ projects, tag }: Props) => {
   const getProjectId = (e: React.MouseEvent<HTMLElement>) => {
-    let projectId = e.currentTarget.id;
-    localStorage.setItem("projectId", projectId);
+    let project_id = e.currentTarget.id;
+    localStorage.setItem("project_id", project_id);
   };
 
   return (
@@ -30,12 +30,10 @@ let ListItem = ({ projects, tag }: Props) => {
             id={project.id}
             onClick={getProjectId}
           >
-            <div className="row sm-height hoverList bodyList">
-              <div className="col-3 col-sm-1 col-md-1 col-lg-1 cl-bl">
-                {project.id}
-              </div>
+            <div className="row sm-height hoverList bodyList ">
+              <div className="col-3 col-sm-1 col-md-1 col-lg-1 cl-bl"></div>
               <div className="col col-sm-4 col-md-5 col-lg-3 cl-bl">
-                {project.ProjectName}
+                {project.name}
               </div>
               <div className="col-sm-3 col-md-2 col-lg-2 cl-bl">0 Kb</div>
               <div className="col-lg-2 cl-bl">mm/dd/yyyy</div>

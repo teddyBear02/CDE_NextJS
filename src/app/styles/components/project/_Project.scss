@@ -132,9 +132,10 @@ a {
   overflow-y: auto;
   padding: 1.25rem 1rem;
   transition: 0.5s;
+  overflow-y: hidden;
 }
 
-#right {
+.right {
   background: #fff;
   box-shadow: 0 0 0.25rem #aeaeb6;
   display: flex;
@@ -153,7 +154,13 @@ a {
     flex-flow: row nowrap;
     padding: 1rem;
     position: inherit;
-
+    h3 {
+      font-size: 18px;
+      margin: 0;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+    }
     h4 {
       align-items: center;
       padding-top: 4px;
@@ -230,7 +237,7 @@ a {
         background-color: #005f9e;
         color: #fff;
         &:hover {
-          cursor: not-allowed;
+          cursor: pointer;
         }
       }
     }

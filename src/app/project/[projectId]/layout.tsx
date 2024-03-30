@@ -8,12 +8,7 @@ export default function ProjectLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let projectId: any;
-  useEffect(() => {
-    if (typeof window.localStorage !== "undefined") {
-      projectId = localStorage.getItem("projectId");
-    }
-  }, []);
+  let projectId: any = localStorage.getItem("project_id");
 
   let isViewPdf = false;
 

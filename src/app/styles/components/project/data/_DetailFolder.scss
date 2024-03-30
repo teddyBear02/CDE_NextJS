@@ -1,0 +1,57 @@
+// Move Folder:
+
+.middleMoveFolder {
+  .panel-body {
+    .list {
+      width: 100%;
+      display: block !important;
+      .group-items {
+        align-items: center;
+        border: none;
+        box-sizing: border-box;
+        display: flex;
+        flex-flow: row nowrap;
+        min-height: 2.5rem;
+        padding: 0 1rem;
+        width: 100%;
+        margin: 0;
+        .block {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 100%;
+          margin: 0;
+        }
+        h5 {
+          padding-left: 1rem;
+          font-size: 18px;
+        }
+      }
+
+      .itemFolder {
+        transition: ease-in-out 0.25s;
+        margin-top: 16px;
+        &:hover {
+          transition: ease-in-out 0.25s;
+          background-color: #ccc;
+          cursor: pointer;
+        }
+        .folder-ic {
+          padding-right: 8px;
+        }
+        button {
+          background-color: transparent;
+          border: none;
+          height: 2.5rem;
+          justify-content: center;
+          min-width: 2.5rem;
+          padding: 0;
+          border-radius: 45%;
+          &:hover {
+            background-color: #eaeaea;
+          }
+        }
+      }
+    }
+  }
+}

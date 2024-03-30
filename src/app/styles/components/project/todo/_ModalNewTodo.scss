@@ -1,0 +1,14 @@
+#modalTodo {
+  transform: translate(50%, 20%);
+  right: 50%;
+}
+
+#detail {
+  border-bottom: 1px solid #ccc;
+  height: 65%;
+  input {
+    padding: 8px;
+    margin: 8px 0;
+    width: 100%;
+  }
+}

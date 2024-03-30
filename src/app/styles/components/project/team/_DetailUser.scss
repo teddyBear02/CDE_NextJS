@@ -1,0 +1,109 @@
+section {
+  .preview {
+    align-items: center;
+    background-color: #f9f9fb;
+    background-position: 50%;
+    background-size: cover;
+    border-bottom: 0.0625rem solid #d0d0d7;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    min-height: 6.5rem;
+
+    .thumbnailDetails {
+      max-width: 100%;
+    }
+
+    .thumbnailSection {
+      align-items: center;
+      display: flex;
+      flex-flow: column nowrap;
+      #user-icon {
+        font-size: 4.5rem;
+      }
+
+      h3 {
+        font-size: 1.125rem;
+      }
+
+      .text-ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .section-header {
+    padding: 0 0.5rem 0 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .section-details {
+    padding: 0 1rem 0.5rem;
+  }
+
+  .label-group {
+    justify-content: center;
+    min-height: 3rem;
+    display: flex;
+    flex-flow: column nowrap;
+    position: relative;
+  }
+
+  select {
+    border: 0.0625rem solid #d0d0d7;
+    border-bottom-color: #363545;
+    border-radius: 0.125rem;
+    box-sizing: border-box;
+    font-size: 0.875rem !important;
+    height: 2.5rem;
+    padding: 0 0.5rem;
+    width: 100%;
+  }
+
+  .group {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
+}
+
+#detail-user {
+  .button {
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    border-radius: 0.125rem;
+    cursor: pointer;
+    display: flex;
+    font-size: 0.875rem;
+    font-weight: 600;
+    min-height: 2.5rem;
+    outline: 0;
+    padding: 0.5rem 1rem;
+    position: relative;
+    text-align: center;
+    transition: color 0.25s ease-in-out, background-color 0.25s ease-in-out;
+  }
+
+  footer {
+    background-color: #fff;
+    border-top: 0.0625rem solid #d0d0d7;
+    width: 100%;
+    padding: 0.75rem;
+    button {
+      color: #c81922;
+      text-align: center;
+      width: 100%;
+      display: block !important;
+    }
+
+    .wrap-button {
+      display: flex;
+      flex: 1;
+      justify-content: flex-end;
+    }
+  }
+}

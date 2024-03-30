@@ -1,5 +1,5 @@
 interface Props {
-  data: any;
+  folders: any;
   titleName: string;
   user: string;
   timeCreate: string;
@@ -10,7 +10,7 @@ interface Props {
 
 export default function ListFolder({
   titleName,
-  data,
+  folders,
   user,
   timeCreate,
   statusTodo,
@@ -32,19 +32,25 @@ export default function ListFolder({
           </tr>
         </thead>
         <tbody className="table-group-divider">
-          {data.map((data: any, index: any) => (
+          {folders.map((folder: any, index: any) => (
             <tr
               className="hoverList"
               key={index}
-              id={data.id}
+              id={folder.id}
               onClick={eventClick}
             >
-              <th scope="row"></th>
-              <td>{data.folderName}</td>
-              <td>{data.modifiled}</td>
-              <td>{data.dateModified}</td>
-              <td>{data.size}</td>
-              <td>{data.tag}</td>
+              <th scope="row" className="icon">
+                {folder.versions >= 1 ? (
+                  <i className="bi bi-file-earmark-fill"></i>
+                ) : (
+                  <i className="bi bi-folder-fill"></i>
+                )}
+              </th>
+              <td className="nameFol">{folder.name}</td>
+              <td>{folder.user.name}</td>
+              <td>{folder.created_at.slice(0, 10)}</td>
+              <td>{folder.updated_at.slice(0, 10)}</td>
+              <td></td>
               <td></td>
             </tr>
           ))}

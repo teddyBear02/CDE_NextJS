@@ -1,10 +1,28 @@
 import SubNav from "../../common/subNav";
 
-export default function Privacy() {
+interface Props {
+  onSaveChange: any;
+  onChangeTodo: any;
+  onChangeInvite: any;
+  todoChoice: any;
+  inviteChoice: any;
+}
+
+export default function Privacy({
+  onSaveChange,
+  onChangeTodo,
+  onChangeInvite,
+  todoChoice,
+  inviteChoice,
+}: Props) {
   return (
     <>
       <div className="container showFolder">
-        <SubNav titleNav="Quyền truy cập" btnTitle="Lưu thay đổi" />
+        <SubNav
+          titleNav="Quyền truy cập"
+          btnTitle="Lưu thay đổi"
+          event={onSaveChange}
+        />
         <div className="container showFolder">
           <div className="boxPermission mb-4" id="todoVisual">
             <div className="headerPermisson">{"Hiển thị việc cần làm"}</div>
@@ -17,9 +35,11 @@ export default function Privacy() {
                   <div className="radio">
                     <input
                       type="radio"
-                      name=""
-                      id=""
-                      className="custom-input"
+                      name="todo_permission"
+                      id="0"
+                      checked={todoChoice === 0}
+                      className="custom-input inp-todo"
+                      onChange={onChangeTodo}
                     />
                   </div>
                   <label htmlFor="">
@@ -35,16 +55,18 @@ export default function Privacy() {
                   <div className="radio">
                     <input
                       type="radio"
-                      name=""
-                      id=""
-                      className="custom-input"
+                      name="todo_permission"
+                      id="1"
+                      checked={todoChoice === 1}
+                      className="custom-input inp-todo"
+                      onChange={onChangeTodo}
                     />
                   </div>
                   <label htmlFor="">
-                    {"Hiển thị việc cần làm (Mặc định)"}
+                    {"Chỉ định hiển thị việc cần làm"}
                     <p className="small text-meta">
-                      Việc cần làm sẽ hiển thị toàn bộ với những người trong dự
-                      án
+                      Việc cần làm sẽ hiển thị đối với quản trị viên, người tạo
+                      và những người được cấp phép
                     </p>
                   </label>
                 </div>
@@ -63,17 +85,15 @@ export default function Privacy() {
                   <div className="radio">
                     <input
                       type="radio"
-                      name=""
-                      id=""
-                      className="custom-input"
+                      name="invite_permission"
+                      id="0"
+                      className="custom-input inp-invite"
+                      checked={inviteChoice === 0}
+                      onChange={onChangeInvite}
                     />
                   </div>
                   <label htmlFor="">
-                    {"Hiển thị việc cần làm (Mặc định)"}
-                    <p className="small text-meta">
-                      Việc cần làm sẽ hiển thị toàn bộ với những người trong dự
-                      án
-                    </p>
+                    {"Cho phép tất cả người dùng mời người khác vào dự án"}
                   </label>
                 </div>
 
@@ -81,17 +101,15 @@ export default function Privacy() {
                   <div className="radio">
                     <input
                       type="radio"
-                      name=""
-                      id=""
-                      className="custom-input"
+                      name="invite_permission"
+                      id="1"
+                      className="custom-input inp-invite"
+                      checked={inviteChoice === 1}
+                      onChange={onChangeInvite}
                     />
                   </div>
                   <label htmlFor="">
-                    {"Hiển thị việc cần làm (Mặc định)"}
-                    <p className="small text-meta">
-                      Việc cần làm sẽ hiển thị toàn bộ với những người trong dự
-                      án
-                    </p>
+                    {"Chỉ cho phép quản trị viên mời người khác"}
                   </label>
                 </div>
               </div>

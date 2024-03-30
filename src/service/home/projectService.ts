@@ -2,12 +2,11 @@ import { env } from "@/config/varenv";
 
 const projectService = {
   //....................GET project......................//
-  async getProject(token: any) {
-    
+  async getProject(token: any, project_id:any) {
+    try{
       const response = await fetch(`${env.BASE_URL}/api/project`, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -18,8 +17,11 @@ const projectService = {
       } else {
         const errorData = await response.json();
         console.log(errorData);
-        // console.error("Lấy dữ liệu  thất bại:", errorData);
       }
+    }catch(error){
+      console.error("Không lay mới được dữ liệu:", error);
+    }
+      
   },
 
   //...................POST project......................//
@@ -46,6 +48,32 @@ const projectService = {
       console.error("Không tạo mới được dữ liệu:", error);
     }
   },
+
+
+  //...................DELETE project......................//
+  async handleDeleteProject (token:any, project_id:any){
+    try {
+      const response = await fetch(`${env.BASE_URL}/api/project/${project_id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Add new project successful:", data.metadata);
+        return data.metadata;
+      } else {
+        const errorData = await response.json();
+        console.error("Add new project failed:", errorData);
+      }
+    } catch (error) {
+      console.error("Không tạo mới được dữ liệu:", error);
+    }
+  }
+
 };
 
 export default projectService;

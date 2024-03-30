@@ -1,0 +1,21 @@
+tr {
+  th,
+  td {
+    text-align: left;
+  }
+
+  .icon {
+    text-align: center;
+    font-size: 36px;
+  }
+
+  td {
+    max-width: 240px;
+  }
+  .nameFol {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 240px;
+  }
+}

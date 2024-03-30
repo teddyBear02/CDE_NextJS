@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavBar, SubNav, None, ModalCreate, ListProject } from "../components";
 import { env } from "@/config/varenv";
-import { useQuery} from "react-query";
-import projectService from "@/service/projectService";
+import projectService from "@/service/home/projectService";
 
 const Home = () => {
   let token: any = env.TOKEN;
+
   const paramNone = {
     title: "Hiện không có dự án nào",
     subTitle: "Ấn tạo mới để tạo dự án ",
@@ -18,19 +18,18 @@ const Home = () => {
     setShowModal(!showModal);
   };
 
+  const [data, setData] = useState<any[]>([]);
+
   //..................GET Project....................//
 
+  const dataProject = async () => {
+    const respone = await projectService.getProject(token);
+    setData(respone);
+  };
 
-  const { data, isLoading, error } = useQuery("project",() => {
-    fetch(`${env.BASE_URL}/api/project`)
-      .then((res) => res.json())
-      .then((res) => res = data)
-      .catch(()=> console.log("Lỗi"))
-  });
-
-  if(error){
-    console.log("Error")
-  }
+  useEffect(() => {
+    dataProject();
+  }, []);
 
   //.................................................//
 
@@ -42,9 +41,10 @@ const Home = () => {
     finish_date: "",
   });
 
-  const handleSubmit  = async (data: any) => {
-    const response = await projectService.getProject(data)
-    return response.json();
+  const handleSubmit = async () => {
+    const response = await projectService.handleCreateProject(formData, token);
+    setData((prev: any) => [...prev, response]);
+    toggleModal();
   };
 
   //.................................................//
@@ -55,7 +55,7 @@ const Home = () => {
         <NavBar />
         <div className="toRender container">
           <SubNav titleNav="Dự án" btnTitle="Tạo mới" event={toggleModal} />
-          {data === undefined ? (
+          {data === undefined || data.length === 0 ? (
             <None params={paramNone} />
           ) : (
             <ListProject projects={data} />

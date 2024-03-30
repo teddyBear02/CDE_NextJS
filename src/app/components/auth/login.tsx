@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { login } from "@/service/loginService";
+import { login } from "@/service/auth/loginService";
 import { useRouter } from "next/navigation";
 import { useMutation } from "react-query";
 let Login = () => {

@@ -1,3 +1,5 @@
+//...............Variable..................//
+
 @import "./components/Var";
 
 //................Common...................//
@@ -13,18 +15,30 @@
 
 @import "./components/project/Project";
 
-@import "./components/project/TodoComponent";
+@import "./components/project/todo/TodoComponent";
 
-@import "./components/project/TeamComponent";
+@import "./components/project/team/TeamComponent";
 
-@import "./components/project/tags";
+@import "./components/project/tags/tags";
 
 @import "./components/project/ProjectDetail";
 
-@import "./components/project/NoneFolder";
+@import "./components/project/data/ModalCreateFolder";
 
-@import "./components/project/Permission";
+@import "./components/project/permission/Permission";
 
-@import "./components/project/ModalCreateFolder";
+@import "./components/project/data/NoneDataFolder";
+
+@import "./components/project/data/NoneFolder";
+
+@import "./components/project/todo/ModalNewTodo";
+
+@import "./components/project/team/ModalInvite";
+
+@import "./components/project/team/DetailUser";
+
+@import "./components/project/data/DetailFolder";
+
+@import "./components/project/data/ListFolder";
 //...............View PDF..................//
-@import "./components/project/ViewPDF";
+@import "./components/project/data/ViewPDF";
