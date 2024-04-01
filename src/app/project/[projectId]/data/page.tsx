@@ -19,21 +19,31 @@ import {
   GetFolderCanMove,
 } from "@/service/project/folderService";
 
-import { FileUpload } from "@/service/project/fileService";
+import tagService from "@/service/project/tagsService";
+
+import {
+  FileUpload,
+  FileUpdate,
+  DownloadFile,
+  GetHistoryFile,
+} from "@/service/project/fileService";
+
+import { PostComment } from "@/service/project/commentService";
 
 import { env } from "@/config/varenv";
+
 let Folder = () => {
   // local variable:
 
   let token = env.TOKEN;
 
-  let project_id = localStorage.getItem("project_id");
+  let project_id: any = localStorage.getItem("project_id");
 
   let parent_id: any = localStorage.getItem("parent_id");
 
   let type = localStorage.getItem("type");
 
-  let folder_id_local = localStorage.getItem("folder_id");
+  let folder_id_local: any = localStorage.getItem("folder_id");
 
   const [data, setData] = useState<any[]>([]);
 
@@ -63,10 +73,17 @@ let Folder = () => {
 
   const [showMoveFolder, setShowMoveFolder] = useState(false);
 
+  const [showHistory, setShowHistory] = useState(false);
+
+  // comment state:
+
+  const [showComment, setShowComment] = useState(false);
+
   const handleHideOption = () => {
     setShowOption(false);
     setShowEdit(false);
     setShowMoveFolder(false);
+    setShowHistory(false);
   };
 
   const [clickCount, setClickCount] = useState(0);
@@ -78,6 +95,7 @@ let Folder = () => {
   const handleBack = () => {
     setShowEdit(false);
     setShowMoveFolder(false);
+    setShowHistory(false);
   };
 
   const handleNewOpen = () => {
@@ -93,9 +111,11 @@ let Folder = () => {
       }, 300);
     } else if (clickCount === 2) {
       getFolderData();
+
       for (let folder of data) {
         if (folder.id == folder_id) {
           localStorage.setItem("parent_id", folder.id);
+
           set_parent_id(folder.id);
         }
       }
@@ -114,15 +134,20 @@ let Folder = () => {
     setNameFolder(name_folder);
     set_folder_id(currValue);
 
-    for (let folder of data) {
-      if (folder.id === parseInt(currValue)) {
-        localStorage.setItem("parent_id", folder.parent_id);
-      }
+    if (e.currentTarget.classList.contains("folder")) {
+      localStorage.setItem("type", "folder");
+      localStorage.setItem("type-num", "0");
+    } else {
+      localStorage.setItem("type", "file");
+      localStorage.setItem("type-num", "1");
+    }
 
-      if (typeof folder.versions === "number") {
-        localStorage.setItem("type", "file");
-      } else if (typeof folder.versions === "undefined") {
-        localStorage.setItem("type", "folder");
+    for (let folder of data) {
+      if (folder.versions >= 1) {
+        localStorage.setItem("parent_id", folder.folder_id);
+        localStorage.setItem("first-version", folder.first_version);
+      } else if (folder.id === parseInt(currValue)) {
+        localStorage.setItem("parent_id", folder.parent_id);
       }
     }
 
@@ -131,11 +156,15 @@ let Folder = () => {
 
   //....................GET folders..............................//
 
+  const [tags, setTags] = useState<any[]>([]);
+
   const getFolderData = async () => {
     const res = await getFolder(token, project_id, folder_id);
+    const tagRes = await tagService.getTags(token, project_id);
 
     const foldersAndFiles = [...res.folders, ...res.files];
 
+    setTags(tagRes);
     setData(foldersAndFiles);
   };
 
@@ -146,7 +175,7 @@ let Folder = () => {
   //......................POST folder..............................//
   const [dataFolder, setDataFolder] = useState({
     name: "",
-    parent_id: `${parent_id}`,
+    parent_id: folder_id_local,
     project_id: project_id,
   });
 
@@ -183,28 +212,27 @@ let Folder = () => {
     parent_id: parent_id,
   });
 
+  const [fileEdit, setFileEdit] = useState({
+    name: "",
+    project_id: project_id,
+    folder_id: parent_id,
+  });
+
   const handleChangeFolder = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     let currValue: any = e.currentTarget?.closest(".row")?.textContent;
     setNameFolder(currValue);
     setFolderEdit({ ...folderEdit, [name]: value });
+    setFileEdit({ ...fileEdit, name: e.target.value });
   };
 
   const handleUpdateFolder = async () => {
-    const response = await updateFolder(token, folderEdit, folder_id);
-
-    let newNameFolder = {
-      name: response.name,
-      id: response.id,
-    };
-
-    const indexToRemove = data.findIndex(
-      (item: any) => item.id === parseInt(folder_id)
-    );
-
-    data.splice(indexToRemove, 1, newNameFolder);
-    setShowEdit(!showEdit);
-    setShowOption(false);
+    if (type === "file") {
+      FileUpdate(token, folder_id_local, fileEdit);
+    } else {
+      await updateFolder(token, folderEdit, folder_id);
+    }
+    // location.reload();
   };
 
   //....................UploadFile......................//
@@ -217,11 +245,19 @@ let Folder = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("folder_id", folder_id_local);
+    formData.append("project_id", project_id);
+
     await FileUpload(token, formData);
     setIsUploadFile(!isUploadFile);
+    // location.reload();
   }
 
-  //....................................................//
+  //......................Update File...........................//
+
+  const handleUpdateFile = () => {
+    FileUpdate(token, folder_id_local, data);
+  };
 
   //.......................Get all folder can move.......................//
 
@@ -229,19 +265,25 @@ let Folder = () => {
     GetFolderCanMove(token, type, folder_id_local, parent_id, project_id).then(
       (res: any) => {
         setDataCanMove(res.data.metadata);
-        // console.log();
       }
     );
   };
 
-  //.........................Move Folder to another Folder..........................//
+  //.........................Move Folder/File to another Folder..........................//
 
-  let parent_id_to_move = localStorage.getItem("parent_id_to_move");
-  let name_folder_local = localStorage.getItem("name_folder");
+  let parent_id_to_move: any = localStorage.getItem("parent_id_to_move");
+  let name_folder_local: any = localStorage.getItem("name_folder");
+
   const [dataMoveFolder, setDataMoveFolder] = useState({
     name: name_folder_local,
     project_id: project_id,
     parent_id: parent_id_to_move,
+  });
+
+  const [dataMoveFile, setDataMoveFile] = useState({
+    name: name_folder_local,
+    project_id: project_id,
+    folder_id: parent_id_to_move,
   });
 
   const handleClickFolderToMove = (e: React.MouseEvent) => {
@@ -251,8 +293,46 @@ let Folder = () => {
   };
 
   const handleMoveFolder = async () => {
-    const response = await updateFolder(token, dataMoveFolder, folder_id_local);
-    console.log(response);
+    if (type === "file") {
+      const response = FileUpdate(token, folder_id_local, dataMoveFile);
+      // location.reload();
+      console.log(response);
+    } else {
+      const response = await updateFolder(
+        token,
+        dataMoveFolder,
+        folder_id_local
+      );
+      // location.reload();
+
+      console.log(response);
+    }
+  };
+
+  //...........................Post comment...............................//
+
+  let type_num: any = localStorage.getItem("type-num");
+
+  const [comment, setComment] = useState({
+    type: type_num,
+    another_id: folder_id_local,
+    content: "",
+  });
+
+  const HandlePostComment = () => {
+    PostComment(token, comment);
+  };
+
+  //............................. Get History File .............................//
+  let first_version: any = localStorage.getItem("first-version");
+  const [dataHistory, setDataHistory] = useState<any>([]);
+  const handleClickGetHistoryFile = () => {
+    if (type === "file") {
+      GetHistoryFile(token, first_version).then((res) => {
+        setDataHistory(res.metadata);
+        console.log(res.metadata);
+      });
+    }
   };
 
   let NoneComponent: ReactNode;
@@ -325,6 +405,22 @@ let Folder = () => {
           handleClickMove={handleMoveFolder}
           showMoveFolder={showMoveFolder}
           getIdFolerToMove={handleClickFolderToMove}
+          isActive={showComment}
+          showCmt={() => setShowComment(!showComment)}
+          cancelCmt={() => setShowComment(!showComment)}
+          createCmt={HandlePostComment}
+          onChangeComment={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setComment({ ...comment, content: e.target.value });
+          }}
+          downloadFile={() => {
+            DownloadFile(token, folder_id_local);
+          }}
+          showHistory={showHistory}
+          clickShowHistory={() => {
+            setShowHistory(!showHistory);
+            handleClickGetHistoryFile();
+          }}
+          dataHistory={dataHistory}
         />
       )}
 

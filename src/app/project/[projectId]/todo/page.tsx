@@ -1,6 +1,12 @@
 "use client";
 import { useState } from "react";
-import { SubNav, ModalNewTodo, TodoList, NoneTodo } from "@/app/components";
+import {
+  SubNav,
+  ModalNewTodo,
+  TodoList,
+  NoneTodo,
+  DetailTodo,
+} from "@/app/components";
 import { PostTodo } from "@/service/project/todoService";
 
 export default function Todo() {
@@ -9,6 +15,8 @@ export default function Todo() {
   let project_id = localStorage.getItem("project_id");
 
   const [showModalTodo, setShowModalTodo] = useState(false);
+
+  const [showDetail, setShowDetail] = useState(false);
 
   let data: any = [
     {
@@ -71,12 +79,17 @@ export default function Todo() {
               state="Ưu tiên"
               status="Trạng thái"
               data={data}
+              handleClick={() => setShowDetail(true)}
             />
           ) : (
             <NoneTodo />
           )}
         </div>
       </div>
+
+      {showDetail && (
+        <DetailTodo handleHideOption={() => setShowDetail(false)} />
+      )}
 
       {showModalTodo && (
         <ModalNewTodo

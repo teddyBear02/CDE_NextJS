@@ -6,6 +6,13 @@ interface Props {
   handleHideOption: any;
   showModalDelete: any;
   showMoveFolder: any;
+  isActive: any;
+  cancelCmt: any;
+  createCmt: any;
+  showCmt: any;
+  onChangeComment: any;
+  downloadFile: any;
+  clickShowHistory: any;
 }
 
 function inforFolder({
@@ -14,6 +21,13 @@ function inforFolder({
   handleHideOption,
   showModalDelete,
   showMoveFolder,
+  isActive,
+  cancelCmt,
+  createCmt,
+  showCmt,
+  onChangeComment,
+  downloadFile,
+  clickShowHistory,
 }: Props) {
   return (
     <>
@@ -37,7 +51,7 @@ function inforFolder({
                 <button className="btn mr-1">
                   <i className="bi bi-person-gear"></i>
                 </button>
-                <button className="btn mr-1">
+                <button className="btn mr-1" onClick={downloadFile}>
                   <i className="bi bi-download"></i>
                 </button>
                 <button className="btn mr-1" onClick={showMoveFolder}>
@@ -63,7 +77,7 @@ function inforFolder({
                 <label htmlFor="">Version</label>
                 <div className="value">
                   <span>1</span>
-                  <a href="#" className="pointer">
+                  <a className="pointer" onClick={clickShowHistory}>
                     See history
                   </a>
                 </div>
@@ -98,8 +112,58 @@ function inforFolder({
           </div>
         </div>
       </section>
-      <footer className="p-0">
-        <div className="comments"></div>
+      <footer className="p-0" id="footerInfoFol">
+        {isActive ? (
+          <div className="comments">
+            <div className="add-comment-section active">
+              <div id="add-comment-wrapper" className="px-2">
+                <div id="comment-container" className="comment-support"></div>
+                <div className="relative">
+                  <textarea
+                    id="comment-add"
+                    className="comment-add"
+                    placeholder="Add a comment..."
+                    maxLength={1024}
+                    name="content"
+                    onChange={onChangeComment}
+                  ></textarea>
+                  <div className="line"></div>
+                </div>
+                <ul className="list mb-1" id="attachment-list"></ul>
+              </div>
+              <div className="row-distribute px-2 py-2">
+                <div className="d-flex">
+                  <button
+                    className="button link-secondary"
+                    id="cancelCmt"
+                    onClick={cancelCmt}
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    className="button bg-primary text-light ms-2"
+                    id="createCmt"
+                    onClick={createCmt}
+                  >
+                    Bình luận
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="comments" onClick={showCmt}>
+            <div className="add-comment-section inactive">
+              <i className="bi bi-chat-right-dots-fill"></i>
+              <textarea
+                name=""
+                id="comment-add"
+                className="comment-add mt-1"
+                placeholder="Thêm bình luận..."
+              ></textarea>
+            </div>
+          </div>
+        )}
       </footer>
     </>
   );

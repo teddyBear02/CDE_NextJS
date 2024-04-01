@@ -34,7 +34,10 @@ export default function ListFolder({
         <tbody className="table-group-divider">
           {folders.map((folder: any, index: any) => (
             <tr
-              className="hoverList"
+              className={
+                // folder.versions >= 1 ? "hoverList file" : "hoverList folder"
+                "hoverList folder"
+              }
               key={index}
               id={folder.id}
               onClick={eventClick}
@@ -47,7 +50,7 @@ export default function ListFolder({
                 )}
               </th>
               <td className="nameFol">{folder.name}</td>
-              <td>{folder.user.name}</td>
+              <td></td>
               <td>{folder.created_at.slice(0, 10)}</td>
               <td>{folder.updated_at.slice(0, 10)}</td>
               <td></td>

@@ -33,11 +33,13 @@ export { default as None } from "./common/none";
     export { default as MoveFolder} from './project/data/detail/moveFolder'
     export { default as EditFolder} from './project/data/detail/editFolder'
     export { default as InforFolder} from './project/data/detail/inforFolder'
+    export { default as HistoryFile} from './project/data/detail/historyFile'
     
     //..................Todo Components.....................//
     export { default as TodoList } from "./project/todo/todoList";
     export { default as NoneTodo } from "./project/todo/noneTodo";
     export { default as ModalNewTodo} from "./project/todo/modalNewTodo"
+    export { default as DetailTodo} from "./project/todo/detailTodo"
 
     //.................Privacy Components...................//
     export { default as ProjectDetail } from "./project/project_detail/projectDetail";

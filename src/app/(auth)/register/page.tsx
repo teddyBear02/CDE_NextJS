@@ -100,7 +100,7 @@ export default function Register() {
             <div id="btnValid" className="mb-4">
               <button
                 className="btn btn-primary p-4 pt-2 pb-2"
-                onClick={resgister}
+                onClick={() => googleRegis()}
               >
                 Đăng kí
               </button>

@@ -9,10 +9,6 @@ export default function ProjectDetail({
   out_project,
   data_project,
 }: Props) {
-  let dateCreate = "Sep 14, 2023 10:14 PM";
-  let userCreate = "nva@gmail.com";
-  let lastModifile = "Dec 29, 2023 08:05 PM";
-  let userLastModifile = "nvb@gmail.com";
   let sizeProject = "35 KB";
   let totalFolder = 5;
   let totalFiles = 13;
@@ -67,9 +63,7 @@ export default function ProjectDetail({
                     Ngày tạo
                   </label>
                   <div>
-                    <p>
-                      {dateCreate} by {userCreate}
-                    </p>
+                    <p>{data_project.created_at.slice(0, 10)}</p>
                   </div>
                 </div>
                 <div className="col-12">
@@ -77,9 +71,7 @@ export default function ProjectDetail({
                     Sửa đổi cuối cùng
                   </label>
                   <div>
-                    <p>
-                      {lastModifile} by {userLastModifile}
-                    </p>
+                    <p>{data_project.updated_at.slice(0, 10)}</p>
                   </div>
                 </div>
 
@@ -122,13 +114,23 @@ export default function ProjectDetail({
                   <label htmlFor="" className="titleName-ProjectDetail">
                     Ngày bắt đầu
                   </label>
-                  <input type="text" name="" id="inpNameProjectDetail" />
+                  <input
+                    type="date"
+                    name=""
+                    id="inpNameProjectDetail"
+                    value={data_project.start_date.slice(0, 10)}
+                  />
                 </div>
                 <div className="col-6">
                   <label htmlFor="" className="titleName-ProjectDetail">
                     Ngày kết thúc {"(Dự kiến)"}
                   </label>
-                  <input type="text" name="" id="inpNameProjectDetail" />
+                  <input
+                    type="date"
+                    name=""
+                    id="inpNameProjectDetail"
+                    value={data_project.finish_date.slice(0, 10)}
+                  />
                 </div>
                 <div className="col-12">
                   <label htmlFor="" className="titleName-ProjectDetail">

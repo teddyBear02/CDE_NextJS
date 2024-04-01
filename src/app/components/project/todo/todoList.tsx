@@ -7,6 +7,7 @@ interface Props {
   timeModified: string;
   status: string;
   state: string;
+  handleClick: any;
 }
 export default function todoList({
   title,
@@ -16,6 +17,7 @@ export default function todoList({
   status,
   timeModified,
   state,
+  handleClick,
 }: Props) {
   return (
     <>
@@ -33,8 +35,15 @@ export default function todoList({
         </thead>
         <tbody className="table-group-divider">
           {data.map((data: any) => (
-            <tr className="hoverList" key={data.id} id={data.id}>
-              <th scope="row"></th>
+            <tr
+              className="hoverList todoList"
+              key={data.id}
+              id={data.id}
+              onClick={handleClick}
+            >
+              <th scope="row" className="icon">
+                <i className="bi bi-clipboard-check-fill"></i>
+              </th>
               <td>{data.name}</td>
               <td>{data.userModified}</td>
               <td>{data.modifiedTime}</td>

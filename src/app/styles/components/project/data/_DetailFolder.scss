@@ -55,3 +55,137 @@
     }
   }
 }
+
+#footerInfoFol {
+  background-color: #fff;
+  border-top: 0.0625rem solid #d0d0d7;
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+  //.................... InActive Comment...........................//
+  .comments {
+    width: 100%;
+
+    .add-comment-section.inactive {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      flex-flow: row nowrap;
+      font-size: 0.875rem;
+      justify-content: center;
+      max-height: 4rem;
+      padding: 1rem;
+      width: inherit;
+
+      &:hover {
+        background-color: #f3f3f7;
+      }
+      i {
+        color: #00437b;
+        margin-top: 0.5rem;
+        width: 2.5rem;
+        font-size: 24px;
+      }
+      textarea {
+        border: none;
+        height: 2rem !important;
+        min-height: 2rem !important;
+        resize: none;
+        background: transparent;
+        pointer-events: none;
+      }
+    }
+  }
+
+  //.................... Active Comment...........................//
+  .active {
+    display: flex;
+    flex-flow: column nowrap;
+    width: inherit;
+
+    .comment-container {
+      word-wrap: break-word;
+      font-size: 14px;
+      height: 0;
+      overflow: hidden;
+      padding: 0.75rem 1rem;
+      visibility: hidden;
+      white-space: pre-wrap;
+      width: auto;
+    }
+
+    #add-comment-wrapper {
+      padding: 2rem 1rem 0.5rem 1rem !important;
+      overflow: hidden scroll;
+    }
+
+    .row-distribute {
+      align-items: center;
+      display: flex;
+      flex-flow: row nowrap;
+      padding: 1rem !important;
+      justify-content: space-between;
+      .d-flex {
+        display: flex !important;
+        flex-direction: row;
+
+        #cancelCmt,
+        #createCmt {
+          &:hover {
+            transition: ease-in-out 0.2;
+            opacity: 0.9;
+          }
+        }
+
+        button {
+          border-radius: 0.25rem;
+          border: none;
+          min-height: 2.5rem;
+          display: flex;
+          align-items: center;
+          padding: 0.5rem 1rem;
+          cursor: pointer;
+          transition: ease-in-out 0.2;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+//.................... History Version File ......................//
+
+#history {
+  ul {
+    padding: 0;
+
+    .group-items {
+      margin: 0 !important;
+      padding: 0.75rem;
+      .text-ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      small {
+        font-size: 12px;
+      }
+    }
+    .revision-wrapthumb {
+      align-items: center;
+      background: #d8d8d8;
+      display: flex;
+      flex-flow: row nowrap;
+      height: 3rem;
+      justify-content: center;
+      margin-right: 0.5rem;
+      width: 3rem;
+      i {
+        font-size: 18px;
+      }
+    }
+  }
+}

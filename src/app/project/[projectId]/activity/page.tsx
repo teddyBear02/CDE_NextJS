@@ -31,7 +31,9 @@ export default function Activity() {
             </div>
           </div>
 
-          <None params={propsNone} />
+          <div className="container">
+            <None params={propsNone} />
+          </div>
         </div>
       </>
     </>

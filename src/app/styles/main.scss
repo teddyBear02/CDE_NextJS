@@ -3,9 +3,9 @@
 @import "./components/Var";
 
 //................Common...................//
-@import "./components/Login";
+@import "./components/auth/Login";
 
-@import "./components/Home";
+@import "./components/home/Home";
 
 @import "./components/Profile";
 
@@ -40,5 +40,7 @@
 @import "./components/project/data/DetailFolder";
 
 @import "./components/project/data/ListFolder";
+
+@import "./components/project/todo/ListTodo";
 //...............View PDF..................//
 @import "./components/project/data/ViewPDF";

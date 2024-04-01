@@ -15,7 +15,7 @@ export default function projectDetail() {
 
   const [openQuit, setOpenQuit] = useState<any>(false);
 
-  const [projectInfo, setProjectInfo] = useState();
+  const [projectInfo, setProjectInfo] = useState<any>({});
 
   let token = env.TOKEN;
 
@@ -25,11 +25,10 @@ export default function projectDetail() {
 
   //......................Get info Project............................//
 
-  const getInforProject = async () => {
-    const res = await projectService.getProject(token, project_id);
-    setProjectInfo(res);
-    // console.log(projectInfo);
-    console.log(projectInfo);
+  const getInforProject = () => {
+    projectService.getInforProject(token, project_id).then((res: any) => {
+      setProjectInfo(res.data.metadata);
+    });
   };
 
   useEffect(() => {

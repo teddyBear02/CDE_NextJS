@@ -1,12 +1,14 @@
 import { env } from "@/config/varenv";
+import axios from "axios";
 
 const projectService = {
   //....................GET project......................//
-  async getProject(token: any, project_id:any) {
+  async getProject(token: any) {
     try{
       const response = await fetch(`${env.BASE_URL}/api/project`, {
         method: "GET",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -72,6 +74,20 @@ const projectService = {
     } catch (error) {
       console.error("Không tạo mới được dữ liệu:", error);
     }
+  },
+
+  getInforProject(token:any,project_id:any){
+    return axios
+      .get(`${env.BASE_URL}/api/project/${project_id}`,{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      .catch((error)=>{
+        console.log(error);
+      })
   }
 
 };
