@@ -1,14 +1,17 @@
 "use client";
 import { NavBar, SideBar } from "@/app/components";
-import ViewPdf from "./view/page";
-import { useEffect } from "react";
+import ViewPdf from "./[projectId]/view/page";
+import { useState } from "react";
 
 export default function ProjectLayout({
   children,
 }: {
   children: React.ReactNode;
+  default: any;
 }) {
   let projectId: any = localStorage.getItem("project_id");
+
+  const [viewPdf, setViewPdf] = useState(false);
 
   let isViewPdf = false;
 

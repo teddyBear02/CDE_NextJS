@@ -1,8 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { NavBar, SubNav, None, ModalCreate, ListProject } from "../components";
 import { env } from "@/config/varenv";
 import projectService from "@/service/home/projectService";
+import { Thumbnail } from "react-pdf";
 
 const Home = () => {
   let token: any = env.TOKEN;
@@ -18,14 +19,15 @@ const Home = () => {
     setShowModal(!showModal);
   };
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<any>();
 
   //..................GET Project....................//
 
   const dataProject = async () => {
-    const respone = await projectService.getProject(token);
-    setData(respone);
+    const response = await projectService.getProject(token);
+    setData(response);
   };
+  console.log(data);
 
   useEffect(() => {
     dataProject();
@@ -35,15 +37,26 @@ const Home = () => {
 
   //.................POST Project....................//
 
+  const [file, setFile] = useState<undefined | File | any>();
+
+  const fileInputRef = useRef<any>(null);
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
   const [formData, setFormData] = useState({
     name: "",
     start_date: "",
     finish_date: "",
+    note: "",
+    thumbnails: "",
   });
 
   const handleSubmit = async () => {
     const response = await projectService.handleCreateProject(formData, token);
-    setData((prev: any) => [...prev, response]);
+    setData(() => [...data, response]);
+    console.log(response);
     toggleModal();
   };
 
@@ -66,15 +79,26 @@ const Home = () => {
         <ModalCreate
           showModal={showModal}
           handleClose={toggleModal}
-          handleInputChangeName={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setFormData({ ...formData, name: e.target.value })
-          }
-          handleInputChangeStart={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setFormData({ ...formData, start_date: e.target.value })
-          }
-          handleInputChangeEnd={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setFormData({ ...formData, finish_date: e.target.value })
-          }
+          handleInputChangeName={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setFormData({ ...formData, name: e.target.value });
+          }}
+          handleInputChangeStart={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setFormData({ ...formData, start_date: e.target.value });
+          }}
+          handleInputChangeEnd={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setFormData({ ...formData, finish_date: e.target.value });
+          }}
+          handleChangeNote={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setFormData({ ...formData, note: e.target.value });
+          }}
+          handleChangeThumbnail={(
+            e: React.ChangeEvent<HTMLInputElement> | any
+          ) => {
+            // console.log(e.target.files[0]);
+            setFormData({ ...formData, thumbnails: e.target.files[0] });
+          }}
+          handleUpload={handleClick}
+          inputImgRef={fileInputRef}
           handleCreateProject={handleSubmit}
         />
       )}

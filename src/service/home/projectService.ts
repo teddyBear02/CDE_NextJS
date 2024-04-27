@@ -29,13 +29,21 @@ const projectService = {
   //...................POST project......................//
   async handleCreateProject(data: any, token: any) {
     try {
+      const formData = new FormData();
+      formData.append("finish_date", data.finish_date);
+      formData.append("thumbnails", data.thumbnails);
+      formData.append("name", data.name);
+      formData.append("start_date", data.start_date);
+      formData.append("note", data.note);
+      // console.log(data);
+      
       const response = await fetch(`${env.BASE_URL}/api/project`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          // "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(data),
+        body: formData
       });
 
       if (response.ok) {
@@ -76,18 +84,27 @@ const projectService = {
     }
   },
 
-  getInforProject(token:any,project_id:any){
-    return axios
-      .get(`${env.BASE_URL}/api/project/${project_id}`,{
+  async getInforProject(token:any,project_id:any){
+    try {
+      const response =await fetch(`${env.BASE_URL}/api/project/${project_id}`,{
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          // "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
 
-      .catch((error)=>{
-        console.log(error);
-      })
+      if(response.ok) {
+        const data = await response.json();
+        return data.metadata;
+      } else {
+        const errorData = await response.json();
+        console.error("Get project failed:", errorData);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+      
   }
 
 };

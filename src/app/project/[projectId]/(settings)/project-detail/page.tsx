@@ -1,21 +1,23 @@
 "use client";
 // import các thư viện hoặc các hooks...
+
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-// import các component hoặc các services
+// import các component hoặc các services:
+
 import { ProjectDetail } from "@/app/components";
 import { env } from "@/config/varenv";
 import { SubNav, ModalDeleteProject, ModalQuitProject } from "@/app/components";
-import CheckRole from "@/service/project/checkRole";
 import projectService from "@/service/home/projectService";
+// import CheckRole from "@/service/project/checkRole";
 
 export default function projectDetail() {
   const [openDelete, setOpenDelete] = useState(false);
 
   const [openQuit, setOpenQuit] = useState<any>(false);
 
-  const [projectInfo, setProjectInfo] = useState<any>({});
+  const [projectInfo, setProjectInfo] = useState<any>();
 
   let token = env.TOKEN;
 
@@ -25,14 +27,13 @@ export default function projectDetail() {
 
   //......................Get info Project............................//
 
-  const getInforProject = () => {
-    projectService.getInforProject(token, project_id).then((res: any) => {
-      setProjectInfo(res.data.metadata);
-    });
+  const getInfoProject = async () => {
+    const response = await projectService.getInforProject(token, project_id);
+    setProjectInfo(response);
   };
 
   useEffect(() => {
-    getInforProject();
+    getInfoProject();
   }, []);
 
   //...................... Quit project ..............................//
@@ -56,11 +57,14 @@ export default function projectDetail() {
     <>
       <div className="container showFolder">
         <SubNav titleNav="Thông tin dự án" btnTitle="Lưu thay đổi" />
-        <ProjectDetail
-          data_project={projectInfo}
-          delete_project={() => setOpenDelete(true)}
-          out_project={() => setOpenQuit(true)}
-        />
+
+        {typeof projectInfo != "object" ? null : (
+          <ProjectDetail
+            data_project={projectInfo}
+            delete_project={() => setOpenDelete(true)}
+            out_project={() => setOpenQuit(true)}
+          />
+        )}
       </div>
 
       {openDelete && (

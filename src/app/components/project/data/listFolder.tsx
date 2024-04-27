@@ -2,8 +2,8 @@ interface Props {
   folders: any;
   titleName: string;
   user: string;
-  timeCreate: string;
-  size: string;
+  timeUpdate?: string;
+  size?: string;
   statusTodo: string;
   eventClick: any;
 }
@@ -12,7 +12,7 @@ export default function ListFolder({
   titleName,
   folders,
   user,
-  timeCreate,
+  timeUpdate,
   statusTodo,
   size,
   eventClick,
@@ -25,7 +25,7 @@ export default function ListFolder({
             <th scope="col"></th>
             <th scope="col">{titleName}</th>
             <th scope="col">{user}</th>
-            <th scope="col">{timeCreate}</th>
+            <th scope="col">{timeUpdate}</th>
             <th scope="col">{size}</th>
             <th scope="col">{}</th>
             <th scope="col">{statusTodo}</th>
@@ -35,8 +35,7 @@ export default function ListFolder({
           {folders.map((folder: any, index: any) => (
             <tr
               className={
-                // folder.versions >= 1 ? "hoverList file" : "hoverList folder"
-                "hoverList folder"
+                folder.versions >= 1 ? "hoverList file" : "hoverList folder"
               }
               key={index}
               id={folder.id}
@@ -50,9 +49,9 @@ export default function ListFolder({
                 )}
               </th>
               <td className="nameFol">{folder.name}</td>
-              <td></td>
-              <td>{folder.created_at.slice(0, 10)}</td>
+              <td>{folder.user.name}</td>
               <td>{folder.updated_at.slice(0, 10)}</td>
+              <td></td>
               <td></td>
               <td></td>
             </tr>

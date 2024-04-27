@@ -26,6 +26,7 @@ import {
   FileUpdate,
   DownloadFile,
   GetHistoryFile,
+  DeleteFile,
 } from "@/service/project/fileService";
 
 import { PostComment } from "@/service/project/commentService";
@@ -45,11 +46,13 @@ let Folder = () => {
 
   let folder_id_local: any = localStorage.getItem("folder_id");
 
+  let parent_id_to_move: any = localStorage.getItem("parent_id_to_move");
+
   const [data, setData] = useState<any[]>([]);
 
   const [dataCanMove, setDataCanMove] = useState<any[]>([]);
 
-  const [parentId, set_parent_id] = useState<any>(0); // Store folder parent's id
+  const [parentId, set_parent_id] = useState<any>("0"); // Store folder's parent id
 
   const [folder_id, set_folder_id] = useState<any>(0); // Store folder's id
 
@@ -60,6 +63,8 @@ let Folder = () => {
   const [isOpenCreateFolder, setIsOpenCreateFolder] = useState(false); //open modal create Folder
 
   const [isUploadFile, setIsUploadFile] = useState(false); // Modal upload file /folder
+
+  const [option, setOption] = useState<any>();
 
   const [file, setFile] = useState<undefined | File | any>(); // File
 
@@ -78,6 +83,13 @@ let Folder = () => {
   // comment state:
 
   const [showComment, setShowComment] = useState(false);
+
+  const [elemNav, setEmlemNav] = useState<any>([
+    {
+      name: "Thư mục",
+      id: 0,
+    },
+  ]);
 
   const handleHideOption = () => {
     setShowOption(false);
@@ -108,17 +120,9 @@ let Folder = () => {
       timeout = setTimeout(() => {
         setShowOption(true);
         setClickCount(0);
-      }, 300);
+      }, 500);
     } else if (clickCount === 2) {
-      getFolderData();
-
-      for (let folder of data) {
-        if (folder.id == folder_id) {
-          localStorage.setItem("parent_id", folder.id);
-
-          set_parent_id(folder.id);
-        }
-      }
+      setShowOption(false);
       setClickCount(0);
     }
     return () => clearTimeout(timeout);
@@ -150,89 +154,168 @@ let Folder = () => {
         localStorage.setItem("parent_id", folder.parent_id);
       }
     }
-
     setClickCount((prevCount) => prevCount + 1);
-  }; // Function Get folder's id, name
+    if (clickCount > 0) {
+      for (let folder of data) {
+        if (folder.versions >= 1) {
+        }
+      }
+      set_parent_id(currValue);
+      setDataFolder({ ...dataFolder, parent_id: currValue });
+      setEmlemNav([...elemNav, { name: name_folder, id: currValue }]);
+    }
+  };
 
-  //....................GET folders..............................//
+  const toFolder = (e: React.MouseEvent) => {
+    let idGoTo: any = (e.currentTarget.closest(".hoverItemNav") as HTMLElement)
+      ?.id;
+    let indexItem: any = parseInt(e.currentTarget.classList[1]);
+    setDataFolder({ ...dataFolder, parent_id: idGoTo });
+    set_parent_id(idGoTo);
+    elemNav.splice(indexItem + 1, elemNav.length - indexItem);
+  };
 
-  const [tags, setTags] = useState<any[]>([]);
+  //....................GET folders (Done)..............................//
+
+  // const [tags, setTags] = useState<any[]>([]);
 
   const getFolderData = async () => {
-    const res = await getFolder(token, project_id, folder_id);
-    const tagRes = await tagService.getTags(token, project_id);
-
+    const res = await getFolder(token, project_id, parentId);
     const foldersAndFiles = [...res.folders, ...res.files];
-
-    setTags(tagRes);
     setData(foldersAndFiles);
   };
 
   useEffect(() => {
     getFolderData();
-  }, []);
+  }, [parentId]);
 
-  //......................POST folder..............................//
+  //......................POST folder (done)..............................//
+  //còn bị conflict back về folder cũ - chưa set lại đc parent_id
+
   const [dataFolder, setDataFolder] = useState({
     name: "",
-    parent_id: folder_id_local,
+    parent_id: parentId,
     project_id: project_id,
   });
 
   const handleCreateFolder = async () => {
-    try {
-      const response = await createFolder(dataFolder, token);
-      setData((prev: any) => [...prev, response]);
-      setIsOpenCreateFolder(false);
-    } catch (error) {
-      console.error("Lỗi khi tạo Folder mới:", error);
-    }
+    const response = await createFolder(dataFolder, token);
+    setData(() => [...data, response]);
+    setIsOpenCreateFolder(false);
   };
 
-  //.........................DELETE Folder...........................//
+  //.........................DELETE Folder (done)...........................//
 
   const handleDeleteFolder = async () => {
-    await deleteFolder(token, folder_id, project_id);
-    const indexToRemove = data.findIndex(
-      (item: any) => item.id === parseInt(folder_id)
-    );
+    if (type == "folder") {
+      await deleteFolder(token, folder_id, project_id);
+      const indexToRemove = data.findIndex(
+        (item: any) => item.id === parseInt(folder_id)
+      );
 
-    if (indexToRemove !== -1) {
-      data.splice(indexToRemove, 1);
+      if (indexToRemove !== -1) {
+        data.splice(indexToRemove, 1);
+      }
+      setShowDeleteFolder(false);
+      setShowOption(false);
+    } else if (type == "file") {
+      DeleteFile(token, folder_id_local, project_id);
+      const indexToRemove = data.findIndex(
+        (item: any) => item.id === parseInt(folder_id)
+      );
+
+      if (indexToRemove !== -1) {
+        data.splice(indexToRemove, 1);
+      }
+      setShowDeleteFolder(false);
+      setShowOption(false);
     }
-    setShowDeleteFolder(false);
-    setShowOption(false);
   };
 
   //.........................UPDATE Folder...........................//
 
   const [folderEdit, setFolderEdit] = useState({
     name: "",
-    project_id: project_id,
     parent_id: parent_id,
+    project_id: project_id,
   });
 
   const [fileEdit, setFileEdit] = useState({
     name: "",
-    project_id: project_id,
     folder_id: parent_id,
+    project_id: project_id,
   });
 
   const handleChangeFolder = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
     let currValue: any = e.currentTarget?.closest(".row")?.textContent;
     setNameFolder(currValue);
-    setFolderEdit({ ...folderEdit, [name]: value });
-    setFileEdit({ ...fileEdit, name: e.target.value });
+    if (folderEdit.name != e.target.value && type == "folder") {
+      setFolderEdit({ ...folderEdit, name: e.target.value });
+      setOption("1");
+    } else if (folderEdit.parent_id != parent_id_to_move && type == "folder") {
+      setFolderEdit({ ...folderEdit, parent_id: parent_id_to_move });
+      setOption("2");
+    }
+
+    if (folderEdit.name != e.target.value && type == "file") {
+      setFileEdit({ ...fileEdit, name: e.target.value });
+      setOption("1");
+    }
   };
 
   const handleUpdateFolder = async () => {
+    // type = file
     if (type === "file") {
-      FileUpdate(token, folder_id_local, fileEdit);
+      const res = FileUpdate(token, folder_id_local, fileEdit, option);
+      const indexChange = data.findIndex(
+        (item: any) => item.id === parseInt(folder_id)
+      );
+      // data.splice(indexChange, 1, res);
+      // setShowEdit(!showEdit);
+      // setShowOption(!showOption);
+      console.table(indexChange);
     } else {
-      await updateFolder(token, folderEdit, folder_id);
+      // type = folder
+      switch (option) {
+        case 1: // Đổi tên thư mục
+          const response1: any = await updateFolder(
+            token,
+            folderEdit,
+            folder_id_local,
+            option
+          );
+          const indexChange = data.findIndex(
+            (item: any) => item.id === parseInt(folder_id)
+          );
+          data.splice(indexChange, 1, response1);
+          setShowEdit(!showEdit);
+          setShowOption(!showOption);
+          break;
+        case 2: // Di chuyển thư mục tới thư mục khác
+          const response2: any = await updateFolder(
+            token,
+            folderEdit,
+            folder_id_local,
+            option
+          );
+          const indexMove = data.findIndex(
+            (item: any) => item.id === parseInt(folder_id)
+          );
+          data.splice(indexMove, 1);
+          setShowOption(!showOption);
+          break;
+        case 3: // Thêm tags
+          const response3: any = await updateFolder(
+            token,
+            folderEdit,
+            folder_id_local,
+            option
+          );
+          break;
+        default:
+          break;
+      }
     }
-    // location.reload();
   };
 
   //....................UploadFile......................//
@@ -248,16 +331,16 @@ let Folder = () => {
     formData.append("folder_id", folder_id_local);
     formData.append("project_id", project_id);
 
-    await FileUpload(token, formData);
+    const response: any = await FileUpload(token, formData);
+    console.log(response);
     setIsUploadFile(!isUploadFile);
-    // location.reload();
   }
 
   //......................Update File...........................//
 
-  const handleUpdateFile = () => {
-    FileUpdate(token, folder_id_local, data);
-  };
+  // const handleUpdateFile = () => {
+  //   FileUpdate(token, folder_id_local, data);
+  // };
 
   //.......................Get all folder can move.......................//
 
@@ -271,14 +354,7 @@ let Folder = () => {
 
   //.........................Move Folder/File to another Folder..........................//
 
-  let parent_id_to_move: any = localStorage.getItem("parent_id_to_move");
   let name_folder_local: any = localStorage.getItem("name_folder");
-
-  const [dataMoveFolder, setDataMoveFolder] = useState({
-    name: name_folder_local,
-    project_id: project_id,
-    parent_id: parent_id_to_move,
-  });
 
   const [dataMoveFile, setDataMoveFile] = useState({
     name: name_folder_local,
@@ -294,17 +370,8 @@ let Folder = () => {
 
   const handleMoveFolder = async () => {
     if (type === "file") {
-      const response = FileUpdate(token, folder_id_local, dataMoveFile);
+      const response = FileUpdate(token, folder_id_local, dataMoveFile, 2);
       // location.reload();
-      console.log(response);
-    } else {
-      const response = await updateFolder(
-        token,
-        dataMoveFolder,
-        folder_id_local
-      );
-      // location.reload();
-
       console.log(response);
     }
   };
@@ -337,7 +404,7 @@ let Folder = () => {
 
   let NoneComponent: ReactNode;
 
-  if (data.length === 0 && parentId === 0) {
+  if (data.length == 0 && parentId == 0) {
     NoneComponent = (
       <NoneFolder
         openCreateFolder={() => {
@@ -346,7 +413,7 @@ let Folder = () => {
         }}
       />
     );
-  } else if (data.length === 0 && parentId != 0) {
+  } else if (data.length == 0 && parentId != 0) {
     NoneComponent = <NoneData />;
   }
 
@@ -354,7 +421,13 @@ let Folder = () => {
     <>
       <div className="container showFolder">
         <div>
-          <SubNav titleNav="Thư mục" btnTitle="Tạo mới" event={handleNewOpen} />
+          <SubNav
+            titleNav="Thư mục"
+            btnTitle="Tạo mới"
+            event={handleNewOpen}
+            elemNav={elemNav}
+            toFolder={toFolder}
+          />
           {newOpen == true ? (
             <ModalNewFolder
               eventCreateFolder={() => {
@@ -376,8 +449,8 @@ let Folder = () => {
             <ListFolder
               titleName="Tên"
               user="Người tạo"
-              timeCreate="Ngày tạo"
-              size="Ngày sửa đổi"
+              timeUpdate="Ngày sửa đổi"
+              size="Kích thước"
               statusTodo="Tags"
               eventClick={handleClick}
               folders={data}

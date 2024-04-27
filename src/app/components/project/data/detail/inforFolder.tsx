@@ -112,7 +112,7 @@ function inforFolder({
           </div>
         </div>
       </section>
-      <footer className="p-0" id="footerInfoFol">
+      <footer className="p-0 footerInfoFol" id="">
         {isActive ? (
           <div className="comments">
             <div className="add-comment-section active">

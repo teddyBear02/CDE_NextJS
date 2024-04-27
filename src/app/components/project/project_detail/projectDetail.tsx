@@ -1,7 +1,7 @@
 interface Props {
   delete_project: any;
   out_project: any;
-  data_project: any;
+  data_project?: any;
 }
 
 export default function ProjectDetail({

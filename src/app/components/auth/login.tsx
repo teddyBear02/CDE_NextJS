@@ -3,8 +3,11 @@ import Link from "next/link";
 import { login } from "@/service/auth/loginService";
 import { useRouter } from "next/navigation";
 import { useMutation } from "react-query";
+import LoginFailed from "./loginFailed";
+import { ReactNode } from "react";
 let Login = () => {
   const router = useRouter();
+  let loginFailed: ReactNode;
 
   const mutation = useMutation({
     mutationFn: login,
@@ -13,6 +16,10 @@ let Login = () => {
         localStorage.setItem("Token", data?.metadata?.token);
         router.push("/home");
       }
+    },
+    onError: () => {
+      loginFailed = <LoginFailed />;
+      console.log(123);
     },
   });
 
@@ -28,6 +35,7 @@ let Login = () => {
   return (
     <>
       <div className="bgImg">
+        {loginFailed}
         <div className="formLog">
           <h3>Đăng nhập</h3>
           <form onSubmit={handleFormSubmit} method="POST">

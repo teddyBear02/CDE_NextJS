@@ -35,6 +35,17 @@ li {
 #subNav {
   background-color: #f3f3f7 !important;
   margin-bottom: 1rem;
+  .navbar-brand {
+    margin: 0;
+  }
+}
+
+.hoverItemNav {
+  padding: 3px 0;
+  &:hover {
+    background-color: #d2d2d2;
+    cursor: pointer;
+  }
 }
 
 .disable {

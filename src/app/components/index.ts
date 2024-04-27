@@ -28,18 +28,20 @@ export { default as None } from "./common/none";
     export { default as ModalNewFolder } from './project/data/modalNew'
     export { default as ModalCreateFolder } from './project/data/modalNewFolder'
     export { default as DetailFolder } from './project/data/detail/detailFolder' 
-    export { default as ModalDeleteFolder} from './project/data/modalDeleteFolder'
-    export { default as NoneData} from './project/data/noneData'
-    export { default as MoveFolder} from './project/data/detail/moveFolder'
-    export { default as EditFolder} from './project/data/detail/editFolder'
-    export { default as InforFolder} from './project/data/detail/inforFolder'
-    export { default as HistoryFile} from './project/data/detail/historyFile'
+    export { default as ModalDeleteFolder } from './project/data/modalDeleteFolder'
+    export { default as NoneData } from './project/data/noneData'
+    export { default as MoveFolder } from './project/data/detail/moveFolder'
+    export { default as EditFolder } from './project/data/detail/editFolder'
+    export { default as InforFolder } from './project/data/detail/inforFolder'
+    export { default as HistoryFile } from './project/data/detail/historyFile'
     
     //..................Todo Components.....................//
     export { default as TodoList } from "./project/todo/todoList";
     export { default as NoneTodo } from "./project/todo/noneTodo";
-    export { default as ModalNewTodo} from "./project/todo/modalNewTodo"
-    export { default as DetailTodo} from "./project/todo/detailTodo"
+    export { default as ModalNewTodo } from "./project/todo/modalNewTodo"
+    export { default as DetailTodo } from "./project/todo/detailTodo"
+    export { default as EditTodo } from './project/todo/editTodo'
+    export { default as InfoTodo } from './project/todo/infoTodo'
 
     //.................Privacy Components...................//
     export { default as ProjectDetail } from "./project/project_detail/projectDetail";
@@ -48,9 +50,12 @@ export { default as None } from "./common/none";
     export { default as ModalQuitProject} from "./project/project_detail/modalQuitProject"
 
     //..................Teams Components.....................//
-    export { default as ListUser} from "./project/team/listUser"
-    export { default as ModalInvite} from "./project/team/modalInvite"
-    export { default as UserDetail} from './project/team/detailUser'
+    export { default as ListUser } from "./project/team/listUser"
+    export { default as ModalInvite } from "./project/team/modalInvite"
+    export { default as UserDetail } from './project/team/detailUser'
+
+    //...................Activities Components.................//
+    export { default as ListActivities } from './project/activities/listActivities' 
 
 //...................Home Components....................//
 export { default as ModalCreate } from "./home/modalCreate";
@@ -58,6 +63,7 @@ export { default as ListProject } from "./home/listProject";
 
 //...................Login Components....................//
 export { default as LoginComponent } from "./auth/login";
+export { default as LoginFailed} from './auth/loginFailed'
 
 //...................View PDF Component..................//
 export {default as NavPdf} from "./project/viewPdf/navPdf"

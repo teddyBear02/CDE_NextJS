@@ -19,7 +19,7 @@ export const createFolder = async (data: any,token:any) => {
         return data.metadata;
       } else {
         const errorData = await response.json();
-        console.error("Login failed:", errorData);
+        console.error("Failed:", errorData);
       }
     } catch (error) {
       console.error("Lỗi không tới được điểm cuối:", error);
@@ -76,9 +76,9 @@ export const deleteFolder = async (token:any, folder_id:any, project_id:any) =>{
 
 //.....................UPDATE Folder..............................//
 
-export const updateFolder = async (token:any, data:any, folder_id:any) =>{
+export const updateFolder = async (token:any, data:any, folder_id:any,option:any) =>{
   try {
-    const res = await fetch(`${env.BASE_URL}/api/folder/${folder_id}`,{
+    const res = await fetch(`${env.BASE_URL}/api/folder/${folder_id}/${option}`,{
       method: "PUT",
       headers:{
         "Content-Type": "application/json",

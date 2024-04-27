@@ -49,7 +49,6 @@ export default function Register() {
                 id="floatingInput"
                 placeholder=""
                 name="name"
-                value={formData.name}
                 onChange={handleInputChange}
               />
               <label htmlFor="floatingInput">Tên người dùng</label>
@@ -61,7 +60,6 @@ export default function Register() {
                 className="form-control"
                 id="floatingPassword"
                 placeholder="Email"
-                value={formData.email}
                 name="email"
                 onChange={handleInputChange}
               />
@@ -75,7 +73,6 @@ export default function Register() {
                 id="floatingPassword"
                 placeholder="Password"
                 name="password"
-                value={formData.password}
                 onChange={handleInputChange}
               />
               <label htmlFor="floatingPassword">Nhập mật khẩu</label>
@@ -90,8 +87,7 @@ export default function Register() {
                 id="floatingPassword"
                 maxLength={12}
                 placeholder="Số điện thoại"
-                name="NumberPhone"
-                value={formData.phone}
+                name="phone"
                 onChange={handleInputChange}
               />
               <label htmlFor="floatingPassword">Nhập số điện thoại</label>
@@ -100,7 +96,7 @@ export default function Register() {
             <div id="btnValid" className="mb-4">
               <button
                 className="btn btn-primary p-4 pt-2 pb-2"
-                onClick={() => googleRegis()}
+                onClick={resgister}
               >
                 Đăng kí
               </button>

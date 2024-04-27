@@ -6,13 +6,6 @@ const nextConfig = {
 
     webpack: (config) => {
         config.resolve.alias.canvas = false;
-        config.module.rules.push({
-          test: /\.(pdf)$/i,
-          loader: 'file-loader',
-          options: {
-              name: './public/document.pdf'
-          }
-     })
         return config;
     },
 

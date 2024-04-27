@@ -1,6 +1,26 @@
-import { SubNav, None } from "@/app/components";
-
+"use client";
+import { useEffect, useState } from "react";
+import { SubNav, None, ListActivities } from "@/app/components";
+import { getActivities } from "@/service/project/ActivitiesService";
+import { env } from "@/config/varenv";
 export default function Activity() {
+  let arr: any = [1];
+
+  const [listActivity, setListActivity] = useState<any[]>([]);
+  let project_id = localStorage.getItem("project_id");
+
+  const token = env.TOKEN;
+
+  const getAllActive = async () => {
+    const response = await getActivities(token, project_id);
+    setListActivity(response.metadata);
+    console.log(response);
+  };
+
+  useEffect(() => {
+    getAllActive();
+  }, []);
+
   const propsNone = {
     title: "Hiện không có hoạt động nào",
     subTitle: "Hãy thay đổi trong dự án",
@@ -32,7 +52,11 @@ export default function Activity() {
           </div>
 
           <div className="container">
-            <None params={propsNone} />
+            {listActivity.length >= 1 ? (
+              <ListActivities data={listActivity} />
+            ) : (
+              <None params={propsNone} />
+            )}
           </div>
         </div>
       </>

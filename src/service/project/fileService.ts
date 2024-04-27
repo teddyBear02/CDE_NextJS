@@ -4,7 +4,7 @@ import axios from "axios";
 //.......................Upload file....................................//
 export const  FileUpload =  (token : any, formData:any) =>{
     
-    axios
+    return axios
         .post(`${env.BASE_URL}/api/files`, formData, {
             headers: {
             "Content-Type": "multipart/form-data",
@@ -23,9 +23,9 @@ export const  FileUpload =  (token : any, formData:any) =>{
 }
 
 //...............................Update File..............................//
-export const FileUpdate = (token:any,id:any, data:any) =>{
+export const FileUpdate = (token:any,id:any, data:any,option:any) =>{
     axios
-        .put(`${env.BASE_URL}/api/files/${id}`,data, {
+        .put(`${env.BASE_URL}/api/files/${id}/${option}`,data, {
             headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -40,6 +40,24 @@ export const FileUpdate = (token:any,id:any, data:any) =>{
             console.log("Error uploading file: ", error);
         });
 
+}
+
+export const DeleteFile = (token:any,id:any,project_id:any) =>{
+    axios
+        .delete(`${env.BASE_URL}/api/files/${id}/${project_id}`, {
+            headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            },
+        })
+        .then((response) => {
+            console.log("File delete successfully!");
+            return response
+        })
+        .catch((error) => {
+            // Xử lý lỗi
+            console.log("Error uploading file: ", error);
+        });
 }
 
 //.............................. Download File ...................................//

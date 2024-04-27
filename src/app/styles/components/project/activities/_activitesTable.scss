@@ -1,0 +1,63 @@
+.activities-item {
+  box-shadow: 0 0 0.125rem #aeaeb6;
+  margin-bottom: 1rem;
+  padding: 1.5rem;
+  background-color: #fff;
+  .activity {
+    flex: 1 1 auto;
+    min-width: 0;
+    
+    p {
+      margin: 0;
+      text-align: left;
+    }
+    small {
+      text-align: left;
+    }
+  }
+  .activity-type {
+    display: block;
+    color: #005f9e;
+    flex: 0 0 1.5rem;
+    margin-right: 1.75rem;
+    i {
+      font-size: 24px;
+    }
+  }
+  .row-center {
+    align-items: center;
+    display: flex;
+    flex-flow: row nowrap;
+    .avatar {
+      height: 2rem;
+      min-width: 2rem;
+      width: 2rem;
+      border-radius: 50%;
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+      background: #eaeaef;
+      justify-content: center;
+      position: relative;
+    }
+  }
+  .flex-row {
+    flex-direction: row !important;
+    display: flex;
+    flex-flow: row nowrap;
+  }
+
+  .text-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.activity-time {
+  p {
+    margin: 0;
+  }
+  display: flex;
+  justify-content: flex-end;
+}

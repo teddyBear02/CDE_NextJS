@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { use, useState } from "react";
 import {
   SubNav,
   ModalNewTodo,
@@ -8,6 +8,7 @@ import {
   DetailTodo,
 } from "@/app/components";
 import { PostTodo } from "@/service/project/todoService";
+import { PostComment } from "@/service/project/commentService";
 
 export default function Todo() {
   let token: any = localStorage.getItem("Token");
@@ -17,6 +18,23 @@ export default function Todo() {
   const [showModalTodo, setShowModalTodo] = useState(false);
 
   const [showDetail, setShowDetail] = useState(false);
+
+  const [showEdit, setShowEdit] = useState(false);
+
+  const [isActive, setIsActive] = useState(false);
+
+  const handleHideOption = () => {
+    setShowEdit(false);
+    setShowDetail(false);
+  };
+
+  const toggleEditClick = () => {
+    setShowEdit(!showEdit);
+  };
+
+  const toggleClick = () => {
+    setIsActive(!isActive);
+  };
 
   let data: any = [
     {
@@ -33,6 +51,16 @@ export default function Todo() {
 
   const handleCreateTodo = async () => {
     const response = await PostTodo(token, todoEdit);
+  };
+
+  const [comment, setComment] = useState({
+    type: "",
+    another_id: "",
+    content: "",
+  });
+
+  const handleComment = async () => {
+    await PostComment(token, comment);
   };
 
   return (
@@ -88,7 +116,20 @@ export default function Todo() {
       </div>
 
       {showDetail && (
-        <DetailTodo handleHideOption={() => setShowDetail(false)} />
+        <DetailTodo
+          isEdit={showEdit}
+          handleBack={toggleEditClick}
+          saveBtn={""}
+          handleHideOption={handleHideOption}
+          handleToogleEdit={toggleEditClick}
+          isActive={isActive}
+          showCmt={toggleClick}
+          cancelCmt={toggleClick}
+          createCmt={handleComment}
+          onChangeComment={(e: any) => {
+            setComment({ ...comment, content: e.target.value });
+          }}
+        />
       )}
 
       {showModalTodo && (
