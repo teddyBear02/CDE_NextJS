@@ -10,7 +10,13 @@ import {
   ModalDeleteFolder,
   NoneData,
 } from "@/app/components";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, {
+  ReactNode,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
 import {
   createFolder,
   getFolder,
@@ -33,7 +39,7 @@ import { PostComment } from "@/service/project/commentService";
 
 import { env } from "@/config/varenv";
 
-let Folder = () => {
+const Folder = () => {
   // local variable:
 
   let token = env.TOKEN;
@@ -46,17 +52,19 @@ let Folder = () => {
 
   let folder_id_local: any = localStorage.getItem("folder_id");
 
-  let parent_id_to_move: any = localStorage.getItem("parent_id_to_move");
+  let name_folder_local: any = localStorage.getItem("name_folder");
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<any[]>([]); // Store folder's data
 
   const [dataCanMove, setDataCanMove] = useState<any[]>([]);
 
   const [parentId, set_parent_id] = useState<any>("0"); // Store folder's parent id
 
+  const [parent_move_id, set_parent_move_id] = useState<any>("0"); // Store folder's parent id
+
   const [folder_id, set_folder_id] = useState<any>(0); // Store folder's id
 
-  const [nameFolder, setNameFolder] = useState(""); // Store folder's name
+  const [nameFolder, setNameFolder] = useState<any>(""); // Store folder's name
 
   const [newOpen, setNewOpen] = useState(false); // Btn Open setting
 
@@ -67,6 +75,12 @@ let Folder = () => {
   const [option, setOption] = useState<any>();
 
   const [file, setFile] = useState<undefined | File | any>(); // File
+
+  const [display, setDisplay] = useState(""); // search result
+
+  const [listTags, setListTags] = useState<any[]>([]); // Tags của một folder/ file
+
+  const [activeHover, setActiveHover] = useState(false);
 
   // show right bar
 
@@ -91,6 +105,10 @@ let Folder = () => {
     },
   ]);
 
+  // Ref elem:
+
+  const inpTagRef = useRef<HTMLInputElement | any>("");
+
   const handleHideOption = () => {
     setShowOption(false);
     setShowEdit(false);
@@ -113,6 +131,7 @@ let Folder = () => {
   const handleNewOpen = () => {
     setNewOpen(!newOpen);
   };
+  //....................................................//
 
   useEffect(() => {
     let timeout: any;
@@ -127,6 +146,8 @@ let Folder = () => {
     }
     return () => clearTimeout(timeout);
   }, [clickCount]);
+
+  //......................................................................//
 
   const handleClick = (e: React.MouseEvent) => {
     let currValue: any = (e.currentTarget.closest(".hoverList") as HTMLElement)
@@ -152,6 +173,7 @@ let Folder = () => {
         localStorage.setItem("first-version", folder.first_version);
       } else if (folder.id === parseInt(currValue)) {
         localStorage.setItem("parent_id", folder.parent_id);
+        setListTags(folder.tag);
       }
     }
     setClickCount((prevCount) => prevCount + 1);
@@ -166,6 +188,8 @@ let Folder = () => {
     }
   };
 
+  //.......................................................................//
+
   const toFolder = (e: React.MouseEvent) => {
     let idGoTo: any = (e.currentTarget.closest(".hoverItemNav") as HTMLElement)
       ?.id;
@@ -176,8 +200,6 @@ let Folder = () => {
   };
 
   //....................GET folders (Done)..............................//
-
-  // const [tags, setTags] = useState<any[]>([]);
 
   const getFolderData = async () => {
     const res = await getFolder(token, project_id, parentId);
@@ -232,19 +254,122 @@ let Folder = () => {
     }
   };
 
-  //.........................UPDATE Folder...........................//
+  //.........................UPDATE Folder...........................// (Xong thêm tag, rename)
 
-  const [folderEdit, setFolderEdit] = useState({
+  // move data file
+  const [dataMoveFile, setDataMoveFile] = useState({
     name: "",
     parent_id: parent_id,
     project_id: project_id,
   });
 
+  // move data folder
+  const [dataMoveFolder, setDataMoveFolder] = useState({
+    name: "",
+    parent_id: "",
+    project_id: project_id,
+  });
+
+  // edit data folder
+  const [folderEdit, setFolderEdit] = useState({
+    name: name_folder_local,
+    parent_id: parent_id,
+    project_id: project_id,
+  });
+
+  // edit data file
   const [fileEdit, setFileEdit] = useState({
     name: "",
     folder_id: parent_id,
     project_id: project_id,
   });
+
+  // add tag data folder
+
+  const [addTagFolder, setAddTagFolder] = useState({
+    name: name_folder_local,
+    parent_id: parent_id,
+    project_id: project_id,
+    tag: "",
+  });
+
+  //.......................Get all folder can move.......................//
+
+  const getFolderCanMove = () => {
+    GetFolderCanMove(
+      token,
+      type,
+      folder_id_local,
+      parent_move_id,
+      project_id
+    ).then((res: any) => {
+      setDataCanMove(res.data.metadata);
+    });
+  };
+
+  useEffect(() => {
+    getFolderCanMove();
+  }, [parent_move_id, folder_id_local]);
+
+  //..........................Get all tags...............................//
+
+  const [tags, setTags] = useState<any[]>([]); // Lấy tất cả các tags trong dự án
+
+  const [searchResult, setSearchResult] = useState<any[]>([]); // kết quả tìm kiếm khi search
+
+  const getAllTags = async () => {
+    const response = await tagService.getTags(token, project_id);
+    setTags(response);
+  };
+
+  useEffect(() => {
+    getAllTags();
+  }, [project_id]);
+
+  const handleChangeTagInput = () => {
+    const value = inpTagRef.current.value;
+    const result = tags.filter((tag) => tag.name.includes(value));
+    if (value.length >= 1) {
+      setDisplay("show");
+      setSearchResult(result);
+    } else if (value.length == 0) {
+      setDisplay("");
+    }
+  };
+
+  const choseTag = (e: React.MouseEvent) => {
+    let currVal = (e.currentTarget.closest(".search-result") as HTMLElement)
+      ?.id;
+
+    tags.map((tag) => {
+      if (tag.id == currVal) {
+        setListTags([...listTags, tag]);
+      }
+    });
+
+    setOption("3");
+    inpTagRef.current.value = "";
+    setDisplay("");
+  };
+
+  const rejectTag = (e: any) => {
+    let currVal = (e.currentTarget.closest(".chips") as HTMLElement)?.id;
+
+    const indexToRemove = listTags.findIndex(
+      (item: any) => item.id === parseInt(currVal)
+    );
+
+    const newListTags = listTags.filter((tag) => tag.id !== parseInt(currVal));
+
+    setListTags(newListTags);
+
+    setOption("3");
+  };
+
+  useEffect(() => {
+    const tagsId = listTags.map((tag) => tag.id);
+    setAddTagFolder({ ...addTagFolder, tag: `${tagsId.toString()}` });
+  }, [listTags]);
 
   const handleChangeFolder = (e: React.ChangeEvent<HTMLInputElement>) => {
     let currValue: any = e.currentTarget?.closest(".row")?.textContent;
@@ -252,9 +377,6 @@ let Folder = () => {
     if (folderEdit.name != e.target.value && type == "folder") {
       setFolderEdit({ ...folderEdit, name: e.target.value });
       setOption("1");
-    } else if (folderEdit.parent_id != parent_id_to_move && type == "folder") {
-      setFolderEdit({ ...folderEdit, parent_id: parent_id_to_move });
-      setOption("2");
     }
 
     if (folderEdit.name != e.target.value && type == "file") {
@@ -263,21 +385,52 @@ let Folder = () => {
     }
   };
 
+  const goToFolder = (e: React.MouseEvent) => {
+    let currValue: any = (e.currentTarget.parentElement as HTMLElement)?.id;
+    set_parent_move_id(currValue);
+  };
+
+  // click để đi vào bên trong 1 folder can move
+  const handleClickFolderToMove = (e: React.MouseEvent) => {
+    let currValue: any = (e.currentTarget.closest(".itemFolder") as HTMLElement)
+      ?.id;
+
+    if (currValue == parent_move_id) {
+      setActiveHover(true);
+    } else {
+      setActiveHover(false);
+    }
+
+    if (dataMoveFile.parent_id != currValue && type == "folder") {
+      setDataMoveFolder({
+        ...dataMoveFolder,
+        name: nameFolder,
+        parent_id: currValue,
+      });
+      setOption("2");
+    }
+  };
+
   const handleUpdateFolder = async () => {
     // type = file
-    if (type === "file") {
-      const res = FileUpdate(token, folder_id_local, fileEdit, option);
-      const indexChange = data.findIndex(
-        (item: any) => item.id === parseInt(folder_id)
-      );
-      // data.splice(indexChange, 1, res);
-      // setShowEdit(!showEdit);
-      // setShowOption(!showOption);
-      console.table(indexChange);
-    } else {
+    if (type == "file") {
+      switch (option) {
+        case "1":
+          const res = FileUpdate(token, folder_id_local, fileEdit, option);
+          const indexChange = data.findIndex(
+            (item: any) => item.id === parseInt(folder_id)
+          );
+          break;
+        case "2":
+          console.log(2);
+          break;
+        default:
+          break;
+      }
+    } else if (type == "folder") {
       // type = folder
       switch (option) {
-        case 1: // Đổi tên thư mục
+        case "1": // Đổi tên thư mục
           const response1: any = await updateFolder(
             token,
             folderEdit,
@@ -291,10 +444,10 @@ let Folder = () => {
           setShowEdit(!showEdit);
           setShowOption(!showOption);
           break;
-        case 2: // Di chuyển thư mục tới thư mục khác
+        case "2": // Di chuyển thư mục tới thư mục khác
           const response2: any = await updateFolder(
             token,
-            folderEdit,
+            dataMoveFolder,
             folder_id_local,
             option
           );
@@ -302,17 +455,19 @@ let Folder = () => {
             (item: any) => item.id === parseInt(folder_id)
           );
           data.splice(indexMove, 1);
+          setShowMoveFolder(!showMoveFolder);
           setShowOption(!showOption);
           break;
-        case 3: // Thêm tags
+        case "3": // Thêm tags
           const response3: any = await updateFolder(
             token,
-            folderEdit,
+            addTagFolder,
             folder_id_local,
             option
           );
           break;
         default:
+          console.error(new Error());
           break;
       }
     }
@@ -342,36 +497,11 @@ let Folder = () => {
   //   FileUpdate(token, folder_id_local, data);
   // };
 
-  //.......................Get all folder can move.......................//
-
-  const handleGetFolderCanMove = () => {
-    GetFolderCanMove(token, type, folder_id_local, parent_id, project_id).then(
-      (res: any) => {
-        setDataCanMove(res.data.metadata);
-      }
-    );
-  };
-
   //.........................Move Folder/File to another Folder..........................//
-
-  let name_folder_local: any = localStorage.getItem("name_folder");
-
-  const [dataMoveFile, setDataMoveFile] = useState({
-    name: name_folder_local,
-    project_id: project_id,
-    folder_id: parent_id_to_move,
-  });
-
-  const handleClickFolderToMove = (e: React.MouseEvent) => {
-    let currValue: any = (e.currentTarget.closest(".itemFolder") as HTMLElement)
-      ?.id;
-    localStorage.setItem("parent_id_to_move", currValue);
-  };
 
   const handleMoveFolder = async () => {
     if (type === "file") {
       const response = FileUpdate(token, folder_id_local, dataMoveFile, 2);
-      // location.reload();
       console.log(response);
     }
   };
@@ -462,6 +592,7 @@ let Folder = () => {
       {showOption && (
         <DetailFolder
           showEdit={showEdit}
+          rejectTag={rejectTag}
           handleBack={handleBack}
           nameFolder={nameFolder}
           handleToogleEdit={handleToogleEdit}
@@ -471,11 +602,10 @@ let Folder = () => {
           handleChange={handleChangeFolder}
           value={nameFolder}
           handleShowMoveFolder={() => {
-            handleGetFolderCanMove();
             setShowMoveFolder(true);
           }}
           folders={dataCanMove}
-          handleClickMove={handleMoveFolder}
+          handleClickMove={handleUpdateFolder}
           showMoveFolder={showMoveFolder}
           getIdFolerToMove={handleClickFolderToMove}
           isActive={showComment}
@@ -494,6 +624,14 @@ let Folder = () => {
             handleClickGetHistoryFile();
           }}
           dataHistory={dataHistory}
+          tags={listTags}
+          tagLenghtVal={inpTagRef}
+          changNameTag={handleChangeTagInput}
+          display={display}
+          searchResult={searchResult}
+          choseTag={choseTag}
+          goIntoFolder={goToFolder}
+          actveItem={activeHover}
         />
       )}
 
