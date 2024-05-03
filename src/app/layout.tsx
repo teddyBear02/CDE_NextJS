@@ -3,6 +3,7 @@ import GlobalStyle from "./styles/globalStyle";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Providers from "./until/Providers";
+import { useEffect } from "react";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,11 +15,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <Providers>
-      <GlobalStyle>
+      <GlobalStyle>   
         <html lang="en">
-          <body>{children}</body>
+            <body>{children}</body>
         </html>
       </GlobalStyle>
     </Providers>
