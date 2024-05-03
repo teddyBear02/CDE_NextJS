@@ -35,7 +35,7 @@ const projectService = {
       formData.append("name", data.name);
       formData.append("start_date", data.start_date);
       formData.append("note", data.note);
-      // console.log(data);
+
       
       const response = await fetch(`${env.BASE_URL}/api/project`, {
         method: "POST",

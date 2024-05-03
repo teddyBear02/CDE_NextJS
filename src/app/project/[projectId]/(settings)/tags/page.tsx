@@ -164,7 +164,8 @@ export default function Tags() {
     } else {
       setRole(false);
     }
-    console.log(response)
+
+    console.log(response);
   };
 
   useEffect(() => {

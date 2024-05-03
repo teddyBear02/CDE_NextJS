@@ -84,7 +84,7 @@ export const updateFolder = async (token:any, data:any, folder_id:any,option:any
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     })
     if(res.ok){
       const data = await res.json()

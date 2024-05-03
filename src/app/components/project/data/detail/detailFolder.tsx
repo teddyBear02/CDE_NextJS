@@ -29,6 +29,15 @@ interface Props {
   showHistory: any;
   clickShowHistory: any;
   dataHistory: any;
+  tags: any;
+  tagLenghtVal: any;
+  changNameTag: any;
+  display: any;
+  searchResult: any;
+  choseTag: any;
+  rejectTag: any;
+  goIntoFolder: any;
+  actveItem: any;
 }
 let DetailFolder = ({
   showEdit,
@@ -54,17 +63,33 @@ let DetailFolder = ({
   showHistory,
   clickShowHistory,
   dataHistory,
+  tags,
+  tagLenghtVal,
+  changNameTag,
+  display,
+  searchResult,
+  choseTag,
+  rejectTag,
+  goIntoFolder,
+  actveItem,
 }: Props) => {
   return (
     <>
       <div className="right">
         {showEdit ? (
           <EditFolder
+            changeNameTag={changNameTag}
             handleChange={handleChange}
             handleHideOption={handleHideOption}
             handleBack={handleBack}
             value={value}
             saveBtn={saveBtn}
+            tags={tags}
+            tagLenghtVal={tagLenghtVal}
+            display={display}
+            searchResult={searchResult}
+            choseTag={choseTag}
+            rejectTag={rejectTag}
           />
         ) : showMoveFolder ? (
           <MoveFolder
@@ -73,6 +98,8 @@ let DetailFolder = ({
             handleToogleEdit={handleBack}
             getIdFolerToMove={getIdFolerToMove}
             folders={folders}
+            goIntoFolder={goIntoFolder}
+            activeItem={actveItem}
           />
         ) : showHistory ? (
           <HistoryFile

@@ -6,6 +6,8 @@ interface Props {
   handleClickMove: any;
   folders?: any;
   getIdFolerToMove: any;
+  goIntoFolder: any;
+  activeItem: any;
 }
 
 function MoveFolder({
@@ -14,6 +16,8 @@ function MoveFolder({
   handleClickMove,
   folders,
   getIdFolerToMove,
+  goIntoFolder,
+  activeItem,
 }: Props) {
   return (
     <>
@@ -40,19 +44,21 @@ function MoveFolder({
 
           <ul className="list nav">
             {folders.map((folder: any, index: any) => (
-              <div
-                className="itemFolder"
-                key={index}
-                onClick={getIdFolerToMove}
-                id={`${folder.id}`}
-              >
-                <li className="list-item group selectable disabled">
-                  <div className="group-items">
+              <div className={`itemFolder`} key={index}>
+                <li
+                  className={`list-item group selectable disabled ${
+                    activeItem ? `hover-move` : ``
+                  }`}
+                  id={`${folder.id}`}
+                  onClick={getIdFolerToMove}
+                >
+                  <div className="group-items" id={`${folder.id}`}>
                     <i className="bi bi-folder-fill folder-ic"></i>
                     <span className="block">{folder.name}</span>
                     <button
                       className="button icon-circle icon-medium tertiary"
                       aria-label="open folder"
+                      onClick={goIntoFolder}
                     >
                       <i className="bi bi-chevron-right"></i>
                     </button>
