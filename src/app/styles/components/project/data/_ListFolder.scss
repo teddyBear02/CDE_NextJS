@@ -18,4 +18,11 @@ tr {
     white-space: nowrap;
     width: 240px;
   }
+
+  .circle-round {
+    background-color: #ccc;
+    width: fit-content;
+    padding: 4px 12px;
+    border-radius: 50%;
+  }
 }

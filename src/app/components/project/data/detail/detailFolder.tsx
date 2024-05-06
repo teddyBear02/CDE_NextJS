@@ -38,6 +38,8 @@ interface Props {
   rejectTag: any;
   goIntoFolder: any;
   actveItem: any;
+  dataTag: any;
+  isEditComment: any;
 }
 let DetailFolder = ({
   showEdit,
@@ -72,6 +74,8 @@ let DetailFolder = ({
   rejectTag,
   goIntoFolder,
   actveItem,
+  dataTag,
+  isEditComment,
 }: Props) => {
   return (
     <>
@@ -109,6 +113,8 @@ let DetailFolder = ({
           />
         ) : (
           <InforFolder
+            data={dataTag}
+            isEditComment={isEditComment}
             showMoveFolder={handleShowMoveFolder}
             nameFolder={nameFolder}
             handleToogleEdit={handleToogleEdit}

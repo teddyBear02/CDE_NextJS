@@ -46,8 +46,8 @@ function MoveFolder({
             {folders.map((folder: any, index: any) => (
               <div className={`itemFolder`} key={index}>
                 <li
-                  className={`list-item group selectable disabled ${
-                    activeItem ? `hover-move` : ``
+                  className={`list-item group selectable ${
+                    activeItem === folder.id ? `hover-move` : ``
                   }`}
                   id={`${folder.id}`}
                   onClick={getIdFolerToMove}

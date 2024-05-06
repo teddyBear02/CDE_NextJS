@@ -80,7 +80,9 @@ const Folder = () => {
 
   const [listTags, setListTags] = useState<any[]>([]); // Tags của một folder/ file
 
-  const [activeHover, setActiveHover] = useState(false);
+  const [activeHover, setActiveHover] = useState<number>();
+
+  const [isEditComment, setIsEditComment] = useState<boolean>(true);
 
   // show right bar
 
@@ -167,15 +169,21 @@ const Folder = () => {
       localStorage.setItem("type-num", "1");
     }
 
-    for (let folder of data) {
-      if (folder.versions >= 1) {
+    data.map((folder) => {
+      if (e.currentTarget.classList.contains("file")) {
         localStorage.setItem("parent_id", folder.folder_id);
         localStorage.setItem("first-version", folder.first_version);
-      } else if (folder.id === parseInt(currValue)) {
+        setListTags(folder.tag);
+      } else if (
+        e.currentTarget.classList.contains("folder") &&
+        parseInt(folder.id) === parseInt(currValue)
+      ) {
         localStorage.setItem("parent_id", folder.parent_id);
         setListTags(folder.tag);
+        console.log("in this cases", folder.tag);
       }
-    }
+    });
+
     setClickCount((prevCount) => prevCount + 1);
     if (clickCount > 0) {
       for (let folder of data) {
@@ -266,7 +274,7 @@ const Folder = () => {
   // move data folder
   const [dataMoveFolder, setDataMoveFolder] = useState({
     name: "",
-    parent_id: "",
+    parent_id: 0,
     project_id: project_id,
   });
 
@@ -277,18 +285,19 @@ const Folder = () => {
     project_id: project_id,
   });
 
-  // edit data file
-  const [fileEdit, setFileEdit] = useState({
-    name: "",
-    folder_id: parent_id,
-    project_id: project_id,
-  });
-
   // add tag data folder
 
   const [addTagFolder, setAddTagFolder] = useState({
     name: name_folder_local,
     parent_id: parent_id,
+    project_id: project_id,
+    tag: "",
+  });
+
+  // edit data file
+  const [fileEdit, setFileEdit] = useState({
+    name: name_folder_local,
+    folder_id: parent_id,
     project_id: project_id,
     tag: "",
   });
@@ -367,8 +376,12 @@ const Folder = () => {
   };
 
   useEffect(() => {
-    const tagsId = listTags.map((tag) => tag.id);
-    setAddTagFolder({ ...addTagFolder, tag: `${tagsId.toString()}` });
+    const tagsId = listTags?.map((tag) => tag.id);
+    if (type === "folder") {
+      setAddTagFolder({ ...addTagFolder, tag: `${tagsId.toString()}` });
+    } else if (type === "file") {
+      setFileEdit({ ...fileEdit, tag: `${tagsId.toString()}` });
+    }
   }, [listTags]);
 
   const handleChangeFolder = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -392,20 +405,24 @@ const Folder = () => {
 
   // click để đi vào bên trong 1 folder can move
   const handleClickFolderToMove = (e: React.MouseEvent) => {
-    let currValue: any = (e.currentTarget.closest(".itemFolder") as HTMLElement)
+    let currValue: any = (e.currentTarget.closest(".list-item") as HTMLElement)
       ?.id;
 
-    if (currValue == parent_move_id) {
-      setActiveHover(true);
-    } else {
-      setActiveHover(false);
-    }
-
-    if (dataMoveFile.parent_id != currValue && type == "folder") {
+    console.log(currValue);
+    if (
+      parseInt(dataMoveFile.parent_id) !== parseInt(currValue) &&
+      type == "folder"
+    ) {
       setDataMoveFolder({
         ...dataMoveFolder,
         name: nameFolder,
-        parent_id: currValue,
+        parent_id: parseInt(currValue),
+      });
+      setOption("2");
+    } else if (type == "file") {
+      setFileEdit({
+        ...fileEdit,
+        folder_id: currValue,
       });
       setOption("2");
     }
@@ -416,13 +433,41 @@ const Folder = () => {
     if (type == "file") {
       switch (option) {
         case "1":
-          const res = FileUpdate(token, folder_id_local, fileEdit, option);
-          const indexChange = data.findIndex(
+          const responseChangeName = FileUpdate(
+            token,
+            folder_id_local,
+            fileEdit,
+            option
+          ).then((res: any) => console.log(res.data.metadata));
+
+          const indexChangeName = data.findIndex(
             (item: any) => item.id === parseInt(folder_id)
           );
+          data.splice(indexChangeName, 1, responseChangeName);
+          setShowMoveFolder(!showMoveFolder);
+          setShowOption(!showOption);
           break;
         case "2":
-          console.log(2);
+          FileUpdate(token, folder_id_local, fileEdit, option);
+          const indexMove = data.findIndex(
+            (item: any) => item.id === parseInt(folder_id)
+          );
+          data.splice(indexMove, 1);
+          setShowMoveFolder(!showMoveFolder);
+          setShowOption(!showOption);
+          break;
+        case "3":
+          const responseAddTag = FileUpdate(
+            token,
+            folder_id_local,
+            fileEdit,
+            option
+          );
+          const indexAddTag = data.findIndex(
+            (item: any) => item.id === parseInt(folder_id)
+          );
+          data.splice(indexAddTag, 1, responseAddTag);
+          setShowOption(!showOption);
           break;
         default:
           break;
@@ -431,7 +476,7 @@ const Folder = () => {
       // type = folder
       switch (option) {
         case "1": // Đổi tên thư mục
-          const response1: any = await updateFolder(
+          const responseChangeName: any = await updateFolder(
             token,
             folderEdit,
             folder_id_local,
@@ -440,17 +485,12 @@ const Folder = () => {
           const indexChange = data.findIndex(
             (item: any) => item.id === parseInt(folder_id)
           );
-          data.splice(indexChange, 1, response1);
+          data.splice(indexChange, 1, responseChangeName);
           setShowEdit(!showEdit);
           setShowOption(!showOption);
           break;
         case "2": // Di chuyển thư mục tới thư mục khác
-          const response2: any = await updateFolder(
-            token,
-            dataMoveFolder,
-            folder_id_local,
-            option
-          );
+          await updateFolder(token, dataMoveFolder, folder_id_local, option);
           const indexMove = data.findIndex(
             (item: any) => item.id === parseInt(folder_id)
           );
@@ -459,12 +499,17 @@ const Folder = () => {
           setShowOption(!showOption);
           break;
         case "3": // Thêm tags
-          const response3: any = await updateFolder(
+          const responseAddTag: any = await updateFolder(
             token,
             addTagFolder,
             folder_id_local,
             option
           );
+          const indexAddTag = data.findIndex(
+            (item: any) => item.id === parseInt(folder_id)
+          );
+          data.splice(indexAddTag, 1, responseAddTag);
+          setShowOption(!showOption);
           break;
         default:
           console.error(new Error());
@@ -485,17 +530,10 @@ const Folder = () => {
     formData.append("file", file);
     formData.append("folder_id", folder_id_local);
     formData.append("project_id", project_id);
-
     const response: any = await FileUpload(token, formData);
-    console.log(response);
-    setIsUploadFile(!isUploadFile);
+    setData([...data, response.data.metadata]);
+    setIsUploadFile(false);
   }
-
-  //......................Update File...........................//
-
-  // const handleUpdateFile = () => {
-  //   FileUpdate(token, folder_id_local, data);
-  // };
 
   //.........................Move Folder/File to another Folder..........................//
 
@@ -517,7 +555,7 @@ const Folder = () => {
   });
 
   const HandlePostComment = () => {
-    PostComment(token, comment);
+    PostComment(token, comment, project_id);
   };
 
   //............................. Get History File .............................//
@@ -580,7 +618,6 @@ const Folder = () => {
               titleName="Tên"
               user="Người tạo"
               timeUpdate="Ngày sửa đổi"
-              size="Kích thước"
               statusTodo="Tags"
               eventClick={handleClick}
               folders={data}
@@ -591,6 +628,8 @@ const Folder = () => {
 
       {showOption && (
         <DetailFolder
+          isEditComment={isEditComment}
+          dataTag={listTags}
           showEdit={showEdit}
           rejectTag={rejectTag}
           handleBack={handleBack}

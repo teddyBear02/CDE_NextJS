@@ -42,7 +42,7 @@ export default function ListFolder({
               onClick={eventClick}
             >
               <th scope="row" className="icon">
-                {folder.versions >= 1 ? (
+                {folder?.versions >= 1 ? (
                   <i className="bi bi-file-earmark-fill"></i>
                 ) : (
                   <i className="bi bi-folder-fill"></i>
@@ -53,7 +53,13 @@ export default function ListFolder({
               <td>{folder.updated_at.slice(0, 10)}</td>
               <td></td>
               <td></td>
-              <td></td>
+              <td>
+                <div className="circle-round">
+                  {folder.tag.length > 0
+                    ? `+${folder.tag.length}`
+                    : `${folder.tag.length}`}
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>

@@ -9,10 +9,6 @@ export default function ProjectDetail({
   out_project,
   data_project,
 }: Props) {
-  let sizeProject = "35 KB";
-  let totalFolder = 5;
-  let totalFiles = 13;
-  let totalUsers = 6;
   return (
     <>
       <div className="container">
@@ -78,27 +74,27 @@ export default function ProjectDetail({
                 <div className="row">
                   <div className="col">
                     <label htmlFor="" className="titleName-ProjectDetail">
-                      Kích thước
+                      Hoạt động
                     </label>
-                    <p>{sizeProject}</p>
+                    <p>{data_project.number_activities}</p>
                   </div>
                   <div className="col">
                     <label htmlFor="" className="titleName-ProjectDetail">
-                      Folder
+                      Folders
                     </label>
-                    <p>{totalFolder}</p>
+                    <p>{data_project.number_folders}</p>
                   </div>
                   <div className="col">
                     <label htmlFor="" className="titleName-ProjectDetail">
                       Files
                     </label>
-                    <p>{totalFiles}</p>
+                    <p>{data_project.number_files}</p>
                   </div>
                   <div className="col">
                     <label htmlFor="" className="titleName-ProjectDetail">
                       Người dùng
                     </label>
-                    <p>{totalUsers}</p>
+                    <p>{data_project.number_users}</p>
                   </div>
                 </div>
               </div>

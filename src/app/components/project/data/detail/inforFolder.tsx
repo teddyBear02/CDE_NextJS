@@ -13,6 +13,8 @@ interface Props {
   onChangeComment: any;
   downloadFile: any;
   clickShowHistory: any;
+  data: any;
+  isEditComment: any;
 }
 
 function inforFolder({
@@ -28,6 +30,8 @@ function inforFolder({
   onChangeComment,
   downloadFile,
   clickShowHistory,
+  data,
+  isEditComment,
 }: Props) {
   return (
     <>
@@ -96,6 +100,24 @@ function inforFolder({
               </div>
             </div>
           </div>
+          {/* Hiển thị các tags */}
+          {data.length > 0 ? (
+            <div className="sub-section">
+              <div className="section-header">
+                <h5>Tags</h5>
+              </div>
+              <div className="section-detail">
+                <ul className="flex-grow-wrap">
+                  {data?.map((tag: any) => (
+                    <li className="chips non-editable">{tag.name}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+
           <div className="sub-section">
             <div className="section-header group">
               <h5>Quyền truy cập</h5>
@@ -108,6 +130,72 @@ function inforFolder({
                 <label htmlFor="">Quyền truy cập thành viên dự án</label>
                 <div className="value mb-1">Toàn quyền truy cập</div>
               </div>
+            </div>
+          </div>
+          {/* Hiển thị các comments */}
+          <div className="sub-section">
+            <div className="section-header">
+              <h5>Comment</h5>
+            </div>
+
+            <div className="setion-detail comment-list">
+              <ul className="list px-3">
+                <li className="list-item ">
+                  <div className="group-items px-0">
+                    <div className="mr-1 avatar small">
+                      <img
+                        src="data:application/json;base64,eyJtZXNzYWdlIjoiRG93bmxvYWQgRmFpbGVkIiwiZXJyb3Jjb2RlIjoiRE9XTkxPQURfRkFJTEVEIn0="
+                        className=""
+                      />
+                    </div>
+                    <div className="block">
+                      <div className="text-ellipsis">
+                        <a className="link-secondary">
+                          Nguyễn Thị Yến Nhi 0136 gmail.com
+                        </a>
+                      </div>
+                      <div className="text-ellipsis">
+                        <small className="text-meta">May 05, 2024</small>
+                      </div>
+                    </div>
+                    <div className="dropdown-pane-container connect-dropdown-menu m-width-0">
+                      <button
+                        className="dropdownpane-link button icon-medium tertiary icon-cirlce"
+                        title="More options"
+                        data-cy="ddMenuIcon"
+                      >
+                        <i className="bi bi-three-dots-vertical"></i>
+                      </button>
+                      {isEditComment ? (
+                        <div className="dropdown-pane w-auto right">
+                          <ul className="dropdown-list">
+                            <li
+                              value="Edit"
+                              className="list-item"
+                              data-cy="Edit"
+                            >
+                              Edit
+                            </li>
+                            <li
+                              value="Delete"
+                              className="list-item"
+                              data-cy="Delete"
+                            >
+                              Delete
+                            </li>
+                          </ul>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
+                  </div>
+                  <div className="mt-1">
+                    <p>testssts</p>
+                    {/* <textarea name="" id=""></textarea> */}
+                  </div>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

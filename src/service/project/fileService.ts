@@ -23,18 +23,15 @@ export const  FileUpload =  (token : any, formData:any) =>{
 }
 
 //...............................Update File..............................//
-export const FileUpdate = (token:any,id:any, data:any,option:any) =>{
-    axios
+export const FileUpdate = async (token:any,id:any, data:any,option:any) =>{
+    return await axios
         .put(`${env.BASE_URL}/api/files/${id}/${option}`,data, {
             headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
             },
         })
-        .then((response) => {
-            console.log("File update successfully!");
-            return response
-        })
+        
         .catch((error) => {
             // Xử lý lỗi
             console.log("Error uploading file: ", error);
