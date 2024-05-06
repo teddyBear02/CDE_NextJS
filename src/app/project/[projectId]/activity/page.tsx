@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { SubNav, None, ListActivities } from "@/app/components";
+import { None, ListActivities } from "@/app/components";
 import {
   getActivities,
   getUserActivities,
@@ -22,13 +22,12 @@ const activityMapping = {
 };
 
 export default function Activity() {
-  let arr: any = [1];
-
   const [listActivity, setListActivity] = useState<any[]>([]);
   const [listUserActivity, setListUserActivity] = useState<any[]>([]);
   const [searchTermUser, setSearchTermUser] = useState("");
   const [checkedUsers, setCheckedUsers] = useState([]);
   const [selectedCheckboxDate, setSelectedCheckboxDate] = useState<string>("");
+  const [exportExcel, setExportExcel] = useState(false);
   const [searchDate, setSearchDate] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -57,23 +56,20 @@ export default function Activity() {
     team: false,
     todo: false,
   });
-  const handleCheckboxActivityChange = (event) => {
-    const { name, checked } = event.target;
+  const handleCheckboxActivityChange = (name: string) => {
     setActivity((prevState) => ({
       ...prevState,
-      [name]: checked,
+      [name]: !prevState[name],
     }));
   };
   const handleChangeSearchUser = (event) => {
     setSearchTermUser(event.target.value);
   };
-
-  const handleCheckboxUserChange = (event) => {
-    const userId = parseInt(event.target.name);
-    if (event.target.checked) {
-      setCheckedUsers([...checkedUsers, userId]);
-    } else {
+  const handleCheckboxUserChange = (userId) => {
+    if (checkedUsers.includes(userId)) {
       setCheckedUsers(checkedUsers.filter((id) => id !== userId));
+    } else {
+      setCheckedUsers([...checkedUsers, userId]);
     }
   };
 
@@ -91,16 +87,11 @@ export default function Activity() {
     }
     const queryString = queryStringParams.join(",");
     let params = "";
-    if (checkedUsers.length > 0) {
-      const userIds = checkedUsers.join(","); 
-      params += `&user_id=${userIds}`;
-    }
     if (
       searchDate.startDate &&
       searchDate.endDate &&
       selectedCheckboxDate !== ""
     ) {
-      console.log(searchDate.startDate, searchDate.endDate);
       const startDateString = encodeURIComponent(
         searchDate.startDate.toISOString()
       );
@@ -109,9 +100,21 @@ export default function Activity() {
       );
       params = `&start_date=${startDateString}&finish_date=${endDateString}`;
     }
+    if (checkedUsers.length > 0) {
+      const userIds = checkedUsers.join(",");
+      params += `&user_id=${userIds}`;
+    }
     params += queryString ? `&type=${queryString}` : "";
+    if (!exportExcel) {
       const response = await getActivities(token, project_id, params);
-      setListActivity(response.metadata);   
+      setListActivity(response.metadata);
+    } else {
+      params += "&export=1";
+      const response = await getActivities(token, project_id, params);
+      const linkExport = response.metadata;
+      setExportExcel(false)
+      window.open(linkExport, "_blank");
+    }
   };
   const getUserActive = async () => {
     const response = await getUserActivities(token, project_id);
@@ -154,89 +157,197 @@ export default function Activity() {
         : {}),
     }));
   };
-
+  const handleReset = () => {
+    setActivity({
+      project: false,
+      file: false,
+      folder: false,
+      comment: false,
+      tag: false,
+      team: false,
+      todo: false,
+    });
+    setCheckedUsers([]);
+    setSelectedCheckboxDate("");
+  };
+  const handleExportExcel = () => {
+    if (!exportExcel) {
+      setExportExcel(true);
+    }
+  };
   useEffect(() => {
     getUserActive();
   }, []);
   useEffect(() => {
     getAllActive();
-    console.log("All active");
-  }, [activity, selectedCheckboxDate, checkedUsers]);
+  }, [activity, selectedCheckboxDate, exportExcel]);
 
   const debouncedHandleChange = debounce((term) => {
     console.log(term);
   }, 500);
 
-  const handleChangeValueSearchUser = (event) => {
-    const term = event.target.value;
-    setSearchTermUser(term);
-    debouncedHandleChange(searchTermUser);
-  };
+  // const handleChangeValueSearchUser = (event) => {
+  //   const term = event.target.value;
+  //   setSearchTermUser(term);
+  //   debouncedHandleChange(searchTermUser);
+  // };
   const propsNone = {
     title: "Hiện không có hoạt động nào",
     subTitle: "Hãy thay đổi trong dự án",
   };
   return (
     <div className="container showFolder">
-      <SubNav titleNav="Hoạt động" btnTitle="Xuất ra PDF" />
-      <div className="toolbar-section">
-        <div className="filtersWrapper">
-          <div className="filtersContianer">
+      <div
+        aria-disabled={exportExcel === false}
+        onClick={() => setExportExcel(true)}
+        className="px-2"
+        style={{ 
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%'
+         }}
+      >
+      <div style={{fontSize: '30px' }}>Hoạt động</div>
+      <div
+        aria-disabled={exportExcel === false}
+        onClick={() => setExportExcel(true)}
+      >
+        <Button
+          variant="success"
+          onClick={handleExportExcel}
+          disabled={exportExcel}
+        >
+          Xuất Excel
+        </Button>
+      </div>
+      </div>
+      <div style={{
+        display: "flex",
+        width: '100%',
+        alignItems: 'center'
+       }} 
+       className=" px-2">
             <CustomDropdown label="Activity Type">
-              <Form.Check
-                style={{ marginLeft: "2px" }}
-                type="checkbox"
-                label="Dự án"
-                name="project"
-                checked={activity.project}
-                onChange={handleCheckboxActivityChange}
-              />
-              <Form.Check
-                style={{ marginLeft: "2px" }}
-                type="checkbox"
-                label="Tệp"
-                name="file"
-                checked={activity.file}
-                onChange={handleCheckboxActivityChange}
-              />
-              <Form.Check
-                type="checkbox"
-                label="Thư mục"
-                name="folder"
-                checked={activity.folder}
-                onChange={handleCheckboxActivityChange}
-              />
-              <Form.Check
-                style={{ marginLeft: "2px" }}
-                type="checkbox"
-                label="Bình luận"
-                name="comment"
-                checked={activity.comment}
-                onChange={handleCheckboxActivityChange}
-              />
-              <Form.Check
-                style={{ marginLeft: "2px" }}
-                type="checkbox"
-                label="Tag"
-                name="tag"
-                checked={activity.tag}
-                onChange={handleCheckboxActivityChange}
-              />
-              <Form.Check
-                style={{ marginLeft: "2px" }}
-                type="checkbox"
-                label="Đội nhóm"
-                name="team"
-                checked={activity.team}
-                onChange={handleCheckboxActivityChange}
-              />
-              <Form.Check
-                type="checkbox"
-                label="Cần làm"
-                name="todo"
-                checked={activity.todo}
-                onChange={handleCheckboxActivityChange}
-              />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCheckboxActivityChange("project")}
+              >
+                <Form.Check
+                  style={{ marginLeft: "2px" }}
+                  type="checkbox"
+                  name="project"
+                  checked={activity.project}
+                />
+                <div style={{ textAlign: "left", width: "70%" }}>Dự án</div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCheckboxActivityChange("file")}
+              >
+                <Form.Check
+                  style={{ marginLeft: "2px" }}
+                  type="checkbox"
+                  name="file"
+                  checked={activity.file}
+                />
+                <div style={{ textAlign: "left", width: "70%" }}>Tệp</div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCheckboxActivityChange("folder")}
+              >
+                <Form.Check
+                  style={{ marginLeft: "2px" }}
+                  type="checkbox"
+                  name="folder"
+                  checked={activity.folder}
+                />
+                <div style={{ textAlign: "left", width: "70%" }}>Thư mục</div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCheckboxActivityChange("comment")}
+              >
+                <Form.Check
+                  style={{ marginLeft: "2px" }}
+                  type="checkbox"
+                  name="comment"
+                  checked={activity.comment}
+                />
+                <div style={{ textAlign: "left", width: "70%" }}>Bình luận</div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCheckboxActivityChange("tag")}
+              >
+                <Form.Check
+                  style={{ marginLeft: "2px" }}
+                  type="checkbox"
+                  name="tag"
+                  checked={activity.tag}
+                />
+                <div style={{ textAlign: "left", width: "70%" }}>Nhãn dán</div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCheckboxActivityChange("team")}
+              >
+                <Form.Check
+                  style={{ marginLeft: "2px" }}
+                  type="checkbox"
+                  name="team"
+                  checked={activity.team}
+                />
+                <div style={{ textAlign: "left", width: "70%" }}>Đội nhóm</div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCheckboxActivityChange("todo")}
+              >
+                <Form.Check
+                  style={{ marginLeft: "2px" }}
+                  type="checkbox"
+                  name="todo"
+                  checked={activity.todo}
+                />
+                <div style={{ textAlign: "left", width: "70%" }}>Cần làm</div>
+              </div>
             </CustomDropdown>
             <CustomDropdown label="Groups">
               <Form>
@@ -256,14 +367,16 @@ export default function Activity() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    cursor: "pointer",
                   }}
+                  onClick={() => handleCheckboxUserChange(item.user.id)}
                 >
                   <Form.Check
                     type="checkbox"
                     className="mx-2"
                     name={item.user.id.toString()}
-                    checked={checkedUsers.includes(item?.user?.id)}
-                    onChange={handleCheckboxUserChange}
+                    checked={checkedUsers.includes(item.user.id)}
+                    onChange={(e) => e.stopPropagation()}
                   />
                   <div style={{ width: "90%", textAlign: "left" }}>
                     <div>{item.user.name}</div>
@@ -439,11 +552,22 @@ export default function Activity() {
                 </div>
               </div>
             </CustomDropdown>
-          </div>
-        </div>
+            <div
+              onClick={() => {
+                handleReset();
+              }}
+              className="my-2 mx-2"
+              style={{
+                color: "#0099FF",
+                cursor: "pointer",
+                fontSize: "18px",
+              }}
+            >
+              Reset
+            </div>
       </div>
 
-      <div className="container">
+      <div style={{overflowY: 'scroll', height: '500px' }}>
         {listActivity.length >= 1 ? (
           <ListActivities data={listActivity} />
         ) : (

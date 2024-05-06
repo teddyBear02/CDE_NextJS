@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "react-bootstrap";
 
 interface Props {
   closeModal: any;
@@ -6,6 +7,7 @@ interface Props {
   handleInputStart: any;
   handleInputEnd: any;
   createTodo: any;
+  isCallingApi: boolean
 }
 
 function ModalNewTodo({
@@ -14,6 +16,7 @@ function ModalNewTodo({
   handleInputStart,
   handleInputEnd,
   createTodo,
+  isCallingApi
 }: Props) {
   return (
     <>
@@ -55,9 +58,9 @@ function ModalNewTodo({
               <button className="cancel" onClick={closeModal}>
                 Hủy
               </button>
-              <button className="create" type="submit" onClick={createTodo}>
+              <Button className="create" disabled={isCallingApi} type="submit" onClick={createTodo}>
                 Tạo mới
-              </button>
+              </Button>
             </div>
           </div>
         </div>

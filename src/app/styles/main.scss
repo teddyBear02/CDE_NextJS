@@ -49,3 +49,33 @@
 
 //...............View PDF..................//
 @import "./components/project/data/ViewPDF";
+
+//...............util style..................//
+
+.dropdown {
+    z-index: 10;
+    transition: box-shadow 0.3s ease; 
+}
+.dropdown:hover  {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2); 
+}
+.scrollable {
+    overflow-y: scroll; /* Hiển thị thanh cuộn dọc ngay cả khi không cần */
+    scrollbar-width: none; /* Ẩn thanh cuộn mặc định của trình duyệt Firefox */
+    -ms-overflow-style: none; /* Ẩn thanh cuộn mặc định của trình duyệt Edge và IE */
+  }
+  
+.scrollable::-webkit-scrollbar {
+    display: none; /* Ẩn thanh cuộn mặc định của trình duyệt Chrome và Safari */
+}
+.table-wrapper table {
+    table-layout: fixed;
+  }
+  
+  .table-wrapper td,
+  .table-wrapper th {
+    width: auto;
+    white-space: nowrap; /* Ngăn các nội dung quá dài làm thay đổi kích thước cột */
+    overflow: hidden; /* Ẩn nội dung vượt ra khỏi cột */
+    text-overflow: ellipsis; /* Hiển thị dấu chấm (...) nếu nội dung vượt quá */
+  }
