@@ -34,6 +34,7 @@ export { default as None } from "./common/none";
     export { default as EditFolder } from './project/data/detail/editFolder'
     export { default as InforFolder } from './project/data/detail/inforFolder'
     export { default as HistoryFile } from './project/data/detail/historyFile'
+    export { default as ModalDeleteComment} from './project/data/modalDeleteComment'
     
     //..................Todo Components.....................//
     export { default as TodoList } from "./project/todo/todoList";

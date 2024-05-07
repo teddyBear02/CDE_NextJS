@@ -1,4 +1,5 @@
 import React from "react";
+import { formatDate } from "@/app/until/Helper";
 
 interface Props {
   nameFolder: any;
@@ -15,6 +16,17 @@ interface Props {
   clickShowHistory: any;
   data: any;
   isEditComment: any;
+  dropdownRef: any;
+  toggleDropdown: any;
+  listComment: any;
+  btnDropRef: any;
+  handleShowModalComment: any;
+  isOpenEditComment: any;
+  handleShowEditCmt: any;
+  handleSaveEditCmt: any;
+  onChangeInputComment: any;
+  handleCancelEdit: any;
+  valueComment: any;
 }
 
 function inforFolder({
@@ -32,6 +44,18 @@ function inforFolder({
   clickShowHistory,
   data,
   isEditComment,
+  dropdownRef,
+  toggleDropdown,
+  listComment,
+  btnDropRef,
+  handleShowModalComment,
+  isOpenEditComment,
+  handleShowEditCmt,
+  handleSaveEditCmt,
+  onChangeInputComment,
+  handleCancelEdit,
+
+  valueComment,
 }: Props) {
   return (
     <>
@@ -108,8 +132,10 @@ function inforFolder({
               </div>
               <div className="section-detail">
                 <ul className="flex-grow-wrap">
-                  {data?.map((tag: any) => (
-                    <li className="chips non-editable">{tag.name}</li>
+                  {data?.map((tag: any, index: any) => (
+                    <li className="chips non-editable" key={index}>
+                      {tag.name}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -133,71 +159,117 @@ function inforFolder({
             </div>
           </div>
           {/* Hiển thị các comments */}
-          <div className="sub-section">
-            <div className="section-header">
-              <h5>Comment</h5>
-            </div>
+          {listComment.length > 0 ? (
+            <div className="sub-section">
+              <div className="section-header">
+                <h5>Comment</h5>
+              </div>
 
-            <div className="setion-detail comment-list">
-              <ul className="list px-3">
-                <li className="list-item ">
-                  <div className="group-items px-0">
-                    <div className="mr-1 avatar small">
-                      <img
-                        src="data:application/json;base64,eyJtZXNzYWdlIjoiRG93bmxvYWQgRmFpbGVkIiwiZXJyb3Jjb2RlIjoiRE9XTkxPQURfRkFJTEVEIn0="
-                        className=""
-                      />
-                    </div>
-                    <div className="block">
-                      <div className="text-ellipsis">
-                        <a className="link-secondary">
-                          Nguyễn Thị Yến Nhi 0136 gmail.com
-                        </a>
-                      </div>
-                      <div className="text-ellipsis">
-                        <small className="text-meta">May 05, 2024</small>
-                      </div>
-                    </div>
-                    <div className="dropdown-pane-container connect-dropdown-menu m-width-0">
-                      <button
-                        className="dropdownpane-link button icon-medium tertiary icon-cirlce"
-                        title="More options"
-                        data-cy="ddMenuIcon"
-                      >
-                        <i className="bi bi-three-dots-vertical"></i>
-                      </button>
-                      {isEditComment ? (
-                        <div className="dropdown-pane w-auto right">
-                          <ul className="dropdown-list">
-                            <li
-                              value="Edit"
-                              className="list-item"
-                              data-cy="Edit"
-                            >
-                              Edit
-                            </li>
-                            <li
-                              value="Delete"
-                              className="list-item"
-                              data-cy="Delete"
-                            >
-                              Delete
-                            </li>
-                          </ul>
+              <div className="setion-detail comment-list">
+                <ul className="list">
+                  {listComment.map((item: any, index: any) => (
+                    <li
+                      className="list-item px-3"
+                      key={index}
+                      id={`${item.id}`}
+                    >
+                      <div className="group-items px-0">
+                        <div className="mr-1 avatar small">
+                          <img
+                            src="data:application/json;base64,eyJtZXNzYWdlIjoiRG93bmxvYWQgRmFpbGVkIiwiZXJyb3Jjb2RlIjoiRE9XTkxPQURfRkFJTEVEIn0="
+                            className=""
+                          />
                         </div>
-                      ) : (
-                        <></>
-                      )}
-                    </div>
-                  </div>
-                  <div className="mt-1">
-                    <p>testssts</p>
-                    {/* <textarea name="" id=""></textarea> */}
-                  </div>
-                </li>
-              </ul>
+                        <div className="block">
+                          <div className="text-ellipsis">
+                            <a className="link-secondary">{item.user.email}</a>
+                          </div>
+                          <div className="text-ellipsis">
+                            <small className="text-meta">
+                              {formatDate(item.created_at)}
+                            </small>
+                          </div>
+                        </div>
+                        <div
+                          className="dropdown-pane-container connect-dropdown-menu m-width-0"
+                          ref={dropdownRef}
+                        >
+                          <button
+                            className="dropdownpane-link button icon-medium tertiary icon-cirlce"
+                            title="More options"
+                            data-cy="ddMenuIcon"
+                            onClick={toggleDropdown}
+                          >
+                            <i className="bi bi-three-dots-vertical"></i>
+                          </button>
+
+                          <div
+                            className={`dropdown-pane w-auto ${
+                              isEditComment === item.id
+                                ? `active-edit-comment`
+                                : ``
+                            }`}
+                            ref={btnDropRef}
+                          >
+                            <ul className="dropdown-list">
+                              <li
+                                value="Edit"
+                                data-cy="Edit"
+                                onClick={handleShowEditCmt}
+                              >
+                                Edit
+                              </li>
+                              <li
+                                value="Delete"
+                                data-cy="Delete"
+                                onClick={handleShowModalComment}
+                              >
+                                Delete
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-1">
+                        <p className="content">{item.content}</p>
+
+                        <div
+                          className={`edit-comment ${
+                            isOpenEditComment === item.id
+                              ? `is-active-comment`
+                              : ``
+                          }`}
+                        >
+                          <textarea
+                            name=""
+                            id=""
+                            onChange={onChangeInputComment}
+                            value={valueComment}
+                          ></textarea>
+                          <div className="btns-group">
+                            <button
+                              onClick={handleCancelEdit}
+                              className="cancelEditComment"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={handleSaveEditCmt}
+                              className="saveEditComment"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
+          ) : (
+            <></>
+          )}
         </div>
       </section>
       <footer className="p-0 footerInfoFol" id="">

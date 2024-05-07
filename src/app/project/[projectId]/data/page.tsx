@@ -9,14 +9,9 @@ import {
   DetailFolder,
   ModalDeleteFolder,
   NoneData,
+  ModalDeleteComment,
 } from "@/app/components";
-import React, {
-  ReactNode,
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-} from "react";
+import React, { ReactNode, useEffect, useState, useRef } from "react";
 import {
   createFolder,
   getFolder,
@@ -35,24 +30,33 @@ import {
   DeleteFile,
 } from "@/service/project/fileService";
 
-import { PostComment } from "@/service/project/commentService";
+import {
+  PostComment,
+  GetComment,
+  DeleteComment,
+  UpdateComment,
+} from "@/service/project/commentService";
 
 import { env } from "@/config/varenv";
 
 const Folder = () => {
   // local variable:
 
-  let token = env.TOKEN;
+  const token: any | string = env.TOKEN;
 
-  let project_id: any = localStorage.getItem("project_id");
+  const project_id: any = localStorage.getItem("project_id");
 
-  let parent_id: any = localStorage.getItem("parent_id");
+  const parent_id: any = localStorage.getItem("parent_id");
 
-  let type = localStorage.getItem("type");
+  const type = localStorage.getItem("type");
 
-  let folder_id_local: any = localStorage.getItem("folder_id");
+  const folder_id_local: any = localStorage.getItem("folder_id");
 
-  let name_folder_local: any = localStorage.getItem("name_folder");
+  const name_folder_local: any = localStorage.getItem("name_folder");
+
+  const idComment: any = localStorage.getItem("idComment");
+
+  const type_num: any = localStorage.getItem("type-num");
 
   const [data, setData] = useState<any[]>([]); // Store folder's data
 
@@ -72,7 +76,7 @@ const Folder = () => {
 
   const [isUploadFile, setIsUploadFile] = useState(false); // Modal upload file /folder
 
-  const [option, setOption] = useState<any>();
+  const [option, setOption] = useState<any>(); // 1, 2, 3
 
   const [file, setFile] = useState<undefined | File | any>(); // File
 
@@ -82,7 +86,19 @@ const Folder = () => {
 
   const [activeHover, setActiveHover] = useState<number>();
 
-  const [isEditComment, setIsEditComment] = useState<boolean>(true);
+  const [isEditComment, setIsEditComment] = useState(0); // đang edit hay không
+
+  const [listComments, setListComments] = useState<any[]>([]); // chứa danh sách comments
+
+  const [isOpenEditComment, setIsOpenEditComment] = useState<any>(false); // mở ô text để edit
+
+  const [isShowModalComment, setIsShowModalComment] = useState<boolean>(false); // mở edit / delete
+
+  const [valueCommemt, setValueComment] = useState<any>("");
+
+  const [parentIdToEdit, setParentIdToEdit] = useState<any>(0);
+
+  const [nameToEdit, setNameToEdit] = useState<any>("");
 
   // show right bar
 
@@ -110,6 +126,50 @@ const Folder = () => {
   // Ref elem:
 
   const inpTagRef = useRef<HTMLInputElement | any>("");
+
+  const dropdownRef = useRef<any>(null);
+
+  const btnDropRef = useRef<any>(null);
+
+  // useEffect(() => {
+  //   function handleClickOutside(e: MouseEvent) {
+  //     if (
+  //       dropdownRef.current &&
+  //       !dropdownRef.current.contains(e.target as Node)
+  //     ) {
+  //       setIsEditComment(0);
+  //     }
+  //   }
+
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
+
+  const toggleDropdown = (e: React.MouseEvent) => {
+    const currVal = (e.currentTarget.closest(".list-item") as HTMLElement)?.id;
+    localStorage.setItem("idComment", currVal);
+    setIsEditComment(parseInt(currVal));
+  };
+
+  const toggleModalDeleteComment = () => {
+    setIsShowModalComment(!isShowModalComment);
+    setIsEditComment(0);
+  };
+
+  const handleModalEditComment = (e: React.MouseEvent) => {
+    const value = (e.currentTarget.closest(".list-item") as HTMLElement).id;
+    listComments.filter((comment) => {
+      comment.id === parseInt(value) ? setValueComment(comment.content) : null;
+    });
+    setIsOpenEditComment(parseInt(value));
+    setIsEditComment(0);
+  };
+
+  const handleCancelEditComment = () => {
+    setIsOpenEditComment(0);
+  };
 
   const handleHideOption = () => {
     setShowOption(false);
@@ -158,6 +218,7 @@ const Folder = () => {
       e.currentTarget?.querySelector(".nameFol")?.textContent;
     localStorage.setItem("folder_id", currValue);
     localStorage.setItem("name_folder", name_folder);
+
     setNameFolder(name_folder);
     set_folder_id(currValue);
 
@@ -179,8 +240,9 @@ const Folder = () => {
         parseInt(folder.id) === parseInt(currValue)
       ) {
         localStorage.setItem("parent_id", folder.parent_id);
+        setNameToEdit(name_folder);
+        setParentIdToEdit(folder.parent_id);
         setListTags(folder.tag);
-        console.log("in this cases", folder.tag);
       }
     });
 
@@ -196,6 +258,8 @@ const Folder = () => {
     }
   };
 
+  console.log(nameToEdit);
+
   //.......................................................................//
 
   const toFolder = (e: React.MouseEvent) => {
@@ -205,6 +269,106 @@ const Folder = () => {
     setDataFolder({ ...dataFolder, parent_id: idGoTo });
     set_parent_id(idGoTo);
     elemNav.splice(indexItem + 1, elemNav.length - indexItem);
+  };
+
+  //......................GET Comment...................................//
+
+  const getComment = async () => {
+    if (type_num === "0") {
+      await GetComment(token, 0, folder_id).then((res: any) =>
+        setListComments(res.data.metadata)
+      );
+    } else if (type_num === "1") {
+      await GetComment(token, 1, folder_id).then((res: any) =>
+        setListComments(res.data.metadata)
+      );
+    }
+  };
+
+  useEffect(() => {
+    getComment();
+  }, [folder_id]);
+
+  //...........................POST Comment...............................//
+
+  const [comment, setComment] = useState({
+    type: type_num,
+    another_id: folder_id_local,
+    content: "",
+  });
+
+  const handleOnchangeComment = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (type_num === "0") {
+      setComment({
+        ...comment,
+        type: 0,
+        content: e.currentTarget.value,
+      });
+    } else {
+      setComment({
+        ...comment,
+        type: 1,
+        content: e.currentTarget.value,
+      });
+    }
+  };
+
+  const HandlePostComment = async () => {
+    await PostComment(token, comment, project_id).then((res: any) =>
+      setListComments([res.data.metadata, ...listComments])
+    );
+
+    setShowComment(false);
+  };
+
+  //............................DELETE Comment...............................//
+
+  const HandleDeleteComment = async () => {
+    await DeleteComment(parseInt(idComment), project_id, token);
+
+    const indexToRemove = listComments.findIndex(
+      (item: any) => item.id === parseInt(idComment)
+    );
+
+    listComments.splice(indexToRemove, 1);
+
+    setIsShowModalComment(false);
+  };
+
+  //............................UPDATE Comment...............................//
+
+  const handleOnChangeComment = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const currentVal: any = e.currentTarget.closest(".content")?.textContent;
+    setValueComment(currentVal);
+    if (type_num === "0") {
+      setComment({
+        ...comment,
+        type: 0,
+        content: e.currentTarget.value,
+      });
+    } else if (type_num === "1") {
+      setComment({
+        ...comment,
+        type: 1,
+        content: e.currentTarget.value,
+      });
+    }
+  };
+
+  const HandleUpdateComment = async () => {
+    const res = await UpdateComment(idComment, project_id, token, comment).then(
+      (res: any) => res.data.metadata
+    );
+
+    const indexChange = listComments.findIndex(
+      (item: any) => item.id === parseInt(idComment)
+    );
+
+    if (indexChange != -1) {
+      listComments.splice(indexChange, 1, res);
+    }
+    setValueComment("");
+    setIsOpenEditComment(false);
   };
 
   //....................GET folders (Done)..............................//
@@ -220,7 +384,7 @@ const Folder = () => {
   }, [parentId]);
 
   //......................POST folder (done)..............................//
-  //còn bị conflict back về folder cũ - chưa set lại đc parent_id
+  //còn bị conflict back về folder cũ - chưa set lại đc parent_id (test lại)
 
   const [dataFolder, setDataFolder] = useState({
     name: "",
@@ -230,7 +394,7 @@ const Folder = () => {
 
   const handleCreateFolder = async () => {
     const response = await createFolder(dataFolder, token);
-    setData(() => [...data, response]);
+    setData(() => [response, ...data]);
     setIsOpenCreateFolder(false);
   };
 
@@ -288,7 +452,7 @@ const Folder = () => {
   // add tag data folder
 
   const [addTagFolder, setAddTagFolder] = useState({
-    name: name_folder_local,
+    name: nameToEdit,
     parent_id: parent_id,
     project_id: project_id,
     tag: "",
@@ -296,7 +460,7 @@ const Folder = () => {
 
   // edit data file
   const [fileEdit, setFileEdit] = useState({
-    name: name_folder_local,
+    name: nameToEdit,
     folder_id: parent_id,
     project_id: project_id,
     tag: "",
@@ -378,7 +542,12 @@ const Folder = () => {
   useEffect(() => {
     const tagsId = listTags?.map((tag) => tag.id);
     if (type === "folder") {
-      setAddTagFolder({ ...addTagFolder, tag: `${tagsId.toString()}` });
+      setAddTagFolder({
+        ...addTagFolder,
+        parent_id: parentIdToEdit,
+        name: nameToEdit,
+        tag: `${tagsId.toString()}`,
+      });
     } else if (type === "file") {
       setFileEdit({ ...fileEdit, tag: `${tagsId.toString()}` });
     }
@@ -387,8 +556,13 @@ const Folder = () => {
   const handleChangeFolder = (e: React.ChangeEvent<HTMLInputElement>) => {
     let currValue: any = e.currentTarget?.closest(".row")?.textContent;
     setNameFolder(currValue);
+
     if (folderEdit.name != e.target.value && type == "folder") {
-      setFolderEdit({ ...folderEdit, name: e.target.value });
+      setFolderEdit({
+        ...folderEdit,
+        name: e.target.value,
+        parent_id: parentIdToEdit,
+      });
       setOption("1");
     }
 
@@ -408,7 +582,6 @@ const Folder = () => {
     let currValue: any = (e.currentTarget.closest(".list-item") as HTMLElement)
       ?.id;
 
-    console.log(currValue);
     if (
       parseInt(dataMoveFile.parent_id) !== parseInt(currValue) &&
       type == "folder"
@@ -468,6 +641,7 @@ const Folder = () => {
           );
           data.splice(indexAddTag, 1, responseAddTag);
           setShowOption(!showOption);
+          setShowEdit(false);
           break;
         default:
           break;
@@ -486,7 +660,6 @@ const Folder = () => {
             (item: any) => item.id === parseInt(folder_id)
           );
           data.splice(indexChange, 1, responseChangeName);
-          setShowEdit(!showEdit);
           setShowOption(!showOption);
           break;
         case "2": // Di chuyển thư mục tới thư mục khác
@@ -497,6 +670,7 @@ const Folder = () => {
           data.splice(indexMove, 1);
           setShowMoveFolder(!showMoveFolder);
           setShowOption(!showOption);
+
           break;
         case "3": // Thêm tags
           const responseAddTag: any = await updateFolder(
@@ -508,8 +682,11 @@ const Folder = () => {
           const indexAddTag = data.findIndex(
             (item: any) => item.id === parseInt(folder_id)
           );
+
           data.splice(indexAddTag, 1, responseAddTag);
           setShowOption(!showOption);
+          setShowEdit(!showEdit);
+
           break;
         default:
           console.error(new Error());
@@ -534,29 +711,6 @@ const Folder = () => {
     setData([...data, response.data.metadata]);
     setIsUploadFile(false);
   }
-
-  //.........................Move Folder/File to another Folder..........................//
-
-  const handleMoveFolder = async () => {
-    if (type === "file") {
-      const response = FileUpdate(token, folder_id_local, dataMoveFile, 2);
-      console.log(response);
-    }
-  };
-
-  //...........................Post comment...............................//
-
-  let type_num: any = localStorage.getItem("type-num");
-
-  const [comment, setComment] = useState({
-    type: type_num,
-    another_id: folder_id_local,
-    content: "",
-  });
-
-  const HandlePostComment = () => {
-    PostComment(token, comment, project_id);
-  };
 
   //............................. Get History File .............................//
   let first_version: any = localStorage.getItem("first-version");
@@ -628,6 +782,17 @@ const Folder = () => {
 
       {showOption && (
         <DetailFolder
+          valueComment={valueCommemt}
+          handleCancelEdit={handleCancelEditComment}
+          onChangeInputComment={handleOnChangeComment}
+          handleSaveEditCmt={HandleUpdateComment}
+          handleShowEditCmt={handleModalEditComment}
+          isOpenEditComment={isOpenEditComment}
+          handleShowModalComment={toggleModalDeleteComment}
+          btnDropRef={btnDropRef}
+          listComment={listComments}
+          toggleDropdown={toggleDropdown}
+          dropdownRef={dropdownRef}
           isEditComment={isEditComment}
           dataTag={listTags}
           showEdit={showEdit}
@@ -651,9 +816,7 @@ const Folder = () => {
           showCmt={() => setShowComment(!showComment)}
           cancelCmt={() => setShowComment(!showComment)}
           createCmt={HandlePostComment}
-          onChangeComment={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setComment({ ...comment, content: e.target.value });
-          }}
+          onChangeComment={handleOnchangeComment}
           downloadFile={() => {
             DownloadFile(token, folder_id_local);
           }}
@@ -678,6 +841,13 @@ const Folder = () => {
         <ModalDeleteFolder
           handleClose={() => setShowDeleteFolder(false)}
           handleDeleteFolder={handleDeleteFolder}
+        />
+      )}
+
+      {isShowModalComment && (
+        <ModalDeleteComment
+          handleClose={toggleModalDeleteComment}
+          handleDeleteComment={HandleDeleteComment}
         />
       )}
 

@@ -40,7 +40,7 @@ export const getFolder = async(token:any,project_id:any,folder_id:any) =>{
     })
     if(res.ok){
       const data = await res.json()
-
+      
       return data.metadata
     }else{
       const errorMess = await res.json()

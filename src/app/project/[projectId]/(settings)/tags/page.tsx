@@ -178,7 +178,7 @@ export default function Tags() {
         {role ? (
           <SubNav
             titleNav="Thẻ"
-            btnTitle="Extension"
+            btnTitle="Mở rộng"
             event={toggleModalDeleteAll}
           />
         ) : (
@@ -218,7 +218,7 @@ export default function Tags() {
               <div className=" col-8" id="rightTags">
                 <div className="row" id="headerTags">
                   <div className="col nameHeader">Tags</div>
-                  <div className="col-xl-2 actionHeader">Actions</div>
+                  <div className="col-xl-2 actionHeader">Tùy chỉnh</div>
                 </div>
 
                 <div>

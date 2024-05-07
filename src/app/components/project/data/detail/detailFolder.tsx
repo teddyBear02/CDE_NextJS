@@ -40,6 +40,18 @@ interface Props {
   actveItem: any;
   dataTag: any;
   isEditComment: any;
+  dropdownRef: any;
+  toggleDropdown: any;
+  listComment: any;
+  btnDropRef: any;
+  handleShowModalComment: any;
+  isOpenEditComment: any;
+  handleShowEditCmt: any;
+  handleSaveEditCmt: any;
+  onChangeInputComment: any;
+  handleCancelEdit: any;
+
+  valueComment: any;
 }
 let DetailFolder = ({
   showEdit,
@@ -75,7 +87,19 @@ let DetailFolder = ({
   goIntoFolder,
   actveItem,
   dataTag,
+  dropdownRef,
   isEditComment,
+  toggleDropdown,
+  listComment,
+  btnDropRef,
+  handleShowModalComment,
+  isOpenEditComment,
+  handleShowEditCmt,
+  handleSaveEditCmt,
+  onChangeInputComment,
+  handleCancelEdit,
+
+  valueComment,
 }: Props) => {
   return (
     <>
@@ -113,6 +137,17 @@ let DetailFolder = ({
           />
         ) : (
           <InforFolder
+            valueComment={valueComment}
+            handleCancelEdit={handleCancelEdit}
+            onChangeInputComment={onChangeInputComment}
+            handleSaveEditCmt={handleSaveEditCmt}
+            handleShowEditCmt={handleShowEditCmt}
+            isOpenEditComment={isOpenEditComment}
+            handleShowModalComment={handleShowModalComment}
+            btnDropRef={btnDropRef}
+            listComment={listComment}
+            toggleDropdown={toggleDropdown}
+            dropdownRef={dropdownRef}
             data={dataTag}
             isEditComment={isEditComment}
             showMoveFolder={handleShowMoveFolder}

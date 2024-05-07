@@ -54,11 +54,11 @@ export default function ListFolder({
               <td></td>
               <td></td>
               <td>
-                <div className="circle-round">
-                  {folder.tag.length > 0
-                    ? `+${folder.tag.length}`
-                    : `${folder.tag.length}`}
-                </div>
+                {folder.tag.length > 0 ? (
+                  <div className="circle-round">+{folder.tag.length}</div>
+                ) : (
+                  <></>
+                )}
               </td>
             </tr>
           ))}

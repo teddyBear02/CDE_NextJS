@@ -349,8 +349,9 @@
       padding: 1rem 0;
       position: absolute;
       z-index: 12;
-      right: -30%;
+      right: 10px;
       top: 100%;
+      display: none;
       .list-item {
         align-items: center;
         color: #363545;
@@ -365,6 +366,15 @@
         white-space: nowrap;
       }
     }
+  }
+  .list {
+    padding: 0;
+  }
+
+  .list > .list-item {
+    border-bottom: 1px #ccc solid;
+    width: 100%;
+    padding: 1rem 0;
   }
 
   .dropdown-pane.right {
@@ -417,6 +427,7 @@
 
   button {
     border: none;
+    position: relative;
     background-color: transparent;
     padding: 4px 8px;
     transition: ease-in-out 0.25s;
@@ -425,4 +436,34 @@
       transition: ease-in-out 0.25s;
     }
   }
+
+  .btns-group {
+    margin-top: 12px;
+    .saveEditComment {
+      background-color: #0062b3;
+      color: #fff;
+      margin-left: 12px;
+      border-radius: 4px;
+      &:hover {
+        opacity: 0.85;
+      }
+    }
+
+    .cancelEditComment {
+      // margin-left: 12px;
+      border-radius: 4px;
+    }
+  }
+
+  .edit-comment {
+    display: none;
+  }
+}
+
+.is-active-comment {
+  display: block !important;
+}
+
+.active-edit-comment {
+  display: block !important;
 }
