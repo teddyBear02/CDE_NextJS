@@ -1,8 +1,8 @@
 import { env } from "@/config/varenv";
 
 
-export const getTodo = async (token: any, project_id: any) => {
-    const response: any = await fetch(`${env.BASE_URL}/api/todo/${project_id}`, {
+export const getTodo = async (token: any, project_id: any,params:string = '') => {
+    const response: any = await fetch(`${env.BASE_URL}/api/todo/${project_id}${params}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -19,14 +19,26 @@ export const getTodo = async (token: any, project_id: any) => {
     }
 }
 
-export const postTodo = async (token: any, data: any) => {
+export const postTodo = async (token: any,project_id: any, data: any) => {
+    const formattedStartDate = data.startDate.toISOString().slice(0, 19).replace('T', ' ');
+    const formattedFinishDate = data.finishDate.toISOString().slice(0, 19).replace('T', ' ');
+    const formatdata = {
+        title: data.title,
+        assgin_to: data.assginTo,
+        descriptions: data.descriptions,
+        priorities: data.state,
+        status: data.status,
+        project_id: project_id,
+        start_date: formattedStartDate,
+        finish_date: formattedFinishDate
+    }
     const response = await fetch(`${env.BASE_URL}/api/todo`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(formatdata)
     }
     )
 

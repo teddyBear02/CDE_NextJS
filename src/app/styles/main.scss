@@ -60,7 +60,7 @@
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2); 
 }
 .scrollable {
-    overflow-y: scroll; /* Hiển thị thanh cuộn dọc ngay cả khi không cần */
+    overflow-y: scroll !important; /* Hiển thị thanh cuộn dọc ngay cả khi không cần */
     scrollbar-width: none; /* Ẩn thanh cuộn mặc định của trình duyệt Firefox */
     -ms-overflow-style: none; /* Ẩn thanh cuộn mặc định của trình duyệt Edge và IE */
   }
@@ -78,4 +78,7 @@
     white-space: nowrap; /* Ngăn các nội dung quá dài làm thay đổi kích thước cột */
     overflow: hidden; /* Ẩn nội dung vượt ra khỏi cột */
     text-overflow: ellipsis; /* Hiển thị dấu chấm (...) nếu nội dung vượt quá */
+  }
+  .react-datepicker-wrapper {
+    width: 100%;
   }
