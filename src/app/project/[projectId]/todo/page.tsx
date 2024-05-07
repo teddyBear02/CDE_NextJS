@@ -2,45 +2,57 @@
 import { useEffect, useState } from "react";
 import {
   SubNav,
-  ModalNewTodo,
   NoneTodo,
   DetailTodo,
 } from "@/app/components";
-import { postTodo, getTodo, deleteTodo } from "@/service/project/todoService";
+import { postTodo, getTodo } from "@/service/project/todoService";
 import { PostComment } from "@/service/project/commentService";
-import { Form } from "react-bootstrap";
+import { Button, Form, FormControl } from "react-bootstrap";
 import CustomDropdown from "@/app/until/CustomDropdown";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { env } from "@/config/varenv";
 import { formatDate } from "@/app/until/Helper";
+import { getUserActivities } from "@/service/project/ActivitiesService";
 
 const checkboxesOwner = [
-  { label: "Assigned to me", value: 1 },
-  { label: "Created by me", value: 2 },
-  { label: "Unassigned", value: 3 },
+  { label: "Được giao cho tôi", value: 1 },
+  { label: "Tạo bởi tôi", value: 2 },
+  { label: "Không được giao", value: 3 },
 ];
 const checkboxesStatus = [
-  { label: "New", value: 1 },
-  { label: "In Progress", value: 2 },
-  { label: "Waitting", value: 3 },
-  { label: "Done", value: 4 },
-  { label: "Close", value: 5 }
+  { label: "Mới", value: 1 },
+  { label: "Đang làm", value: 2 },
+  { label: "Đang chờ", value: 3 },
+  { label: "Hoàn thành", value: 4 },
+  { label: "Đóng", value: 5 }
 ];
 const checkboxesPriority = [
-  { label: "Critical", value: 4 },
-  { label: "High", value: 3 },
-  { label: "Normal", value: 2 },
-  { label: "Low", value: 1 },
+  { label: "Nghiêm trọng", value: 4 },
+  { label: "Cao", value: 3 },
+  { label: "Bình thường", value: 2 },
+  { label: "Thấp", value: 1 },
 ];
 export default function Todo() {
   const token = env.TOKEN;
+  const [exportExcel, setExportExcel] = useState(false);
   const [dataToDo, setDataToDo] = useState<any[]>([]);
   const [dataDetailTodo, setDataDetailTodo] = useState<any[]>([]);
+  const [checkedUsers, setCheckedUsers] = useState([]);
+  const [dataFormCreate, setDataFormCreate] = useState({
+    assginTo: '',
+    title: '',
+    descriptions: '',
+    state: 1,
+    status: 1,
+    startDate: new Date(),
+    finishDate: new Date(),
+  });
+  const [isCallingApiCreate, setIsCallingApiCreate] = useState(false);
 
   let project_id = localStorage.getItem("project_id");
 
-  const [showModalTodo, setShowModalTodo] = useState(false);
+  const [showModalCreateTodo, setShowModalCreateTodo] = useState(false);
 
   const [showDetail, setShowDetail] = useState(false);
 
@@ -52,8 +64,70 @@ export default function Todo() {
   const [statusTypes, setStatusTypes] = useState([]);
   const [priorityTypes, setPriorityTypes] = useState([]);
   const [selectedCheckboxDate, setSelectedCheckboxDate] = useState<string>("");
-  const [isCallingApiCreate, setIsCallingApiCreate] = useState(false);
+  const [listUserActivity, setListUserActivity] = useState<any[]>([]);
+  const [searchTermUser, setSearchTermUser] = useState("");
 
+  const filteredUsers = listUserActivity.filter(
+    (item) =>
+      item.user.name.toLowerCase().includes(searchTermUser.toLowerCase()) ||
+      item.user.email.toLowerCase().includes(searchTermUser.toLowerCase())
+  );
+  const handleCheckboxUserChange = (userId) => {
+    if (checkedUsers.includes(userId)) {
+      setCheckedUsers(checkedUsers.filter((id) => id !== userId));
+    } else {
+      setCheckedUsers([...checkedUsers, userId]);
+    }
+  };
+  const handleChangeSearchUser = (event) => {
+    setSearchTermUser(event.target.value);
+  };
+  const getAllActive = async () => {
+    let params = "?";
+    if (ownerType.length > 0) {
+      params += `&owns=${ownerType.join(",")}`
+    }
+    if (checkedUsers.length > 0) {
+      params += `&user_id=${checkedUsers.join(",")}`;
+    }
+    if (statusTypes.length > 0) {
+      params += `&status=${statusTypes.join(',')}`;
+    }
+    if (priorityTypes.length > 0) {
+      params += `&priorities=${priorityTypes.join(",")}`;
+    }
+    if (
+      searchDate.startDate &&
+      searchDate.endDate &&
+      selectedCheckboxDate !== ""
+    ) {
+      const startDateString = encodeURIComponent(
+        searchDate.startDate.toISOString()
+      );
+      const endDateString = encodeURIComponent(
+        searchDate.endDate.toISOString()
+      );
+      params = `&start_date=${startDateString}&finish_date=${endDateString}`;
+    }
+    if (!exportExcel) {
+      const response = await getTodo(token, project_id, params);
+      setDataToDo(response);
+      console.log(dataToDo)
+    } else {
+      // params += "&export=1";
+      // const response = await getActivities(token, project_id, params);
+      // const linkExport = response.metadata;
+      // setExportExcel(false)
+      // window.open(linkExport, "_blank");
+    }
+  };
+  const getUserActive = async () => {
+    const response = await getUserActivities(token, project_id);
+    setListUserActivity(response.metadata);
+  };
+  useEffect(() => {
+    getUserActive();
+  }, []);
   const [searchDate, setSearchDate] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -159,7 +233,7 @@ export default function Todo() {
     return getLabelFromArray(stateValue, checkboxesPriority);
   }
 
-  function handleShowDetailToDo(idToDo : string) {
+  function handleShowDetailToDo(idToDo: string) {
     const dataDetail = dataToDo.find(item => item.id === idToDo)
     setDataDetailTodo(dataDetail)
     setShowDetail(true)
@@ -169,29 +243,32 @@ export default function Todo() {
     setShowDetail(false)
     getAllToDo()
   }
-
-  const [todoEdit, setTodoEdit] = useState({
-    title: "",
-    finish_date: "",
-    start_date: "",
-    project_id: project_id,
-  });
-  const getAllToDo = async () => {
-    const response = await getTodo(token, project_id);
-    if(response) setDataToDo(response)
+  const handleDataCreateFormChange = (key: string, value: string | number | Date | null) => {
+    setDataFormCreate(prevData => ({
+      ...prevData,
+      [key]: value,
+    }));
   };
   const handleCreateTodo = async () => {
-    if (!todoEdit.title || !todoEdit.start_date || !todoEdit.finish_date) {
+    if (!dataFormCreate.title || !dataFormCreate.startDate || !dataFormCreate.finishDate) {
       //validate
       return;
     }
     setIsCallingApiCreate(true)
-    const response = await postTodo(token, todoEdit);
-    if (response.title) getAllToDo()
-    setShowModalTodo(false)
+    const response = await postTodo(token, project_id, dataFormCreate);
+    if (response.title) {
+      getAllToDo()
+    }
+    setShowModalCreateTodo(false)
     setIsCallingApiCreate(false)
   };
-
+  const getAllToDo = async () => {
+    const response = await getTodo(token, project_id);
+    setDataToDo(response)
+  };
+  useEffect(() => {
+    getAllActive();
+  }, [priorityTypes, statusTypes, exportExcel, listUserActivity, ownerType]);
   const [comment, setComment] = useState({
     type: "",
     another_id: "",
@@ -199,7 +276,7 @@ export default function Todo() {
   });
 
   const handleComment = async () => {
-    await PostComment(token, comment);
+    // await PostComment(token, comment);
   };
   useEffect(() => { getAllToDo() }, [])
   return (
@@ -208,309 +285,329 @@ export default function Todo() {
         <SubNav
           titleNav="Việc cần làm"
           btnTitle="Tạo mới"
-          event={() => setShowModalTodo(true)}
+          event={() => setShowModalCreateTodo(true)}
         />
-          <div style={{
-            display: "flex",
-            width: '100%',
-            alignItems: 'center'
-          }} >
-            <CustomDropdown label="Owners">
-              {checkboxesOwner.map((checkbox) => (
-                <div
-                  className="py-1"
-                  key={checkbox.label}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    width: "160px",
-                    textAlign: "left",
-                  }}
-                  onClick={() =>
+        <div style={{
+          display: "flex",
+          width: '100%',
+          alignItems: 'center'
+        }} >
+          <CustomDropdown label="Owners">
+            {checkboxesOwner.map((checkbox) => (
+              <div
+                className="py-1"
+                key={checkbox.label}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  width: "160px",
+                  textAlign: "left",
+                }}
+                onClick={() =>
+                  handleCheckboxOwnerTypeChange(checkbox.value)
+                }
+              >
+                <Form.Check
+                  style={{ marginLeft: "2px" }}
+                  type="checkbox"
+                  checked={ownerType.includes(checkbox.value)}
+                  onChange={() =>
                     handleCheckboxOwnerTypeChange(checkbox.value)
                   }
-                >
-                  <Form.Check
-                    style={{ marginLeft: "2px" }}
-                    type="checkbox"
-                    checked={ownerType.includes(checkbox.value)}
-                    onChange={() =>
-                      handleCheckboxOwnerTypeChange(checkbox.value)
-                    }
-                  />
-                  <div style={{ textAlign: "left", width: "80%" }}>
-                    {checkbox.label}
-                  </div>
+                />
+                <div style={{ textAlign: "left", width: "80%" }}>
+                  {checkbox.label}
                 </div>
-              ))}
-            </CustomDropdown>
+              </div>
+            ))}
+          </CustomDropdown>
 
-            <div className="filter">
-              <span>Users</span> <i className="bi bi-caret-down-fill"></i>
-            </div>
-            <div className="filter">
-              <span>Groups</span> <i className="bi bi-caret-down-fill"></i>
-            </div>
-            <CustomDropdown label="Status">
-              {checkboxesStatus.map((checkbox) => (
-                <div
-                  key={checkbox.label}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    width: "160px",
-                    textAlign: "left",
-                  }}
-                  onClick={() => handleCheckboxStatusChange(checkbox.value)}
-                >
-                  <Form.Check
-                    style={{ marginLeft: "2px" }}
-                    type="checkbox"
-                    checked={statusTypes.includes(checkbox.value)}
-                    onChange={() =>
-                      handleCheckboxStatusChange(checkbox.value)
-                    }
-                  />
-                  <div style={{ textAlign: "left", width: "80%" }}>
-                    {checkbox.label}
-                  </div>
+          <CustomDropdown label="Groups">
+            <Form>
+              <FormControl
+                type="text"
+                style={{ width: "250px" }}
+                placeholder="Search"
+                className="mr-sm-2"
+                value={searchTermUser}
+                onChange={handleChangeSearchUser}
+              />
+            </Form>
+            {filteredUsers.map((item) => (
+              <div
+                key={item.user.id}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCheckboxUserChange(item.user.id)}
+              >
+                <Form.Check
+                  type="checkbox"
+                  className="mx-2"
+                  name={item.user.id.toString()}
+                  checked={checkedUsers.includes(item.user.id)}
+                  onChange={(e) => e.stopPropagation()}
+                />
+                <div style={{ width: "90%", textAlign: "left" }}>
+                  <div>{item.user.name}</div>
+                  <div>{item.user.email}</div>
                 </div>
-              ))}
-            </CustomDropdown>
-            <CustomDropdown label="Priority">
-              {checkboxesPriority.map((checkbox) => (
-                <div
-                  key={checkbox.label}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    cursor: "pointer",
-                    width: "160px",
-                    textAlign: "left",
-                  }}
-                  onClick={() =>
+              </div>
+            ))}
+          </CustomDropdown>
+          <CustomDropdown label="Status">
+            {checkboxesStatus.map((checkbox) => (
+              <div
+                key={checkbox.label}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  width: "160px",
+                  textAlign: "left",
+                }}
+                onClick={() => handleCheckboxStatusChange(checkbox.value)}
+              >
+                <Form.Check
+                  style={{ marginLeft: "2px" }}
+                  type="checkbox"
+                  checked={statusTypes.includes(checkbox.value)}
+                  onChange={() =>
+                    handleCheckboxStatusChange(checkbox.value)
+                  }
+                />
+                <div style={{ textAlign: "left", width: "80%" }}>
+                  {checkbox.label}
+                </div>
+              </div>
+            ))}
+          </CustomDropdown>
+          <CustomDropdown label="Priority">
+            {checkboxesPriority.map((checkbox) => (
+              <div
+                key={checkbox.label}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  width: "160px",
+                  textAlign: "left",
+                }}
+                onClick={() =>
+                  handleCheckboxPriorityChange(checkbox.value)
+                }
+              >
+                <Form.Check
+                  style={{ marginLeft: "2px" }}
+                  type="checkbox"
+                  checked={priorityTypes.includes(checkbox.value)}
+                  onChange={() =>
                     handleCheckboxPriorityChange(checkbox.value)
                   }
-                >
-                  <Form.Check
-                    style={{ marginLeft: "2px" }}
-                    type="checkbox"
-                    checked={priorityTypes.includes(checkbox.value)}
-                    onChange={() =>
-                      handleCheckboxPriorityChange(checkbox.value)
-                    }
-                  />
-                  <div style={{ textAlign: "left", width: "80%" }}>
-                    {checkbox.label}
-                  </div>
+                />
+                <div style={{ textAlign: "left", width: "80%" }}>
+                  {checkbox.label}
                 </div>
-              ))}
-            </CustomDropdown>
+              </div>
+            ))}
+          </CustomDropdown>
 
-            <CustomDropdown label="Date modified">
+          <CustomDropdown label="Date modified">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                width: "200px",
+                padding: "4px",
+                textAlign: "left",
+              }}
+            >
+              <div
+                className="mb-2"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                Custom Date
+                {selectedCheckboxDate !== "customDate" && (
+                  <div
+                    onClick={() => {
+                      setSelectedCheckboxDate("customDate");
+                    }}
+                  >
+                    <i
+                      style={{ fontSize: "30px" }}
+                      className="bi bi-plus ml-2 "
+                    ></i>{" "}
+                  </div>
+                )}
+                {selectedCheckboxDate === "customDate" && (
+                  <div
+                    onClick={() => {
+                      setSelectedCheckboxDate("");
+                    }}
+                  >
+                    <i
+                      style={{ fontSize: "30px" }}
+                      className="bi bi-x"
+                    ></i>
+                  </div>
+                )}
+              </div>
+              {selectedCheckboxDate === "customDate" && (
+                <>
+                  <div>From</div>
+                  <ReactDatePicker
+                    selected={searchDate.startDate}
+                    onChange={(date) => {
+                      if (date) {
+                        handleDateChange(date, "startDate");
+                      }
+                    }}
+                  />
+                  <div>To</div>
+                  <ReactDatePicker
+                    selected={searchDate.endDate}
+                    onChange={(date) => {
+                      if (date) {
+                        handleDateChange(date, "endDate");
+                      }
+                    }}
+                  />
+                </>
+              )}
+
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  width: "200px",
-                  padding: "4px",
-                  textAlign: "left",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "4px",
+                }}
+                onClick={() => {
+                  if (selectedCheckboxDate === "yesterday")
+                    setSelectedCheckboxDate("");
+                  else handleCheckboxDateChange("yesterday");
                 }}
               >
-                <div
-                  className="mb-2"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  Custom Date
-                  {selectedCheckboxDate !== "customDate" && (
-                    <div
-                      onClick={() => {
-                        setSelectedCheckboxDate("customDate");
-                      }}
-                    >
-                      <i
-                        style={{ fontSize: "30px" }}
-                        className="bi bi-plus ml-2 "
-                      ></i>{" "}
-                    </div>
-                  )}
-                  {selectedCheckboxDate === "customDate" && (
-                    <div
-                      onClick={() => {
-                        setSelectedCheckboxDate("");
-                      }}
-                    >
-                      <i
-                        style={{ fontSize: "30px" }}
-                        className="bi bi-x"
-                      ></i>
-                    </div>
-                  )}
-                </div>
-                {selectedCheckboxDate === "customDate" && (
-                  <>
-                    <div>From</div>
-                    <ReactDatePicker
-                      selected={searchDate.startDate}
-                      onChange={(date) => {
-                        if (date) {
-                          handleDateChange(date, "startDate");
-                        }
-                      }}
-                    />
-                    <div>To</div>
-                    <ReactDatePicker
-                      selected={searchDate.endDate}
-                      onChange={(date) => {
-                        if (date) {
-                          handleDateChange(date, "endDate");
-                        }
-                      }}
-                    />
-                  </>
-                )}
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginTop: "4px",
-                  }}
-                  onClick={() => {
-                    if (selectedCheckboxDate === "yesterday")
-                      setSelectedCheckboxDate("");
-                    else handleCheckboxDateChange("yesterday");
-                  }}
-                >
-                  <Form.Check
-                    type="checkbox"
-                    className="mx-2"
-                    name="yesterday"
-                    checked={selectedCheckboxDate === "yesterday"}
-                  />
-                  <div style={{ width: "90%", textAlign: "left" }}>
-                    Yesterday
-                  </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                  onClick={() => {
-                    if (selectedCheckboxDate === "today")
-                      setSelectedCheckboxDate("");
-                    else handleCheckboxDateChange("today");
-                  }}
-                >
-                  <Form.Check
-                    type="checkbox"
-                    className="mx-2"
-                    name="today"
-                    checked={selectedCheckboxDate === "today"}
-                  />
-                  <div style={{ width: "90%", textAlign: "left" }}>
-                    Today
-                  </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                  onClick={() => {
-                    if (selectedCheckboxDate === "lastweek")
-                      setSelectedCheckboxDate("");
-                    else handleCheckboxDateChange("lastweek");
-                  }}
-                >
-                  <Form.Check
-                    type="checkbox"
-                    className="mx-2"
-                    name="lastweek"
-                    checked={selectedCheckboxDate === "lastweek"}
-                  />
-                  <div style={{ width: "90%", textAlign: "left" }}>
-                    Past 7 days
-                  </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                  onClick={() => {
-                    if (selectedCheckboxDate === "lastmonth")
-                      setSelectedCheckboxDate("");
-                    else handleCheckboxDateChange("lastmonth");
-                  }}
-                >
-                  <Form.Check
-                    type="checkbox"
-                    className="mx-2"
-                    name="lastmonth"
-                    checked={selectedCheckboxDate === "lastmonth"}
-                  />
-                  <div style={{ width: "90%", textAlign: "left" }}>
-                    Past 30 days
-                  </div>
-                </div>
-                <div
-                  onClick={() => {
-                    setSelectedCheckboxDate("");
-                  }}
-                  className="my-2 mx-2"
-                  style={{
-                    color: "#0099FF",
-                    cursor: "pointer",
-                    fontSize: "18px",
-                  }}
-                >
-                  Reset
+                <Form.Check
+                  type="checkbox"
+                  className="mx-2"
+                  name="yesterday"
+                  checked={selectedCheckboxDate === "yesterday"}
+                />
+                <div style={{ width: "90%", textAlign: "left" }}>
+                  Yesterday
                 </div>
               </div>
-            </CustomDropdown>
-            <div
-              onClick={() => {
-                handleReset();
-              }}
-              className="my-2 mx-2"
-              style={{
-                color: "#0099FF",
-                cursor: "pointer",
-                fontSize: "18px",
-              }}
-            >
-              Reset
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+                onClick={() => {
+                  if (selectedCheckboxDate === "today")
+                    setSelectedCheckboxDate("");
+                  else handleCheckboxDateChange("today");
+                }}
+              >
+                <Form.Check
+                  type="checkbox"
+                  className="mx-2"
+                  name="today"
+                  checked={selectedCheckboxDate === "today"}
+                />
+                <div style={{ width: "90%", textAlign: "left" }}>
+                  Today
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+                onClick={() => {
+                  if (selectedCheckboxDate === "lastweek")
+                    setSelectedCheckboxDate("");
+                  else handleCheckboxDateChange("lastweek");
+                }}
+              >
+                <Form.Check
+                  type="checkbox"
+                  className="mx-2"
+                  name="lastweek"
+                  checked={selectedCheckboxDate === "lastweek"}
+                />
+                <div style={{ width: "90%", textAlign: "left" }}>
+                  Past 7 days
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+                onClick={() => {
+                  if (selectedCheckboxDate === "lastmonth")
+                    setSelectedCheckboxDate("");
+                  else handleCheckboxDateChange("lastmonth");
+                }}
+              >
+                <Form.Check
+                  type="checkbox"
+                  className="mx-2"
+                  name="lastmonth"
+                  checked={selectedCheckboxDate === "lastmonth"}
+                />
+                <div style={{ width: "90%", textAlign: "left" }}>
+                  Past 30 days
+                </div>
+              </div>
+              <div
+                onClick={() => {
+                  setSelectedCheckboxDate("");
+                }}
+                className="my-2 mx-2"
+                style={{
+                  color: "#0099FF",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                }}
+              >
+                Reset
+              </div>
             </div>
+          </CustomDropdown>
+          <div
+            onClick={() => {
+              handleReset();
+            }}
+            className="my-2 mx-2"
+            style={{
+              color: "#0099FF",
+              cursor: "pointer",
+              fontSize: "18px",
+            }}
+          >
+            Reset
           </div>
+        </div>
 
-          {(dataToDo && dataToDo.length > 0) ? (
-            // <TodoList
-            //   title="Tiêu đề"
-            //   user="Người tạo"
-            //   timeCreate="Thời gian tạo"
-            //   timeModified="Sửa đổi"
-            //   state="Ưu tiên"
-            //   status="Trạng thái"
-            //   data={dataTableTodo}
-            //   handleClick={handleShowDetailToDo}
-            // />
-            <table className="table table-hover">
+        {(dataToDo && dataToDo.length > 0) ? (
+          <table className="table table-hover">
             <thead>
               <tr>
                 <th scope="col">Tiêu đề</th>
@@ -523,22 +620,22 @@ export default function Todo() {
             </thead>
             <tbody>
               <tr>
-                <td colSpan={6}> 
-                  <div className="table-wrapper scrollable"  style={{ overflowY: 'scroll', height: '400px' }}>
-                    <table  style={{ width: '100%' }}>
+                <td colSpan={6}>
+                  <div className="table-wrapper scrollable" style={{ overflowY: 'scroll', height: '400px' }}>
+                    <table style={{ width: '100%' }}>
                       <tbody className="table-group-divider">
                         {dataToDo.map((data: any) => (
                           <tr
                             className="hoverList todoList"
                             key={data.id}
                             id={data.id}
-                            onClick={()=>
+                            onClick={() =>
                               handleShowDetailToDo(data?.id)
                             }
                           >
-                         {/*   <td className="icon">
+                            {/*   <td className="icon">
                             <i className="bi bi-clipboard-check-fill"></i>
-                        </td>   */} 
+                        </td>   */}
                             <td>{data.title}</td>
                             <td>{data.user_create.name}</td>
                             <td>{formatDate(data.created_at)}</td>
@@ -554,10 +651,10 @@ export default function Todo() {
               </tr>
             </tbody>
           </table>
-          ) : (
-            dataToDo ?? <NoneTodo />
-          )}
-        </div>
+        ) : (
+          dataToDo ?? <NoneTodo />
+        )}
+      </div >
 
       {showDetail && (
         <DetailTodo
@@ -575,24 +672,94 @@ export default function Todo() {
             setComment({ ...comment, content: e.target.value });
           }}
         />
-      )}
+      )
+      }
 
-      {showModalTodo && (
-        <ModalNewTodo
-          isCallingApi={isCallingApiCreate}
-          closeModal={() => setShowModalTodo(false)}
-          handleInputName={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setTodoEdit({ ...todoEdit, title: e.target.value });
-          }}
-          handleInputStart={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setTodoEdit({ ...todoEdit, start_date: e.target.value });
-          }}
-          handleInputEnd={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setTodoEdit({ ...todoEdit, finish_date: e.target.value });
-          }}
-          createTodo={handleCreateTodo}
-        />
-      )}
+      {
+        showModalCreateTodo && (
+          <div className="modalCreateFolder">
+            <div className="boxModal scrollable" style={{ height: '500px' }} id="modalTodo">
+              <div className="header">
+                <h3>Tạo việc cần làm</h3>
+                <button onClick={() => setShowModalCreateTodo(false)}>
+                  <i className="bi bi-x-lg"></i>
+                </button>
+              </div>
+              <div id="content" className="middleContent ">
+                <form id="detail">
+                  <label>Tên việc cần làm:</label>
+                  <input
+                    type="text"
+                    placeholder="Việc cần làm"
+                    name="name"
+                    onChange={(event) => handleDataCreateFormChange("title", event.target.value)}
+                  />
+                  <label htmlFor="">Gửi cho</label>
+                  <div className="input-focus-group">
+                    <input
+                      type="email"
+                      onChange={(event) => handleDataCreateFormChange("assginTo", event.target.value)}
+                      value={dataFormCreate.assginTo}
+                    />
+                  </div>
+                  <label>Ngày bắt đầu:</label>
+                  <ReactDatePicker
+                    className="w-full"
+                    selected={dataFormCreate.startDate}
+                    onChange={(date) => handleDataCreateFormChange("startDate", date)}
+                  />
+                  <label>Ngày kết thúc:</label>
+                  <ReactDatePicker
+                    className="w-full"
+                    selected={dataFormCreate.finishDate}
+                    onChange={(date) => handleDataCreateFormChange("finishDate", date)}
+                  />
+                  <label>Miêu tả</label>
+                  <div className="input-focus-group">
+                    <textarea onChange={(event) => handleDataCreateFormChange("descriptions", event.target.value)} value={dataFormCreate?.descriptions} ></textarea>
+                  </div>
+                  <div className="input-group">
+                    <label htmlFor="">Trạng thái </label>
+                    <div className="input-focus-group">
+                      <select value={dataFormCreate.status} onChange={(e) => handleDataCreateFormChange("status", e.target.value)}>
+                        {checkboxesStatus.map((checkbox) => (
+                          <option key={checkbox.value} value={checkbox.value}>
+                            {checkbox.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label htmlFor="">Ưu tiên </label>
+                    <div className="input-focus-group">
+                      <select name="" id="" value={dataFormCreate.state} onChange={(e) => handleDataCreateFormChange("state", e.target.value)}>
+                        {checkboxesPriority.map((checkbox) => (
+                          <option key={checkbox.value} value={checkbox.value}>
+                            {checkbox.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div id="footer">
+                <hr />
+                <div className="wrap-btn">
+                  <button className="cancel" onClick={() => setShowModalCreateTodo(false)}>
+                    Hủy
+                  </button>
+                  <Button className="create" disabled={isCallingApiCreate} type="submit" onClick={() => handleCreateTodo()}>
+                    Tạo mới
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
     </>
   );
 }

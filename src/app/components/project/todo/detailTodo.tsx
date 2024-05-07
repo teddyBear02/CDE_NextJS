@@ -1,7 +1,6 @@
 import { formatDate } from "@/app/until/Helper";
 import { env } from "@/config/varenv";
 import { deleteTodo, editTodo } from "@/service/project/todoService";
-
 import { useEffect, useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -20,22 +19,22 @@ interface Props {
   saveBtn: any;
 }
 const checkboxesOwner = [
-  { label: "Assigned to me", value: 1 },
-  { label: "Created by me", value: 2 },
-  { label: "Unassigned", value: 3 },
+  { label: "Được giao cho tôi", value: 1 },
+  { label: "Tạo bởi tôi", value: 2 },
+  { label: "Không được giao", value: 3 },
 ];
 const checkboxesStatus = [
-  { label: "New", value: 1 },
-  { label: "In Progress", value: 2 },
-  { label: "Waitting", value: 3 },
-  { label: "Done", value: 4 },
-  { label: "Close", value: 5 }
+  { label: "Mới", value: 1 },
+  { label: "Đang làm", value: 2 },
+  { label: "Đang chờ", value: 3 },
+  { label: "Hoàn thành", value: 4 },
+  { label: "Đóng", value: 5 }
 ];
 const checkboxesPriority = [
-  { label: "Critical", value: 4 },
-  { label: "High", value: 3 },
-  { label: "Normal", value: 2 },
-  { label: "Low", value: 1 },
+  { label: "Nghiêm trọng", value: 4 },
+  { label: "Cao", value: 3 },
+  { label: "Bình thường", value: 2 },
+  { label: "Thấp", value: 1 },
 ];
 
 const DetailTodo = ({
@@ -74,6 +73,7 @@ const DetailTodo = ({
       finishDate:  data.finish_date,
     })
   }, [data])
+  
   const handleDataFormChange = (key : string, value: string | number | Date | null) => {
     setDataFormEdit(prevData => ({
       ...prevData,
@@ -172,13 +172,13 @@ const DetailTodo = ({
                     <ReactDatePicker 
                        selected={dataFormEdit.startDate} 
                        onChange={(date) => handleDataFormChange("finishDate", date)} 
-                    /> </div>
+                    /></div>
                  </div>
                  <div className="sub-section">
                    <div className="input-group">
                      <label htmlFor="">Trạng thái </label>
                      <div className="input-focus-group">
-                     <select name="" id="" value={dataFormEdit.status} onChange={(e) => handleDataFormChange("status", e.target.value)}>
+                     <select value={dataFormEdit.status} onChange={(e) => handleDataFormChange("status", e.target.value)}>
                         {checkboxesStatus.map((checkbox) => (
                           <option key={checkbox.value} value={checkbox.value}>
                             {checkbox.label}

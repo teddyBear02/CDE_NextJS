@@ -1,6 +1,6 @@
 import { env } from "@/config/varenv";
 
-export const getActivities = async(token:any,project_id:any,params:string) =>{
+export const getActivities = async(token:any,project_id:any,params:string = '') =>{
     try {
         const response:any = await fetch(`${env.BASE_URL}/api/activities?project_id=${project_id}${params}`,{
             method: "GET",
