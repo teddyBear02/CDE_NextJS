@@ -396,6 +396,7 @@ const DetailTodo = ({
                     </div>
                   </div>
                 </div>
+
                 <div className="sub-section">
                   <div className="section-header group pad-right-todo">
                     <h5>Attachments</h5>

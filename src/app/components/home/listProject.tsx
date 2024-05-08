@@ -5,9 +5,14 @@ interface Props {
 }
 
 let ListItem = ({ projects, tag }: Props) => {
-  const getProjectId = (e: React.MouseEvent<HTMLElement>) => {
+  const getProjectId = (e: React.MouseEvent) => {
     let project_id = e.currentTarget.id;
+    let invite_permiss: any = e.currentTarget.attributes[2].nodeValue;
+    let todo_permiss: any = e.currentTarget.attributes[3].nodeValue;
+
     localStorage.setItem("project_id", project_id);
+    localStorage.setItem("invite_permiss", invite_permiss);
+    localStorage.setItem("todo_permiss", todo_permiss);
   };
 
   return (
@@ -25,9 +30,11 @@ let ListItem = ({ projects, tag }: Props) => {
         </div>
         {projects?.map((project: any, index: any) => (
           <Link
-            href={`/project/${project.id}`}
+            href={`/project/${project.id}/data`}
             key={index}
             id={project.id}
+            data-invite={project.invite_permission}
+            data-todo={project.todo_permission}
             onClick={getProjectId}
           >
             <div className="row sm-height hoverList bodyList ">

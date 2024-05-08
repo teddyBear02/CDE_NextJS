@@ -11,7 +11,13 @@ import {
   NoneData,
   ModalDeleteComment,
 } from "@/app/components";
-import React, { ReactNode, useEffect, useState, useRef } from "react";
+import React, {
+  ReactNode,
+  useEffect,
+  useState,
+  useRef,
+  useContext,
+} from "react";
 import {
   createFolder,
   getFolder,
@@ -38,6 +44,8 @@ import {
 } from "@/service/project/commentService";
 
 import { env } from "@/config/varenv";
+import { useProjectContext } from "../../layout";
+import { useRouter } from "next/navigation";
 
 const Folder = () => {
   // local variable:
@@ -100,6 +108,8 @@ const Folder = () => {
 
   const [nameToEdit, setNameToEdit] = useState<any>("");
 
+  const [urlFile, setUrlFile] = useState("");
+
   // show right bar
 
   const [showOption, setShowOption] = useState(false); // Show Folder Detail
@@ -123,7 +133,7 @@ const Folder = () => {
     },
   ]);
 
-  // Ref elem:
+  const router = useRouter();
 
   const inpTagRef = useRef<HTMLInputElement | any>("");
 
@@ -131,21 +141,7 @@ const Folder = () => {
 
   const btnDropRef = useRef<any>(null);
 
-  // useEffect(() => {
-  //   function handleClickOutside(e: MouseEvent) {
-  //     if (
-  //       dropdownRef.current &&
-  //       !dropdownRef.current.contains(e.target as Node)
-  //     ) {
-  //       setIsEditComment(0);
-  //     }
-  //   }
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, []);
+  const { setViewPdf } = useProjectContext();
 
   const toggleDropdown = (e: React.MouseEvent) => {
     const currVal = (e.currentTarget.closest(".list-item") as HTMLElement)?.id;
@@ -245,20 +241,25 @@ const Folder = () => {
         setListTags(folder.tag);
       }
     });
-
     setClickCount((prevCount) => prevCount + 1);
     if (clickCount > 0) {
-      for (let folder of data) {
-        if (folder.versions >= 1) {
+      data.filter((item) => {
+        if (
+          item.versions >= 1 &&
+          e.currentTarget.classList.contains("file") &&
+          item.id === parseInt(currValue)
+        ) {
+          setViewPdf(true);
+          router.push(`/project/${project_id}/view/${item.url}`);
+          return;
         }
-      }
+      });
+
       set_parent_id(currValue);
       setDataFolder({ ...dataFolder, parent_id: currValue });
       setEmlemNav([...elemNav, { name: name_folder, id: currValue }]);
     }
   };
-
-  console.log(nameToEdit);
 
   //.......................................................................//
 
@@ -705,11 +706,17 @@ const Folder = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("folder_id", folder_id_local);
+    formData.append("folder_id", parentId);
     formData.append("project_id", project_id);
     const response: any = await FileUpload(token, formData);
-    setData([...data, response.data.metadata]);
+
+    if (!response) {
+      alert("Có lỗi khi upload file");
+    } else {
+      setData([...data, response.data.metadata]);
+    }
     setIsUploadFile(false);
+    window.location.reload();
   }
 
   //............................. Get History File .............................//
@@ -749,6 +756,11 @@ const Folder = () => {
             event={handleNewOpen}
             elemNav={elemNav}
             toFolder={toFolder}
+            showBtn={true}
+            btnShow3D={"Mô hình 3D"}
+            to3DModal={() => {
+              router.push(`view3d`);
+            }}
           />
           {newOpen == true ? (
             <ModalNewFolder

@@ -40,6 +40,7 @@ export default function ListFolder({
               key={index}
               id={folder.id}
               onClick={eventClick}
+              url-data={folder.versions >= 1 ? `${folder.url}` : ``}
             >
               <th scope="row" className="icon">
                 {folder?.versions >= 1 ? (

@@ -1,5 +1,6 @@
 import { env } from "@/config/varenv";
 
+
 const googleRegister = async () => {
   try {
     const response = await fetch(`${env.BASE_URL}/google/redirect`, {

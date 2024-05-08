@@ -56,7 +56,11 @@ export default function projectDetail() {
   return (
     <>
       <div className="container showFolder">
-        <SubNav titleNav="Thông tin dự án" btnTitle="Lưu thay đổi" />
+        <SubNav
+          titleNav="Thông tin dự án"
+          btnTitle="Lưu thay đổi"
+          showBtn={false}
+        />
 
         {typeof projectInfo != "object" ? null : (
           <ProjectDetail

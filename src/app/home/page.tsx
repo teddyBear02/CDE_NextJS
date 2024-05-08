@@ -3,7 +3,6 @@ import { useEffect, useState, useRef } from "react";
 import { NavBar, SubNav, None, ModalCreate, ListProject } from "../components";
 import { env } from "@/config/varenv";
 import projectService from "@/service/home/projectService";
-import { Thumbnail } from "react-pdf";
 
 const Home = () => {
   let token: any = env.TOKEN;
@@ -26,8 +25,8 @@ const Home = () => {
   const dataProject = async () => {
     const response = await projectService.getProject(token);
     setData(response);
+    localStorage.setItem("invite", re);
   };
-  console.log(data);
 
   useEffect(() => {
     dataProject();

@@ -1,9 +1,21 @@
+import { useProjectContext } from "@/app/project/layout";
+import { useRouter } from "next/navigation";
+
 export default function navPdf() {
+  const { setViewPdf, viewPdf } = useProjectContext();
+  const routerNav = useRouter();
+  const project_id = localStorage.getItem("project_id");
   return (
     <>
       <div className="wrapperNavPdf">
         <div className="backFromPdf">
-          <div className="goBackBox">
+          <div
+            onClick={() => {
+              setViewPdf(false);
+              routerNav.push(`/project/${project_id}/data`);
+            }}
+            className="goBackBox"
+          >
             <i className="bi bi-arrow-left"></i>
             {"Back"}
           </div>

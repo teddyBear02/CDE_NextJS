@@ -2,7 +2,12 @@
 import { useEffect, useState } from "react";
 import { SubNav, NoneTodo, DetailTodo } from "@/app/components";
 import { postTodo, getTodo } from "@/service/project/todoService";
-import { PostComment } from "@/service/project/commentService";
+import {
+  PostComment,
+  GetComment,
+  UpdateComment,
+  DeleteComment,
+} from "@/service/project/commentService";
 import { Button, Form, FormControl } from "react-bootstrap";
 import CustomDropdown from "@/app/until/CustomDropdown";
 import ReactDatePicker from "react-datepicker";
@@ -30,11 +35,12 @@ const checkboxesPriority = [
   { label: "Thấp", value: 1 },
 ];
 export default function Todo() {
-  const token = env.TOKEN;
+  const token: any = env.TOKEN;
+
   const [exportExcel, setExportExcel] = useState(false);
   const [dataToDo, setDataToDo] = useState<any[]>([]);
   const [dataDetailTodo, setDataDetailTodo] = useState<any[]>([]);
-  const [checkedUsers, setCheckedUsers] = useState([]);
+  const [checkedUsers, setCheckedUsers] = useState<any>([]);
   const [dataFormCreate, setDataFormCreate] = useState({
     assginTo: "",
     title: "",
@@ -63,19 +69,23 @@ export default function Todo() {
   const [listUserActivity, setListUserActivity] = useState<any[]>([]);
   const [searchTermUser, setSearchTermUser] = useState("");
 
+  const [listComments, setListComments] = useState<any[]>([]);
+
+  const [idTodo, setIdToDo] = useState<any>(0);
+
   const filteredUsers = listUserActivity.filter(
     (item) =>
       item.user.name.toLowerCase().includes(searchTermUser.toLowerCase()) ||
       item.user.email.toLowerCase().includes(searchTermUser.toLowerCase())
   );
-  const handleCheckboxUserChange = (userId) => {
+  const handleCheckboxUserChange = (userId: any) => {
     if (checkedUsers.includes(userId)) {
-      setCheckedUsers(checkedUsers.filter((id) => id !== userId));
+      setCheckedUsers(checkedUsers.filter((id: any) => id !== userId));
     } else {
       setCheckedUsers([...checkedUsers, userId]);
     }
   };
-  const handleChangeSearchUser = (event) => {
+  const handleChangeSearchUser = (event: any) => {
     setSearchTermUser(event.target.value);
   };
   const getAllActive = async () => {
@@ -108,7 +118,6 @@ export default function Todo() {
     if (!exportExcel) {
       const response = await getTodo(token, project_id, params);
       setDataToDo(response);
-      console.log(dataToDo);
     } else {
       // params += "&export=1";
       // const response = await getActivities(token, project_id, params);
@@ -231,9 +240,12 @@ export default function Todo() {
 
   function handleShowDetailToDo(idToDo: string) {
     const dataDetail = dataToDo.find((item) => item.id === idToDo);
+    setIdToDo(idToDo);
     setDataDetailTodo(dataDetail);
     setShowDetail(true);
   }
+
+  console.log(idTodo);
 
   function handleFinishEditDetailToDo() {
     setShowDetail(false);
@@ -269,18 +281,11 @@ export default function Todo() {
     const response = await getTodo(token, project_id);
     setDataToDo(response);
   };
+
   useEffect(() => {
     getAllActive();
   }, [priorityTypes, statusTypes, exportExcel, listUserActivity, ownerType]);
-  const [comment, setComment] = useState({
-    type: "",
-    another_id: "",
-    content: "",
-  });
 
-  const handleComment = async () => {
-    // await PostComment(token, comment);
-  };
   useEffect(() => {
     getAllToDo();
   }, []);
@@ -291,6 +296,7 @@ export default function Todo() {
           titleNav="Việc cần làm"
           btnTitle="Tạo mới"
           event={() => setShowModalCreateTodo(true)}
+          showBtn={false}
         />
         <div
           style={{
@@ -658,10 +664,8 @@ export default function Todo() {
           isActive={isActive}
           showCmt={toggleClick}
           cancelCmt={toggleClick}
-          createCmt={handleComment}
-          onChangeComment={(e: any) => {
-            setComment({ ...comment, content: e.target.value });
-          }}
+          createCmt={() => {}}
+          onChangeComment={() => {}}
         />
       )}
 
@@ -727,40 +731,44 @@ export default function Todo() {
                     value={dataFormCreate?.descriptions}
                   ></textarea>
                 </div>
-                <div className="input-group">
-                  <label htmlFor="">Trạng thái </label>
-                  <div className="input-focus-group">
-                    <select
-                      value={dataFormCreate.status}
-                      onChange={(e) =>
-                        handleDataCreateFormChange("status", e.target.value)
-                      }
-                    >
-                      {checkboxesStatus.map((checkbox) => (
-                        <option key={checkbox.value} value={checkbox.value}>
-                          {checkbox.label}
-                        </option>
-                      ))}
-                    </select>
+
+                <div className="row mb-4">
+                  <div className="col-12 col-sm-6 ">
+                    <label htmlFor="">Trạng thái </label>
+                    <div className="input-focus-group">
+                      <select
+                        value={dataFormCreate.status}
+                        onChange={(e) =>
+                          handleDataCreateFormChange("status", e.target.value)
+                        }
+                      >
+                        {checkboxesStatus.map((checkbox) => (
+                          <option key={checkbox.value} value={checkbox.value}>
+                            {checkbox.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
-                </div>
-                <div className="input-group">
-                  <label htmlFor="">Ưu tiên </label>
-                  <div className="input-focus-group">
-                    <select
-                      name=""
-                      id=""
-                      value={dataFormCreate.state}
-                      onChange={(e) =>
-                        handleDataCreateFormChange("state", e.target.value)
-                      }
-                    >
-                      {checkboxesPriority.map((checkbox) => (
-                        <option key={checkbox.value} value={checkbox.value}>
-                          {checkbox.label}
-                        </option>
-                      ))}
-                    </select>
+
+                  <div className="col-12 col-sm-6 ">
+                    <label htmlFor="">Ưu tiên </label>
+                    <div className="input-focus-group">
+                      <select
+                        name=""
+                        id=""
+                        value={dataFormCreate.state}
+                        onChange={(e) =>
+                          handleDataCreateFormChange("state", e.target.value)
+                        }
+                      >
+                        {checkboxesPriority.map((checkbox) => (
+                          <option key={checkbox.value} value={checkbox.value}>
+                            {checkbox.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
               </form>

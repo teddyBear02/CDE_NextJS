@@ -109,13 +109,14 @@ export default function Team() {
           titleNav="Đội nhóm"
           btnTitle="Thêm thành viên "
           event={() => setShowModalInvite(true)}
+          showBtn={false}
         />
         <div className="panelWrapper">
           <div className="panelLeft">
             <div className="listPanel">
               <div className="listHeader">
-                <h3>Groups</h3>
-                <button>New Group</button>
+                <h3>Đội nhóm</h3>
+                <button>Nhóm mới</button>
               </div>
               <div className="listWrapper">
                 <div className="sub-section">
@@ -123,16 +124,16 @@ export default function Team() {
                     <li className="listItem">
                       <div className="label-group">
                         <div className="value">
-                          <p>All project members</p>
+                          <p>Thành viên dự án</p>
                         </div>
                         <label htmlFor="">1 User</label>
                       </div>
                     </li>
                   </ul>
                 </div>
-                <h6 className="px-2">CUSTOM GROUPS</h6>
+                <h6 className="px-2">Nhóm</h6>
                 <div className="sub-section ">
-                  <p className="px-2">No group found</p>
+                  <p className="px-2">Không tìm thấy nhóm nào </p>
                 </div>
               </div>
             </div>
@@ -141,7 +142,7 @@ export default function Team() {
             <div className="tableSection">
               <div className="tablePanel">
                 <div className="tableHeader">
-                  <h3>All project members</h3>
+                  <h3>Thành viên trong dự án</h3>
                   <div className="panelControl"></div>
                 </div>
                 <div className="tableWrapper">

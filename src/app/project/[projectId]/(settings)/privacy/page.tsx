@@ -9,21 +9,38 @@ export default function Permission() {
 
   let project_id = localStorage.getItem("project_id");
 
-  const [todoPermiss, setTodoPermiss] = useState<any>(0);
+  const invite_perrmission = localStorage.getItem("invite_permiss");
 
-  const [invitePermiss, setInvitePermiss] = useState<any>(0);
+  const todo_perrmission = localStorage.getItem("todo_permiss");
+
+  const [todoPermiss, setTodoPermiss] = useState<any>(todo_perrmission);
+
+  const [invitePermiss, setInvitePermiss] = useState<any>(invite_perrmission);
 
   const [permission, setPermission] = useState({
-    todo_permission: "",
-    invite_permission: "",
+    todo_permission: 0,
+    invite_permission: 0,
   });
 
   const handleOnchangeTodo = (e: React.ChangeEvent<HTMLInputElement>) => {
     let currVal: any = (e.currentTarget.closest(".inp-todo") as HTMLElement)
       ?.id;
+
+    let invite_val: any = (
+      e.currentTarget.closest(".inp-invite") as HTMLElement
+    )?.id;
+
     setTodoPermiss(parseInt(currVal));
-    setPermission({ ...permission, todo_permission: currVal });
+    // setInvitePermiss(parseInt(invite_val));
+
+    setPermission({
+      ...permission,
+      todo_permission: currVal,
+      invite_permission: invite_val,
+    });
   };
+
+  console.log(permission);
 
   const handleOnchangeInvite = (e: React.ChangeEvent<HTMLInputElement>) => {
     let currVal: any = (e.currentTarget.closest(".inp-invite") as HTMLElement)

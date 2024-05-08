@@ -7,7 +7,7 @@ import {
   TagsEdit,
   ListTag,
 } from "@/app/components";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import tagService from "@/service/project/tagsService";
 import CheckRole from "@/service/project/checkRole";
 import { env } from "@/config/varenv";
@@ -26,6 +26,10 @@ export default function Tags() {
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
   const [currTag, setCurrTag] = useState(""); // Default value tag
+
+  const [valueNameTag, setValueNameTag] = useState<any>("");
+
+  const inputNameTagRef = useRef<any>(null);
 
   const toggleModal = (e: React.MouseEvent<HTMLElement>) => {
     setShowModalEdit(!showModalEdit);
@@ -77,7 +81,14 @@ export default function Tags() {
   async function handleAdd() {
     try {
       const tagsData = await tagService.handleAdd(inforTag, token);
-      setTags((prev: any) => [...prev, tagsData]);
+      inputNameTagRef.current.value = "";
+      if (tagsData != Object) {
+        alert("có lỗi khii thêm tags");
+      } else {
+        setTags((prev: any) => [...prev, tagsData]);
+      }
+
+      console.log(tagsData);
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
     }
@@ -164,8 +175,6 @@ export default function Tags() {
     } else {
       setRole(false);
     }
-
-    console.log(response);
   };
 
   useEffect(() => {
@@ -180,6 +189,7 @@ export default function Tags() {
             titleNav="Thẻ"
             btnTitle="Mở rộng"
             event={toggleModalDeleteAll}
+            showBtn={false}
           />
         ) : (
           <SubNav titleNav="Thẻ" disable={!role} />
@@ -204,6 +214,7 @@ export default function Tags() {
                         name="name"
                         placeholder="Tên thẻ"
                         onChange={handleInputChange}
+                        ref={inputNameTagRef}
                       />
                     </div>
                     <div className="col-20">
@@ -217,7 +228,7 @@ export default function Tags() {
 
               <div className=" col-8" id="rightTags">
                 <div className="row" id="headerTags">
-                  <div className="col nameHeader">Tags</div>
+                  <div className="col nameHeader">Thẻ</div>
                   <div className="col-xl-2 actionHeader">Tùy chỉnh</div>
                 </div>
 

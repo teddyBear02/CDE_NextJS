@@ -22,6 +22,7 @@ export default function Privacy({
           titleNav="Quyền truy cập"
           btnTitle="Lưu thay đổi"
           event={onSaveChange}
+          showBtn={false}
         />
         <div className="container showFolder">
           <div className="boxPermission mb-4" id="todoVisual">
@@ -65,8 +66,8 @@ export default function Privacy({
                   <label htmlFor="">
                     {"Chỉ định hiển thị việc cần làm"}
                     <p className="small text-meta">
-                      Việc cần làm sẽ hiển thị đối với quản trị viên, người tạo
-                      và những người được cấp phép
+                      o] Việc cần làm sẽ hiển thị đối với quản trị viên, người
+                      tạo và những người được cấp phép
                     </p>
                   </label>
                 </div>

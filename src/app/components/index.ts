@@ -54,6 +54,7 @@ export { default as None } from "./common/none";
     //...................Activities Components.................//
     export { default as ListActivities } from './project/activities/listActivities' 
 
+    
 //...................Home Components....................//
 export { default as ModalCreate } from "./home/modalCreate";
 export { default as ListProject } from "./home/listProject";
@@ -65,3 +66,6 @@ export { default as LoginFailed} from './auth/loginFailed'
 //...................View PDF Component..................//
 export {default as NavPdf} from "./project/viewPdf/navPdf"
 export {default as SideNavPdf} from "./project/viewPdf/sideNavPdf"
+
+
+

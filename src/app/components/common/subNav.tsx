@@ -5,6 +5,9 @@ interface Props {
   event?: any;
   elemNav?: any;
   toFolder?: any;
+  showBtn?: any;
+  btnShow3D?: any;
+  to3DModal?: any;
 }
 export default function SubNav({
   titleNav,
@@ -13,6 +16,9 @@ export default function SubNav({
   btnTitle,
   elemNav,
   toFolder,
+  showBtn,
+  btnShow3D,
+  to3DModal,
 }: Props) {
   return (
     <>
@@ -39,7 +45,15 @@ export default function SubNav({
           </div>
 
           <span className={`navbar-text ${disable ? "disable" : ""}`}>
-            <button className="btn btn-primary" onClick={event}>
+            {showBtn ? (
+              <button className="btn btn-primary mx-4" onClick={to3DModal}>
+                {btnShow3D}
+              </button>
+            ) : (
+              <></>
+            )}
+
+            <button className="btn btn-primary ml-3" onClick={event}>
               {btnTitle}
             </button>
           </span>
