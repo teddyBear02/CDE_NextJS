@@ -1,41 +1,54 @@
 "use client";
 import { useEffect, useState } from "react";
-import { SubNav, ModalNewTodo, NoneTodo, DetailTodo } from "@/app/components";
-import { postTodo, getTodo, deleteTodo } from "@/service/project/todoService";
+import { SubNav, NoneTodo, DetailTodo } from "@/app/components";
+import { postTodo, getTodo } from "@/service/project/todoService";
 import { PostComment } from "@/service/project/commentService";
-import { Form } from "react-bootstrap";
+import { Button, Form, FormControl } from "react-bootstrap";
 import CustomDropdown from "@/app/until/CustomDropdown";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { env } from "@/config/varenv";
 import { formatDate } from "@/app/until/Helper";
+import { getUserActivities } from "@/service/project/ActivitiesService";
 
 const checkboxesOwner = [
-  { label: "Assigned to me", value: 1 },
-  { label: "Created by me", value: 2 },
-  { label: "Unassigned", value: 3 },
+  { label: "Được giao cho tôi", value: 1 },
+  { label: "Tạo bởi tôi", value: 2 },
+  { label: "Không được giao", value: 3 },
 ];
 const checkboxesStatus = [
-  { label: "New", value: 1 },
-  { label: "In Progress", value: 2 },
-  { label: "Waitting", value: 3 },
-  { label: "Done", value: 4 },
-  { label: "Close", value: 5 },
+  { label: "Mới", value: 1 },
+  { label: "Đang làm", value: 2 },
+  { label: "Đang chờ", value: 3 },
+  { label: "Hoàn thành", value: 4 },
+  { label: "Đóng", value: 5 },
 ];
 const checkboxesPriority = [
-  { label: "Critical", value: 4 },
-  { label: "High", value: 3 },
-  { label: "Normal", value: 2 },
-  { label: "Low", value: 1 },
+  { label: "Nghiêm trọng", value: 4 },
+  { label: "Cao", value: 3 },
+  { label: "Bình thường", value: 2 },
+  { label: "Thấp", value: 1 },
 ];
 export default function Todo() {
   const token = env.TOKEN;
+  const [exportExcel, setExportExcel] = useState(false);
   const [dataToDo, setDataToDo] = useState<any[]>([]);
   const [dataDetailTodo, setDataDetailTodo] = useState<any[]>([]);
+  const [checkedUsers, setCheckedUsers] = useState([]);
+  const [dataFormCreate, setDataFormCreate] = useState({
+    assginTo: "",
+    title: "",
+    descriptions: "",
+    state: 1,
+    status: 1,
+    startDate: new Date(),
+    finishDate: new Date(),
+  });
+  const [isCallingApiCreate, setIsCallingApiCreate] = useState(false);
 
   let project_id = localStorage.getItem("project_id");
 
-  const [showModalTodo, setShowModalTodo] = useState(false);
+  const [showModalCreateTodo, setShowModalCreateTodo] = useState(false);
 
   const [showDetail, setShowDetail] = useState(false);
 
@@ -47,8 +60,70 @@ export default function Todo() {
   const [statusTypes, setStatusTypes] = useState<any>([]);
   const [priorityTypes, setPriorityTypes] = useState<any>([]);
   const [selectedCheckboxDate, setSelectedCheckboxDate] = useState<string>("");
-  const [isCallingApiCreate, setIsCallingApiCreate] = useState(false);
+  const [listUserActivity, setListUserActivity] = useState<any[]>([]);
+  const [searchTermUser, setSearchTermUser] = useState("");
 
+  const filteredUsers = listUserActivity.filter(
+    (item) =>
+      item.user.name.toLowerCase().includes(searchTermUser.toLowerCase()) ||
+      item.user.email.toLowerCase().includes(searchTermUser.toLowerCase())
+  );
+  const handleCheckboxUserChange = (userId) => {
+    if (checkedUsers.includes(userId)) {
+      setCheckedUsers(checkedUsers.filter((id) => id !== userId));
+    } else {
+      setCheckedUsers([...checkedUsers, userId]);
+    }
+  };
+  const handleChangeSearchUser = (event) => {
+    setSearchTermUser(event.target.value);
+  };
+  const getAllActive = async () => {
+    let params = "?";
+    if (ownerType.length > 0) {
+      params += `&owns=${ownerType.join(",")}`;
+    }
+    if (checkedUsers.length > 0) {
+      params += `&user_id=${checkedUsers.join(",")}`;
+    }
+    if (statusTypes.length > 0) {
+      params += `&status=${statusTypes.join(",")}`;
+    }
+    if (priorityTypes.length > 0) {
+      params += `&priorities=${priorityTypes.join(",")}`;
+    }
+    if (
+      searchDate.startDate &&
+      searchDate.endDate &&
+      selectedCheckboxDate !== ""
+    ) {
+      const startDateString = encodeURIComponent(
+        searchDate.startDate.toISOString()
+      );
+      const endDateString = encodeURIComponent(
+        searchDate.endDate.toISOString()
+      );
+      params = `&start_date=${startDateString}&finish_date=${endDateString}`;
+    }
+    if (!exportExcel) {
+      const response = await getTodo(token, project_id, params);
+      setDataToDo(response);
+      console.log(dataToDo);
+    } else {
+      // params += "&export=1";
+      // const response = await getActivities(token, project_id, params);
+      // const linkExport = response.metadata;
+      // setExportExcel(false)
+      // window.open(linkExport, "_blank");
+    }
+  };
+  const getUserActive = async () => {
+    const response = await getUserActivities(token, project_id);
+    setListUserActivity(response.metadata);
+  };
+  useEffect(() => {
+    getUserActive();
+  }, []);
   const [searchDate, setSearchDate] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -164,29 +239,39 @@ export default function Todo() {
     setShowDetail(false);
     getAllToDo();
   }
-
-  const [todoEdit, setTodoEdit] = useState({
-    title: "",
-    finish_date: "",
-    start_date: "",
-    project_id: project_id,
-  });
-  const getAllToDo = async () => {
-    const response = await getTodo(token, project_id);
-    if (response) setDataToDo(response);
+  const handleDataCreateFormChange = (
+    key: string,
+    value: string | number | Date | null
+  ) => {
+    setDataFormCreate((prevData) => ({
+      ...prevData,
+      [key]: value,
+    }));
   };
   const handleCreateTodo = async () => {
-    if (!todoEdit.title || !todoEdit.start_date || !todoEdit.finish_date) {
+    if (
+      !dataFormCreate.title ||
+      !dataFormCreate.startDate ||
+      !dataFormCreate.finishDate
+    ) {
       //validate
       return;
     }
     setIsCallingApiCreate(true);
-    const response = await postTodo(token, todoEdit);
-    if (response.title) getAllToDo();
-    setShowModalTodo(false);
+    const response = await postTodo(token, project_id, dataFormCreate);
+    if (response.title) {
+      getAllToDo();
+    }
+    setShowModalCreateTodo(false);
     setIsCallingApiCreate(false);
   };
-
+  const getAllToDo = async () => {
+    const response = await getTodo(token, project_id);
+    setDataToDo(response);
+  };
+  useEffect(() => {
+    getAllActive();
+  }, [priorityTypes, statusTypes, exportExcel, listUserActivity, ownerType]);
   const [comment, setComment] = useState({
     type: "",
     another_id: "",
@@ -194,7 +279,7 @@ export default function Todo() {
   });
 
   const handleComment = async () => {
-    await PostComment(token, comment, project_id);
+    // await PostComment(token, comment);
   };
   useEffect(() => {
     getAllToDo();
@@ -205,7 +290,7 @@ export default function Todo() {
         <SubNav
           titleNav="Việc cần làm"
           btnTitle="Tạo mới"
-          event={() => setShowModalTodo(true)}
+          event={() => setShowModalCreateTodo(true)}
         />
         <div
           style={{
@@ -242,12 +327,42 @@ export default function Todo() {
             ))}
           </CustomDropdown>
 
-          <div className="filter">
-            <span>Users</span> <i className="bi bi-caret-down-fill"></i>
-          </div>
-          <div className="filter">
-            <span>Groups</span> <i className="bi bi-caret-down-fill"></i>
-          </div>
+          <CustomDropdown label="Groups">
+            <Form>
+              <FormControl
+                type="text"
+                style={{ width: "250px" }}
+                placeholder="Search"
+                className="mr-sm-2"
+                value={searchTermUser}
+                onChange={handleChangeSearchUser}
+              />
+            </Form>
+            {filteredUsers.map((item) => (
+              <div
+                key={item.user.id}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCheckboxUserChange(item.user.id)}
+              >
+                <Form.Check
+                  type="checkbox"
+                  className="mx-2"
+                  name={item.user.id.toString()}
+                  checked={checkedUsers.includes(item.user.id)}
+                  onChange={(e) => e.stopPropagation()}
+                />
+                <div style={{ width: "90%", textAlign: "left" }}>
+                  <div>{item.user.name}</div>
+                  <div>{item.user.email}</div>
+                </div>
+              </div>
+            ))}
+          </CustomDropdown>
           <CustomDropdown label="Status">
             {checkboxesStatus.map((checkbox) => (
               <div
@@ -482,16 +597,6 @@ export default function Todo() {
         </div>
 
         {dataToDo && dataToDo.length > 0 ? (
-          // <TodoList
-          //   title="Tiêu đề"
-          //   user="Người tạo"
-          //   timeCreate="Thời gian tạo"
-          //   timeModified="Sửa đổi"
-          //   state="Ưu tiên"
-          //   status="Trạng thái"
-          //   data={dataTableTodo}
-          //   handleClick={handleShowDetailToDo}
-          // />
           <table className="table table-hover">
             <thead>
               <tr>
@@ -560,21 +665,128 @@ export default function Todo() {
         />
       )}
 
-      {showModalTodo && (
-        <ModalNewTodo
-          isCallingApi={isCallingApiCreate}
-          closeModal={() => setShowModalTodo(false)}
-          handleInputName={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setTodoEdit({ ...todoEdit, title: e.target.value });
-          }}
-          handleInputStart={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setTodoEdit({ ...todoEdit, start_date: e.target.value });
-          }}
-          handleInputEnd={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setTodoEdit({ ...todoEdit, finish_date: e.target.value });
-          }}
-          createTodo={handleCreateTodo}
-        />
+      {showModalCreateTodo && (
+        <div className="modalCreateFolder">
+          <div
+            className="boxModal scrollable"
+            style={{ height: "500px" }}
+            id="modalTodo"
+          >
+            <div className="header">
+              <h3>Tạo việc cần làm</h3>
+              <button onClick={() => setShowModalCreateTodo(false)}>
+                <i className="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <div id="content" className="middleContent ">
+              <form id="detail">
+                <label>Tên việc cần làm:</label>
+                <input
+                  type="text"
+                  placeholder="Việc cần làm"
+                  name="name"
+                  onChange={(event) =>
+                    handleDataCreateFormChange("title", event.target.value)
+                  }
+                />
+                <label htmlFor="">Gửi cho</label>
+                <div className="input-focus-group">
+                  <input
+                    type="email"
+                    onChange={(event) =>
+                      handleDataCreateFormChange("assginTo", event.target.value)
+                    }
+                    value={dataFormCreate.assginTo}
+                  />
+                </div>
+                <label>Ngày bắt đầu:</label>
+                <ReactDatePicker
+                  className="w-full"
+                  selected={dataFormCreate.startDate}
+                  onChange={(date) =>
+                    handleDataCreateFormChange("startDate", date)
+                  }
+                />
+                <label>Ngày kết thúc:</label>
+                <ReactDatePicker
+                  className="w-full"
+                  selected={dataFormCreate.finishDate}
+                  onChange={(date) =>
+                    handleDataCreateFormChange("finishDate", date)
+                  }
+                />
+                <label>Miêu tả</label>
+                <div className="input-focus-group">
+                  <textarea
+                    onChange={(event) =>
+                      handleDataCreateFormChange(
+                        "descriptions",
+                        event.target.value
+                      )
+                    }
+                    value={dataFormCreate?.descriptions}
+                  ></textarea>
+                </div>
+                <div className="input-group">
+                  <label htmlFor="">Trạng thái </label>
+                  <div className="input-focus-group">
+                    <select
+                      value={dataFormCreate.status}
+                      onChange={(e) =>
+                        handleDataCreateFormChange("status", e.target.value)
+                      }
+                    >
+                      {checkboxesStatus.map((checkbox) => (
+                        <option key={checkbox.value} value={checkbox.value}>
+                          {checkbox.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="input-group">
+                  <label htmlFor="">Ưu tiên </label>
+                  <div className="input-focus-group">
+                    <select
+                      name=""
+                      id=""
+                      value={dataFormCreate.state}
+                      onChange={(e) =>
+                        handleDataCreateFormChange("state", e.target.value)
+                      }
+                    >
+                      {checkboxesPriority.map((checkbox) => (
+                        <option key={checkbox.value} value={checkbox.value}>
+                          {checkbox.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div id="footer">
+              <hr />
+              <div className="wrap-btn">
+                <button
+                  className="cancel"
+                  onClick={() => setShowModalCreateTodo(false)}
+                >
+                  Hủy
+                </button>
+                <Button
+                  className="create"
+                  disabled={isCallingApiCreate}
+                  type="submit"
+                  onClick={() => handleCreateTodo()}
+                >
+                  Tạo mới
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

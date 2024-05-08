@@ -37,12 +37,8 @@ export { default as None } from "./common/none";
     export { default as ModalDeleteComment} from './project/data/modalDeleteComment'
     
     //..................Todo Components.....................//
-    export { default as TodoList } from "./project/todo/todoList";
     export { default as NoneTodo } from "./project/todo/noneTodo";
-    export { default as ModalNewTodo } from "./project/todo/modalNewTodo"
     export { default as DetailTodo } from "./project/todo/detailTodo"
-    export { default as EditTodo } from './project/todo/editTodo'
-    export { default as InfoTodo } from './project/todo/infoTodo'
 
     //.................Privacy Components...................//
     export { default as ProjectDetail } from "./project/project_detail/projectDetail";
