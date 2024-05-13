@@ -32,15 +32,15 @@ export default function ListFolder({
           </tr>
         </thead>
         <tbody className="table-group-divider">
-          {folders.map((folder: any, index: any) => (
+          {folders?.map((folder: any, index: any) => (
             <tr
               className={
-                folder.versions >= 1 ? "hoverList file" : "hoverList folder"
+                folder?.versions >= 1 ? "hoverList file" : "hoverList folder"
               }
               key={index}
-              id={folder.id}
+              id={folder?.id}
               onClick={eventClick}
-              url-data={folder.versions >= 1 ? `${folder.url}` : ``}
+              url-data={folder?.versions >= 1 ? `${folder?.url}` : ``}
             >
               <th scope="row" className="icon">
                 {folder?.versions >= 1 ? (
@@ -50,13 +50,13 @@ export default function ListFolder({
                 )}
               </th>
               <td className="nameFol">{folder.name}</td>
-              <td>{folder.user.name}</td>
-              <td>{folder.updated_at.slice(0, 10)}</td>
+              <td>{folder?.user?.name}</td>
+              <td>{folder?.updated_at?.slice(0, 10)}</td>
               <td></td>
               <td></td>
               <td>
-                {folder.tag.length > 0 ? (
-                  <div className="circle-round">+{folder.tag.length}</div>
+                {folder?.tag?.length > 0 ? (
+                  <div className="circle-round">+{folder?.tag?.length}</div>
                 ) : (
                   <></>
                 )}

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { SubNav, NoneTodo, DetailTodo } from "@/app/components";
+import { SubNav, NoneTodo, DetailTodo } from "@/components";
 import { postTodo, getTodo } from "@/service/project/todoService";
 import {
   PostComment,
@@ -9,11 +9,11 @@ import {
   DeleteComment,
 } from "@/service/project/commentService";
 import { Button, Form, FormControl } from "react-bootstrap";
-import CustomDropdown from "@/app/until/CustomDropdown";
+import CustomDropdown from "@/until/CustomDropdown";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { env } from "@/config/varenv";
-import { formatDate } from "@/app/until/Helper";
+import { formatDate } from "@/until/Helper";
 import { getUserActivities } from "@/service/project/ActivitiesService";
 
 const checkboxesOwner = [
@@ -244,8 +244,6 @@ export default function Todo() {
     setDataDetailTodo(dataDetail);
     setShowDetail(true);
   }
-
-  console.log(idTodo);
 
   function handleFinishEditDetailToDo() {
     setShowDetail(false);
@@ -606,6 +604,7 @@ export default function Todo() {
           <table className="table table-hover">
             <thead>
               <tr>
+                <th></th>
                 <th scope="col">Tiêu đề</th>
                 <th scope="col">Người tạo</th>
                 <th scope="col">Thời gian tạo</th>
@@ -615,37 +614,28 @@ export default function Todo() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td colSpan={6}>
-                  <div
-                    className="table-wrapper scrollable"
-                    style={{ overflowY: "scroll", height: "400px" }}
-                  >
-                    <table style={{ width: "100%" }}>
-                      <tbody className="table-group-divider">
-                        {dataToDo.map((data: any) => (
-                          <tr
-                            className="hoverList todoList"
-                            key={data.id}
-                            id={data.id}
-                            onClick={() => handleShowDetailToDo(data?.id)}
-                          >
-                            {/*   <td className="icon">
-                            <i className="bi bi-clipboard-check-fill"></i>
-                        </td>   */}
-                            <td>{data.title}</td>
-                            <td>{data.user_create.name}</td>
-                            <td>{formatDate(data.created_at)}</td>
-                            <td>{formatDate(data.updated_at)}</td>
-                            <td>{getStateLabel(data.priorities)}</td>
-                            <td>{getStatusLabel(data.status)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </td>
-              </tr>
+              {dataToDo.map((data: any) => (
+                <tr
+                  className="hoverList todoList"
+                  style={{
+                    borderBottom: "1px solid #ccc",
+                    padding: "0px 1rem",
+                  }}
+                  key={data.id}
+                  id={data.id}
+                  onClick={() => handleShowDetailToDo(data?.id)}
+                >
+                  <td className="icon">
+                    <i className="bi bi-clipboard-check-fill"></i>
+                  </td>
+                  <td>{data.title}</td>
+                  <td>{data.user_create.name}</td>
+                  <td>{formatDate(data.created_at)}</td>
+                  <td>{formatDate(data.updated_at)}</td>
+                  <td>{getStateLabel(data.priorities)}</td>
+                  <td>{getStatusLabel(data.status)}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         ) : (

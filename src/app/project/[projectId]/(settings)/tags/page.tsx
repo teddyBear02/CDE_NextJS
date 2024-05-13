@@ -6,7 +6,7 @@ import {
   TagsDeleteAll,
   TagsEdit,
   ListTag,
-} from "@/app/components";
+} from "@/components";
 import { useState, useEffect, useRef } from "react";
 import tagService from "@/service/project/tagsService";
 import CheckRole from "@/service/project/checkRole";
@@ -26,8 +26,6 @@ export default function Tags() {
   const [selectedItemId, setSelectedItemId] = useState<string>("");
 
   const [currTag, setCurrTag] = useState(""); // Default value tag
-
-  const [valueNameTag, setValueNameTag] = useState<any>("");
 
   const inputNameTagRef = useRef<any>(null);
 
@@ -82,10 +80,10 @@ export default function Tags() {
     try {
       const tagsData = await tagService.handleAdd(inforTag, token);
       inputNameTagRef.current.value = "";
-      if (tagsData != Object) {
-        alert("có lỗi khii thêm tags");
+      if (tagsData) {
+        setTags((prev: any) => [tagsData, ...prev]);
       } else {
-        setTags((prev: any) => [...prev, tagsData]);
+        console.log("có lỗi khi thêm tags", tagsData);
       }
 
       console.log(tagsData);
@@ -118,16 +116,11 @@ export default function Tags() {
         project_id
       );
 
-      let newTagName = {
-        id: response.id,
-        name: response.name,
-      };
-
       const indexToRemove = tags.findIndex(
         (item: any) => item.id === parseInt(selectedItemId)
       );
 
-      tags.splice(indexToRemove, 1, newTagName);
+      tags.splice(indexToRemove, 1, response);
       setShowModalEdit(!showModalEdit);
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);

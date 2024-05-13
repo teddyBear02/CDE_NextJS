@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Privacy } from "@/app/components";
+import { Privacy } from "@/components";
 import { ChangePermiss } from "@/service/project/changePermiss";
 import { env } from "@/config/varenv";
 

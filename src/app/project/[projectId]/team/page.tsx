@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { SubNav, ListUser, ModalInvite, UserDetail } from "@/app/components";
+import { SubNav, ListUser, ModalInvite, UserDetail } from "@/components";
 import {
   getInforTeam,
   SendMail,

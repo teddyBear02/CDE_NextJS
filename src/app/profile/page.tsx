@@ -1,4 +1,4 @@
-import { NavBar, SubNav } from "../components";
+import { NavBar, SubNav } from "@/components";
 
 export default function Profile() {
   return (

@@ -1,5 +1,5 @@
 "use client";
-import { NavBar, SideBar } from "@/app/components";
+import { NavBar, SideBar } from "@/components";
 import ViewPdf from "./[projectId]/view/[urlfile]/page";
 import {
   createContext,

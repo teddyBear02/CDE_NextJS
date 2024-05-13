@@ -66,8 +66,8 @@ export default function Privacy({
                   <label htmlFor="">
                     {"Chỉ định hiển thị việc cần làm"}
                     <p className="small text-meta">
-                      o] Việc cần làm sẽ hiển thị đối với quản trị viên, người
-                      tạo và những người được cấp phép
+                      Việc cần làm sẽ hiển thị đối với quản trị viên, người tạo
+                      và những người được cấp phép
                     </p>
                   </label>
                 </div>

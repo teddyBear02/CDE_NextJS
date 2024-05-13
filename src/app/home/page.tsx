@@ -1,11 +1,14 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
-import { NavBar, SubNav, None, ModalCreate, ListProject } from "../components";
+import { useEffect, useState, useRef, useContext } from "react";
+import { NavBar, SubNav, None, ModalCreate, ListProject } from "@/components";
 import { env } from "@/config/varenv";
 import projectService from "@/service/home/projectService";
+import { HomeProvider, HomeContext } from "@/Context/HomeContext";
 
 const Home = () => {
   let token: any = env.TOKEN;
+
+  const { listProject } = useContext(HomeProvider);
 
   const paramNone = {
     title: "Hiện không có dự án nào",
@@ -25,7 +28,7 @@ const Home = () => {
   const dataProject = async () => {
     const response = await projectService.getProject(token);
     setData(response);
-    localStorage.setItem("invite", re);
+    localStorage.setItem("invite", "0");
   };
 
   useEffect(() => {
@@ -35,8 +38,6 @@ const Home = () => {
   //.................................................//
 
   //.................POST Project....................//
-
-  const [file, setFile] = useState<undefined | File | any>();
 
   const fileInputRef = useRef<any>(null);
 
@@ -55,14 +56,13 @@ const Home = () => {
   const handleSubmit = async () => {
     const response = await projectService.handleCreateProject(formData, token);
     setData(() => [...data, response]);
-    console.log(response);
     toggleModal();
   };
 
   //.................................................//
 
   return (
-    <>
+    <HomeContext>
       <div className="main">
         <NavBar />
         <div className="toRender container">
@@ -101,7 +101,7 @@ const Home = () => {
           handleCreateProject={handleSubmit}
         />
       )}
-    </>
+    </HomeContext>
   );
 };
 

@@ -10,7 +10,7 @@ import {
   ModalDeleteFolder,
   NoneData,
   ModalDeleteComment,
-} from "@/app/components";
+} from "@/components";
 import React, {
   ReactNode,
   useEffect,
@@ -230,6 +230,8 @@ const Folder = () => {
       if (e.currentTarget.classList.contains("file")) {
         localStorage.setItem("parent_id", folder.folder_id);
         localStorage.setItem("first-version", folder.first_version);
+        setParentIdToEdit(folder.parent_id);
+
         setListTags(folder.tag);
       } else if (
         e.currentTarget.classList.contains("folder") &&
@@ -461,7 +463,7 @@ const Folder = () => {
 
   // edit data file
   const [fileEdit, setFileEdit] = useState({
-    name: nameToEdit,
+    name: name_folder_local,
     folder_id: parent_id,
     project_id: project_id,
     tag: "",
@@ -568,7 +570,11 @@ const Folder = () => {
     }
 
     if (folderEdit.name != e.target.value && type == "file") {
-      setFileEdit({ ...fileEdit, name: e.target.value });
+      setFileEdit({
+        ...fileEdit,
+
+        name: e.target.value,
+      });
       setOption("1");
     }
   };
@@ -607,17 +613,18 @@ const Folder = () => {
     if (type == "file") {
       switch (option) {
         case "1":
-          const responseChangeName = FileUpdate(
+          const responseChangeName: any = await FileUpdate(
             token,
             folder_id_local,
             fileEdit,
             option
-          ).then((res: any) => console.log(res.data.metadata));
+          );
 
           const indexChangeName = data.findIndex(
             (item: any) => item.id === parseInt(folder_id)
           );
-          data.splice(indexChangeName, 1, responseChangeName);
+
+          data.splice(indexChangeName, 1, responseChangeName.data.metadata);
           setShowMoveFolder(!showMoveFolder);
           setShowOption(!showOption);
           break;
@@ -631,16 +638,18 @@ const Folder = () => {
           setShowOption(!showOption);
           break;
         case "3":
-          const responseAddTag = FileUpdate(
+          const responseAddTag: any = await FileUpdate(
             token,
             folder_id_local,
             fileEdit,
             option
           );
+          console.log(responseAddTag);
+
           const indexAddTag = data.findIndex(
             (item: any) => item.id === parseInt(folder_id)
           );
-          data.splice(indexAddTag, 1, responseAddTag);
+          data.splice(indexAddTag, 1, responseAddTag.data.metadata);
           setShowOption(!showOption);
           setShowEdit(false);
           break;

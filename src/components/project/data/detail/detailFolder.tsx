@@ -1,9 +1,4 @@
-import {
-  MoveFolder,
-  EditFolder,
-  InforFolder,
-  HistoryFile,
-} from "@/app/components";
+import { MoveFolder, EditFolder, InforFolder, HistoryFile } from "@/components";
 
 interface Props {
   showEdit: any;

@@ -1,4 +1,4 @@
-import { LoginComponent } from "@/app/components";
+import { LoginComponent } from "@/components";
 
 export default function Login() {
   return (

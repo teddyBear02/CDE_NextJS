@@ -1,17 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
-import { None, ListActivities } from "@/app/components";
+import { None, ListActivities } from "@/components";
 import {
   getActivities,
   getUserActivities,
 } from "@/service/project/ActivitiesService";
 import { env } from "@/config/varenv";
 import { Button, Form, FormControl } from "react-bootstrap";
-import CustomDropdown from "@/app/until/CustomDropdown";
-import { debounce } from "@/app/until/Helper";
+import CustomDropdown from "@/until/CustomDropdown";
+import { debounce } from "@/until/Helper";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-const activityMapping = {
+const activityMapping: any = {
   project: "Project",
   file: "Files",
   folder: "Folder",
@@ -25,7 +25,7 @@ export default function Activity() {
   const [listActivity, setListActivity] = useState<any[]>([]);
   const [listUserActivity, setListUserActivity] = useState<any[]>([]);
   const [searchTermUser, setSearchTermUser] = useState("");
-  const [checkedUsers, setCheckedUsers] = useState([]);
+  const [checkedUsers, setCheckedUsers] = useState<any[]>([]);
   const [selectedCheckboxDate, setSelectedCheckboxDate] = useState<string>("");
   const [exportExcel, setExportExcel] = useState(false);
   const [searchDate, setSearchDate] = useState({
@@ -47,7 +47,7 @@ export default function Activity() {
     setSelectedCheckboxDate(type);
     handleDateChange(null, type);
   };
-  const [activity, setActivity] = useState({
+  const [activity, setActivity] = useState<any>({
     project: false,
     file: false,
     folder: false,
@@ -57,15 +57,15 @@ export default function Activity() {
     todo: false,
   });
   const handleCheckboxActivityChange = (name: string) => {
-    setActivity((prevState) => ({
+    setActivity((prevState: any) => ({
       ...prevState,
       [name]: !prevState[name],
     }));
   };
-  const handleChangeSearchUser = (event) => {
+  const handleChangeSearchUser = (event: any) => {
     setSearchTermUser(event.target.value);
   };
-  const handleCheckboxUserChange = (userId) => {
+  const handleCheckboxUserChange = (userId: any) => {
     if (checkedUsers.includes(userId)) {
       setCheckedUsers(checkedUsers.filter((id) => id !== userId));
     } else {
@@ -112,7 +112,7 @@ export default function Activity() {
       params += "&export=1";
       const response = await getActivities(token, project_id, params);
       const linkExport = response.metadata;
-      setExportExcel(false)
+      setExportExcel(false);
       window.open(linkExport, "_blank");
     }
   };
@@ -201,360 +201,343 @@ export default function Activity() {
         aria-disabled={exportExcel === false}
         onClick={() => setExportExcel(true)}
         className="px-2"
-        style={{ 
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: '100%'
-         }}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%",
+        }}
       >
-      <div style={{fontSize: '30px' }}>Hoạt động</div>
-      <div
-        aria-disabled={exportExcel === false}
-        onClick={() => setExportExcel(true)}
-      >
-        <Button
-          variant="success"
-          onClick={handleExportExcel}
-          disabled={exportExcel}
+        <div style={{ fontSize: "30px" }}>Hoạt động</div>
+        <div
+          aria-disabled={exportExcel === false}
+          onClick={() => setExportExcel(true)}
         >
-          Xuất Excel
-        </Button>
+          <Button
+            variant="success"
+            onClick={handleExportExcel}
+            disabled={exportExcel}
+          >
+            Xuất Excel
+          </Button>
+        </div>
       </div>
-      </div>
-      <div style={{
-        display: "flex",
-        width: '100%',
-        alignItems: 'center'
-       }} 
-       className=" px-2">
-            <CustomDropdown label="Activity Type">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleCheckboxActivityChange("project")}
-              >
-                <Form.Check
-                  style={{ marginLeft: "2px" }}
-                  type="checkbox"
-                  name="project"
-                  checked={activity.project}
-                />
-                <div style={{ textAlign: "left", width: "70%" }}>Dự án</div>
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          alignItems: "center",
+        }}
+        className=" px-2"
+      >
+        <CustomDropdown label="Activity Type">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={() => handleCheckboxActivityChange("project")}
+          >
+            <Form.Check
+              style={{ marginLeft: "2px" }}
+              type="checkbox"
+              name="project"
+              checked={activity.project}
+            />
+            <div style={{ textAlign: "left", width: "70%" }}>Dự án</div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={() => handleCheckboxActivityChange("file")}
+          >
+            <Form.Check
+              style={{ marginLeft: "2px" }}
+              type="checkbox"
+              name="file"
+              checked={activity.file}
+            />
+            <div style={{ textAlign: "left", width: "70%" }}>Tệp</div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={() => handleCheckboxActivityChange("folder")}
+          >
+            <Form.Check
+              style={{ marginLeft: "2px" }}
+              type="checkbox"
+              name="folder"
+              checked={activity.folder}
+            />
+            <div style={{ textAlign: "left", width: "70%" }}>Thư mục</div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={() => handleCheckboxActivityChange("comment")}
+          >
+            <Form.Check
+              style={{ marginLeft: "2px" }}
+              type="checkbox"
+              name="comment"
+              checked={activity.comment}
+            />
+            <div style={{ textAlign: "left", width: "70%" }}>Bình luận</div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={() => handleCheckboxActivityChange("tag")}
+          >
+            <Form.Check
+              style={{ marginLeft: "2px" }}
+              type="checkbox"
+              name="tag"
+              checked={activity.tag}
+            />
+            <div style={{ textAlign: "left", width: "70%" }}>Nhãn dán</div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={() => handleCheckboxActivityChange("team")}
+          >
+            <Form.Check
+              style={{ marginLeft: "2px" }}
+              type="checkbox"
+              name="team"
+              checked={activity.team}
+            />
+            <div style={{ textAlign: "left", width: "70%" }}>Đội nhóm</div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={() => handleCheckboxActivityChange("todo")}
+          >
+            <Form.Check
+              style={{ marginLeft: "2px" }}
+              type="checkbox"
+              name="todo"
+              checked={activity.todo}
+            />
+            <div style={{ textAlign: "left", width: "70%" }}>Cần làm</div>
+          </div>
+        </CustomDropdown>
+        <CustomDropdown label="Groups">
+          <Form>
+            <FormControl
+              type="text"
+              style={{ width: "250px" }}
+              placeholder="Search"
+              className="mr-sm-2"
+              value={searchTermUser}
+              onChange={handleChangeSearchUser}
+            />
+          </Form>
+          {filteredUsers.map((item) => (
+            <div
+              key={item.user.id}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+              onClick={() => handleCheckboxUserChange(item.user.id)}
+            >
+              <Form.Check
+                type="checkbox"
+                className="mx-2"
+                name={item.user.id.toString()}
+                checked={checkedUsers.includes(item.user.id)}
+                onChange={(e) => e.stopPropagation()}
+              />
+              <div style={{ width: "90%", textAlign: "left" }}>
+                <div>{item.user.name}</div>
+                <div>{item.user.email}</div>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleCheckboxActivityChange("file")}
-              >
-                <Form.Check
-                  style={{ marginLeft: "2px" }}
-                  type="checkbox"
-                  name="file"
-                  checked={activity.file}
-                />
-                <div style={{ textAlign: "left", width: "70%" }}>Tệp</div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleCheckboxActivityChange("folder")}
-              >
-                <Form.Check
-                  style={{ marginLeft: "2px" }}
-                  type="checkbox"
-                  name="folder"
-                  checked={activity.folder}
-                />
-                <div style={{ textAlign: "left", width: "70%" }}>Thư mục</div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleCheckboxActivityChange("comment")}
-              >
-                <Form.Check
-                  style={{ marginLeft: "2px" }}
-                  type="checkbox"
-                  name="comment"
-                  checked={activity.comment}
-                />
-                <div style={{ textAlign: "left", width: "70%" }}>Bình luận</div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleCheckboxActivityChange("tag")}
-              >
-                <Form.Check
-                  style={{ marginLeft: "2px" }}
-                  type="checkbox"
-                  name="tag"
-                  checked={activity.tag}
-                />
-                <div style={{ textAlign: "left", width: "70%" }}>Nhãn dán</div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleCheckboxActivityChange("team")}
-              >
-                <Form.Check
-                  style={{ marginLeft: "2px" }}
-                  type="checkbox"
-                  name="team"
-                  checked={activity.team}
-                />
-                <div style={{ textAlign: "left", width: "70%" }}>Đội nhóm</div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleCheckboxActivityChange("todo")}
-              >
-                <Form.Check
-                  style={{ marginLeft: "2px" }}
-                  type="checkbox"
-                  name="todo"
-                  checked={activity.todo}
-                />
-                <div style={{ textAlign: "left", width: "70%" }}>Cần làm</div>
-              </div>
-            </CustomDropdown>
-            <CustomDropdown label="Groups">
-              <Form>
-                <FormControl
-                  type="text"
-                  style={{ width: "250px" }}
-                  placeholder="Search"
-                  className="mr-sm-2"
-                  value={searchTermUser}
-                  onChange={handleChangeSearchUser}
-                />
-              </Form>
-              {filteredUsers.map((item) => (
+            </div>
+          ))}
+        </CustomDropdown>
+        <CustomDropdown label="Date modified">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              width: "200px",
+              padding: "4px",
+              textAlign: "left",
+            }}
+          >
+            <div
+              className="mb-2"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              Custom Date
+              {selectedCheckboxDate !== "customDate" && (
                 <div
-                  key={item.user.id}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => handleCheckboxUserChange(item.user.id)}
-                >
-                  <Form.Check
-                    type="checkbox"
-                    className="mx-2"
-                    name={item.user.id.toString()}
-                    checked={checkedUsers.includes(item.user.id)}
-                    onChange={(e) => e.stopPropagation()}
-                  />
-                  <div style={{ width: "90%", textAlign: "left" }}>
-                    <div>{item.user.name}</div>
-                    <div>{item.user.email}</div>
-                  </div>
-                </div>
-              ))}
-            </CustomDropdown>
-            <CustomDropdown label="Date modified">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  width: "200px",
-                  padding: "4px",
-                  textAlign: "left",
-                }}
-              >
-                <div
-                  className="mb-2"
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  Custom Date
-                  {selectedCheckboxDate !== "customDate" && (
-                    <div
-                      onClick={() => {
-                        setSelectedCheckboxDate("customDate");
-                      }}
-                    >
-                      <i
-                        style={{ fontSize: "30px" }}
-                        className="bi bi-plus ml-2 "
-                      ></i>{" "}
-                    </div>
-                  )}
-                  {selectedCheckboxDate === "customDate" && (
-                    <div
-                      onClick={() => {
-                        setSelectedCheckboxDate("");
-                      }}
-                    >
-                      <i style={{ fontSize: "30px" }} className="bi bi-x"></i>
-                    </div>
-                  )}
-                </div>
-                {selectedCheckboxDate === "customDate" && (
-                  <>
-                    <div>From</div>
-                    <ReactDatePicker
-                      selected={searchDate.startDate}
-                      onChange={(date) => {
-                        if (date) {
-                          handleDateChange(date, "startDate");
-                        }
-                      }}
-                    />
-                    <div>To</div>
-                    <ReactDatePicker
-                      selected={searchDate.endDate}
-                      onChange={(date) => {
-                        if (date) {
-                          handleDateChange(date, "endDate");
-                        }
-                      }}
-                    />
-                  </>
-                )}
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginTop: "4px",
-                  }}
                   onClick={() => {
-                    if (selectedCheckboxDate === "yesterday")
-                      setSelectedCheckboxDate("");
-                    else handleCheckboxDateChange("yesterday");
+                    setSelectedCheckboxDate("customDate");
                   }}
                 >
-                  <Form.Check
-                    type="checkbox"
-                    className="mx-2"
-                    name="yesterday"
-                    checked={selectedCheckboxDate === "yesterday"}
-                  />
-                  <div style={{ width: "90%", textAlign: "left" }}>
-                    Yesterday
-                  </div>
+                  <i
+                    style={{ fontSize: "30px" }}
+                    className="bi bi-plus ml-2 "
+                  ></i>{" "}
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                  onClick={() => {
-                    if (selectedCheckboxDate === "today")
-                      setSelectedCheckboxDate("");
-                    else handleCheckboxDateChange("today");
-                  }}
-                >
-                  <Form.Check
-                    type="checkbox"
-                    className="mx-2"
-                    name="today"
-                    checked={selectedCheckboxDate === "today"}
-                  />
-                  <div style={{ width: "90%", textAlign: "left" }}>Today</div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                  onClick={() => {
-                    if (selectedCheckboxDate === "lastweek")
-                      setSelectedCheckboxDate("");
-                    else handleCheckboxDateChange("lastweek");
-                  }}
-                >
-                  <Form.Check
-                    type="checkbox"
-                    className="mx-2"
-                    name="lastweek"
-                    checked={selectedCheckboxDate === "lastweek"}
-                  />
-                  <div style={{ width: "90%", textAlign: "left" }}>
-                    Past 7 days
-                  </div>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                  onClick={() => {
-                    if (selectedCheckboxDate === "lastmonth")
-                      setSelectedCheckboxDate("");
-                    else handleCheckboxDateChange("lastmonth");
-                  }}
-                >
-                  <Form.Check
-                    type="checkbox"
-                    className="mx-2"
-                    name="lastmonth"
-                    checked={selectedCheckboxDate === "lastmonth"}
-                  />
-                  <div style={{ width: "90%", textAlign: "left" }}>
-                    Past 30 days
-                  </div>
-                </div>
+              )}
+              {selectedCheckboxDate === "customDate" && (
                 <div
                   onClick={() => {
                     setSelectedCheckboxDate("");
                   }}
-                  className="my-2 mx-2"
-                  style={{
-                    color: "#0099FF",
-                    cursor: "pointer",
-                    fontSize: "18px",
-                  }}
                 >
-                  Reset
+                  <i style={{ fontSize: "30px" }} className="bi bi-x"></i>
                 </div>
+              )}
+            </div>
+            {selectedCheckboxDate === "customDate" && (
+              <>
+                <div>From</div>
+                <ReactDatePicker
+                  selected={searchDate.startDate}
+                  onChange={(date) => {
+                    if (date) {
+                      handleDateChange(date, "startDate");
+                    }
+                  }}
+                />
+                <div>To</div>
+                <ReactDatePicker
+                  selected={searchDate.endDate}
+                  onChange={(date) => {
+                    if (date) {
+                      handleDateChange(date, "endDate");
+                    }
+                  }}
+                />
+              </>
+            )}
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "4px",
+              }}
+              onClick={() => {
+                if (selectedCheckboxDate === "yesterday")
+                  setSelectedCheckboxDate("");
+                else handleCheckboxDateChange("yesterday");
+              }}
+            >
+              <Form.Check
+                type="checkbox"
+                className="mx-2"
+                name="yesterday"
+                checked={selectedCheckboxDate === "yesterday"}
+              />
+              <div style={{ width: "90%", textAlign: "left" }}>Yesterday</div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+              onClick={() => {
+                if (selectedCheckboxDate === "today")
+                  setSelectedCheckboxDate("");
+                else handleCheckboxDateChange("today");
+              }}
+            >
+              <Form.Check
+                type="checkbox"
+                className="mx-2"
+                name="today"
+                checked={selectedCheckboxDate === "today"}
+              />
+              <div style={{ width: "90%", textAlign: "left" }}>Today</div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+              onClick={() => {
+                if (selectedCheckboxDate === "lastweek")
+                  setSelectedCheckboxDate("");
+                else handleCheckboxDateChange("lastweek");
+              }}
+            >
+              <Form.Check
+                type="checkbox"
+                className="mx-2"
+                name="lastweek"
+                checked={selectedCheckboxDate === "lastweek"}
+              />
+              <div style={{ width: "90%", textAlign: "left" }}>Past 7 days</div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+              onClick={() => {
+                if (selectedCheckboxDate === "lastmonth")
+                  setSelectedCheckboxDate("");
+                else handleCheckboxDateChange("lastmonth");
+              }}
+            >
+              <Form.Check
+                type="checkbox"
+                className="mx-2"
+                name="lastmonth"
+                checked={selectedCheckboxDate === "lastmonth"}
+              />
+              <div style={{ width: "90%", textAlign: "left" }}>
+                Past 30 days
               </div>
-            </CustomDropdown>
+            </div>
             <div
               onClick={() => {
-                handleReset();
+                setSelectedCheckboxDate("");
               }}
               className="my-2 mx-2"
               style={{
@@ -565,9 +548,24 @@ export default function Activity() {
             >
               Reset
             </div>
+          </div>
+        </CustomDropdown>
+        <div
+          onClick={() => {
+            handleReset();
+          }}
+          className="my-2 mx-2"
+          style={{
+            color: "#0099FF",
+            cursor: "pointer",
+            fontSize: "18px",
+          }}
+        >
+          Reset
+        </div>
       </div>
 
-      <div style={{overflowY: 'scroll', height: '500px' }}>
+      <div style={{ overflowY: "scroll", height: "500px" }}>
         {listActivity.length >= 1 ? (
           <ListActivities data={listActivity} />
         ) : (

@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 
 // import các component hoặc các services:
 
-import { ProjectDetail } from "@/app/components";
+import { ProjectDetail } from "@/components";
 import { env } from "@/config/varenv";
-import { SubNav, ModalDeleteProject, ModalQuitProject } from "@/app/components";
+import { SubNav, ModalDeleteProject, ModalQuitProject } from "@/components";
 import projectService from "@/service/home/projectService";
 // import CheckRole from "@/service/project/checkRole";
 

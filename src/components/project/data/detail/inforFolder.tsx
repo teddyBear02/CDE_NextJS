@@ -1,5 +1,5 @@
 import React from "react";
-import { formatDate } from "@/app/until/Helper";
+import { formatDate } from "@/until/Helper";
 
 interface Props {
   nameFolder: any;

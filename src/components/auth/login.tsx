@@ -19,7 +19,6 @@ let Login = () => {
     },
     onError: () => {
       loginFailed = <LoginFailed />;
-      console.log(123);
     },
   });
 
